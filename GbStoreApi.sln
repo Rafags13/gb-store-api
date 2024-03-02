@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GbStoreApi.Domain", "GbStoreApi.Domain\GbStoreApi.Domain.csproj", "{EE51CA9D-27F8-4755-AF23-39CF1D65E8ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbStoreApi.Domain", "GbStoreApi.Domain\GbStoreApi.Domain.csproj", "{EE51CA9D-27F8-4755-AF23-39CF1D65E8ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GbStoreApi.Application", "GbStoreApi.Application\GbStoreApi.Application.csproj", "{2116A085-71EE-4E2A-A394-DCA405996E56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbStoreApi.Application", "GbStoreApi.Application\GbStoreApi.Application.csproj", "{2116A085-71EE-4E2A-A394-DCA405996E56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GbStoreApi.Data", "GbStoreApi.Data\GbStoreApi.Data.csproj", "{B6FDB28B-E248-40B9-9DC1-AA4B9574D0ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbStoreApi.Data", "GbStoreApi.Data\GbStoreApi.Data.csproj", "{B6FDB28B-E248-40B9-9DC1-AA4B9574D0ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GbStoreApi.WebApi", "GbStoreApi.WebApi\GbStoreApi.WebApi.csproj", "{1E983DF7-1A18-4DDE-9FF5-07D884A1B358}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GbStoreApi.WebApi", "GbStoreApi.WebApi\GbStoreApi.WebApi.csproj", "{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9D374821-C439-453A-85C0-CEA7A6B6556E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +31,14 @@ Global
 		{B6FDB28B-E248-40B9-9DC1-AA4B9574D0ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6FDB28B-E248-40B9-9DC1-AA4B9574D0ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6FDB28B-E248-40B9-9DC1-AA4B9574D0ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E983DF7-1A18-4DDE-9FF5-07D884A1B358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E983DF7-1A18-4DDE-9FF5-07D884A1B358}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E983DF7-1A18-4DDE-9FF5-07D884A1B358}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E983DF7-1A18-4DDE-9FF5-07D884A1B358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D374821-C439-453A-85C0-CEA7A6B6556E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D374821-C439-453A-85C0-CEA7A6B6556E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D374821-C439-453A-85C0-CEA7A6B6556E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D374821-C439-453A-85C0-CEA7A6B6556E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
