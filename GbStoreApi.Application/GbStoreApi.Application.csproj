@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="interfaces\" />
-    <Folder Include="services\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +23,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GbStoreApi.Data\GbStoreApi.Data.csproj" />
   </ItemGroup>
 
 </Project>
