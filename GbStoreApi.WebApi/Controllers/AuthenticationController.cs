@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto;
 
 namespace GbStoreApi.WebApi.Controllers
 {
@@ -7,11 +8,40 @@ namespace GbStoreApi.WebApi.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-
-        [HttpGet]
-        public IActionResult GetProfile()
+        private readonly IAuthenticationService _authenticationService;
+        public AuthenticationController(IAuthenticationService authenticationService)
         {
-            return Ok("Success");
+            _authenticationService = authenticationService;
+        }
+
+        [HttpPost("Login")]
+        public IActionResult SignIn([FromBody] SignInDto signInDto)
+        {
+            try
+            {
+                var token = _authenticationService.SignIn(signInDto);
+
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("Register")]
+        public IActionResult SignUp([FromBody] SignUpDto signUpDto)
+        {
+            try
+            {
+                var message = _authenticationService.SignUp(signUpDto);
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
