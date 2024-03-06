@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GbStoreApi.Domain.Repository
 {
-    public interface IUserRepository : IGenericRepository<User>
+    public interface ICategoryRepository : IGenericRepository<Category>
     {
     }
 }

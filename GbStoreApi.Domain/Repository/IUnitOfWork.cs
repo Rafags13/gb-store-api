@@ -9,6 +9,7 @@ namespace GbStoreApi.Domain.Repository
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository User { get; }
+        ICategoryRepository Category { get; }
 
         int Save();
     }

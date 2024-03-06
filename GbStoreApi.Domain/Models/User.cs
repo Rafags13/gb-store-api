@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GbStoreApi.Domain.model
+namespace GbStoreApi.Domain.Models
 {
     public class User
     {

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace GbStoreApi.Data.Implementation
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        public UserRepository(DataContext context) : base(context)
+        public CategoryRepository(DataContext context) : base(context)
         {
         }
     }

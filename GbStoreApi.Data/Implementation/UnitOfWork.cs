@@ -15,9 +15,11 @@ namespace GbStoreApi.Data.Implementation
         {
             _context = context;
             User = new UserRepository(_context);
+            Category = new CategoryRepository(_context);
         }
 
         public IUserRepository User { get; private set; }
+        public ICategoryRepository Category { get; private set; }
 
         public int Save()
         {

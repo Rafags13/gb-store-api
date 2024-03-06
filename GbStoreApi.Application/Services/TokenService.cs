@@ -1,7 +1,7 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.Domain.enums;
-using GbStoreApi.Domain.model;
+using GbStoreApi.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

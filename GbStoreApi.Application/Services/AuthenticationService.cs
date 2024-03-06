@@ -1,6 +1,6 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
-using GbStoreApi.Domain.model;
+using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using System.Configuration;
 using Microsoft.IdentityModel.Protocols;

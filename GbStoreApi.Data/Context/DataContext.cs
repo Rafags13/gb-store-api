@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using GbStoreApi.Domain.model;
+using GbStoreApi.Domain.Models;
 
 namespace GbStoreApi.Data.Context
 {
@@ -8,5 +8,7 @@ namespace GbStoreApi.Data.Context
         public DataContext() { }
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }

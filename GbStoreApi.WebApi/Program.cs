@@ -11,7 +11,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MyConfigurationClass>(builder.Configuration.GetSection("Configuration"));
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 
 builder.Services.AddDbContext<DataContext>(option =>
 {
@@ -38,7 +38,7 @@ builder.Services.AddAuthentication(x =>
     {
         // Salva os dados de login no AuthenticationProperties
         x.SaveToken = true;
-        var configuration = new MyConfigurationClass { PrivateKey = builder.Configuration.GetSection("Configuration").GetValue("PrivateKey", "") };
+        var configuration = new MyConfigurationClass { PrivateKey = builder.Configuration.GetSection("Configuration").GetValue("PrivateKey", "") ?? "" };
         // Configurações para leitura do Token
         x.TokenValidationParameters = new TokenValidationParameters
         {
@@ -55,7 +55,7 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 
-scope.ServiceProvider.GetService<DataContext>().Database.Migrate();
+scope.ServiceProvider.GetService<DataContext>()?.Database.Migrate();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

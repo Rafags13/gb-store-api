@@ -1,4 +1,4 @@
-﻿using GbStoreApi.Domain.model;
+﻿using GbStoreApi.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
