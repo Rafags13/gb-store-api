@@ -27,7 +27,7 @@ namespace GbStoreApi.Application.Services
 
             var currentProductId = _unitOfWork.Product.FindOne(x => x.Name == createProductDto.Name).Id;
 
-            
+            return "Adicionado";
         }
     }
 }
