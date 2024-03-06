@@ -10,6 +10,10 @@ namespace GbStoreApi.Domain.Repository
     {
         IUserRepository User { get; }
         ICategoryRepository Category { get; }
+        IProductRepository Product { get; }
+        IStockRepository Stock { get; }
+        ISizeRepository Size { get; }
+        IColorRepository Color { get; }
 
         int Save();
     }

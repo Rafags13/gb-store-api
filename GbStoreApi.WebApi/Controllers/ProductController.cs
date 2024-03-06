@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
@@ -8,6 +10,24 @@ namespace GbStoreApi.WebApi.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
-        // Continue from here...
+        private readonly IProductService _productService;
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateProductDto createProductDto)
+        {
+            try
+            {
+                var message = _productService.CreateProduct(createProductDto);
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
