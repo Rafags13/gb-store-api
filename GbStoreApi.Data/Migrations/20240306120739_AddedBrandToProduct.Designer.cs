@@ -4,6 +4,7 @@ using GbStoreApi.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GbStoreApi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240306120739_AddedBrandToProduct")]
+    partial class AddedBrandToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,24 +61,6 @@ namespace GbStoreApi.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("GbStoreApi.Domain.Models.Color", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Colors");
-                });
-
             modelBuilder.Entity("GbStoreApi.Domain.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -114,55 +99,6 @@ namespace GbStoreApi.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.ProductStock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ColorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SizeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ColorId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SizeId");
-
-                    b.ToTable("ProductStocks");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.Size", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.User", b =>
@@ -222,33 +158,6 @@ namespace GbStoreApi.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("GbStoreApi.Domain.Models.ProductStock", b =>
-                {
-                    b.HasOne("GbStoreApi.Domain.Models.Color", "Color")
-                        .WithMany("Stocks")
-                        .HasForeignKey("ColorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GbStoreApi.Domain.Models.Product", "Product")
-                        .WithMany("Stocks")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GbStoreApi.Domain.Models.Size", "Size")
-                        .WithMany("Stocks")
-                        .HasForeignKey("SizeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Color");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Size");
-                });
-
             modelBuilder.Entity("GbStoreApi.Domain.Models.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -257,21 +166,6 @@ namespace GbStoreApi.Data.Migrations
             modelBuilder.Entity("GbStoreApi.Domain.Models.Category", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.Color", b =>
-                {
-                    b.Navigation("Stocks");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.Product", b =>
-                {
-                    b.Navigation("Stocks");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.Size", b =>
-                {
-                    b.Navigation("Stocks");
                 });
 #pragma warning restore 612, 618
         }

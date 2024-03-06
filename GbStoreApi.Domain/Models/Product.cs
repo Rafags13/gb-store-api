@@ -36,5 +36,11 @@ namespace GbStoreApi.Domain.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
+
+        [ForeignKey("Brand")]
+        public int BrandId { get; set; }
+        public Brand? Brand { get; set; }
+
+        public ICollection<ProductStock>? Stocks { get; set; }
     }
 }
