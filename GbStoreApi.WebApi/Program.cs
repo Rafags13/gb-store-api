@@ -21,6 +21,8 @@ builder.Services.AddDbContext<DataContext>(option =>
 
 
 // Add services to the container.
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -79,8 +81,9 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuer = false,
         ValidateAudience = false
         };
-    });
+});
 
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -96,6 +99,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseAuthentication();
 app.UseAuthorization();

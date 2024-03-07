@@ -14,6 +14,7 @@ namespace GbStoreApi.Domain.Repository
         IStockRepository Stock { get; }
         ISizeRepository Size { get; }
         IColorRepository Color { get; }
+        IBrandRepository Brand { get; }
 
         int Save();
     }

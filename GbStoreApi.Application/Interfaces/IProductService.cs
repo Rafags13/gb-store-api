@@ -9,6 +9,6 @@ namespace GbStoreApi.Application.Interfaces
 {
     public interface IProductService
     {
-        string CreateProduct(CreateProductDto createProductDto);
+        bool CreateProduct(CreateProductDto createProductDto);
     }
 }

@@ -16,10 +16,12 @@ namespace GbStoreApi.Domain.Models
         public int Id { get; set; }
 
         [Required]
+        [StringLength(50)]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public string Description { get; set; } = string.Empty;
+
+        [StringLength(200)]
+        public string? Description { get; set; } = string.Empty;
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
@@ -27,11 +29,11 @@ namespace GbStoreApi.Domain.Models
 
         [Range(0, 1)]
         [DefaultValue(0)]
-        public float DiscountPercent { get; set; }
+        public float? DiscountPercent { get; set; }
 
         [Range(1, 24)]
         [DefaultValue(1)]
-        public int QuotasNumber { get; set; }
+        public int? QuotasNumber { get; set; }
 
         [ForeignKey("Category")]
         public int CategoryId { get; set; }

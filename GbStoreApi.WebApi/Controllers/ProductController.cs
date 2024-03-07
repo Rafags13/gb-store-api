@@ -20,9 +20,14 @@ namespace GbStoreApi.WebApi.Controllers
         {
             try
             {
-                var message = _productService.CreateProduct(createProductDto);
+                var success = _productService.CreateProduct(createProductDto);
 
-                return Ok(message);
+                if(success)
+                {
+                    return Ok("Produto criado com sucesso!");
+                }
+
+                return BadRequest("Não foi possível criar o produto.");
             }
             catch (Exception ex)
             {
