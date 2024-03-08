@@ -34,5 +34,24 @@ namespace GbStoreApi.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Get-Catalog")]
+        public IActionResult GetCatalog(
+            [FromQuery(Name="category")] string category,
+            [FromQuery(Name="brand")] string brand,
+            [FromQuery(Name="Cores")] string colors,
+            [FromQuery(Name="Tamanhos")] string sizes
+            )
+        {
+            try
+            {
+                var parameters = new QuerySearchCatalogDto { Category = category, Brand = brand, Colors = colors, Sizes = sizes };
+                return Ok("Success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
