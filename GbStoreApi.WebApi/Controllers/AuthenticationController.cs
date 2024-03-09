@@ -20,7 +20,6 @@ namespace GbStoreApi.WebApi.Controllers
             try
             {
                 var token = _authenticationService.SignIn(signInDto);
-
                 return Ok(token);
             }
             catch (Exception ex)
@@ -37,6 +36,21 @@ namespace GbStoreApi.WebApi.Controllers
                 var message = _authenticationService.SignUp(signUpDto);
 
                 return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("Refresh-Token")]
+        public IActionResult Refresh()
+        {
+            try
+            {
+                var newToken = _authenticationService.RefreshToken();
+
+                return Ok(newToken);
             }
             catch (Exception ex)
             {

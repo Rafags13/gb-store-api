@@ -1,6 +1,8 @@
-﻿using GbStoreApi.Application.Interfaces;
+﻿using GbStoreApi.Application.Exceptions;
+using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.Domain.enums;
+using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -64,8 +66,29 @@ namespace GbStoreApi.Application.Services
             return userCorrectTyped;
         }
 
+        public User GetByCredentials(SignInDto signInDto)
+        {
+            var encryptPassword = BCrypt.Net.BCrypt.HashPassword(signInDto.Password);
+
+            var currentUser = _unitOfWork.User.FindOne(x =>
+                x.Email == signInDto.Email
+            ) ?? throw new KeyNotFoundException("O usuário informado não existe no sistema.");
+
+            if (!BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password))
+            {
+                throw new InvalidPasswordException("A senha informada não confere.");
+            }
+
+            return currentUser;
+        }
+
         public DisplayUserDto? GetCurrentInformations()
         {
+            if (!_context.HttpContext.User.Identity.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("Você precisa se autenticar para obter mais informações");
+            }
+
             var currentUserEmail = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
             var currentUser = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
             if (currentUser is null)

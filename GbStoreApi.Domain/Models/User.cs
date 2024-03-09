@@ -30,6 +30,10 @@ namespace GbStoreApi.Domain.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime BirthdayDate { get; set; }
 
+        public string? RefreshToken { get; set; } = string.Empty;
+        public DateTime? TokenCreated { get; set; }
+        public DateTime? TokenExpires { get; set; }
+
         [Required]
         [EnumDataType(typeof(UserType))]
         public int TypeOfUser { get; set; }

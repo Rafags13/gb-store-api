@@ -11,6 +11,8 @@ namespace GbStoreApi.Application.Interfaces
 {
     public interface ITokenService
     {
+        UserTokenDto CreateModelByUser(User user);
         string Generate(UserTokenDto user);
+        RefreshToken GenerateRefresh();
     }
 }

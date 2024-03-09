@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace GbStoreApi.Application.Services
@@ -29,7 +30,7 @@ namespace GbStoreApi.Application.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = GenerateClaims(user),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = credentials,
             };
             var token = handler.CreateToken(tokenDescriptor);
@@ -46,5 +47,28 @@ namespace GbStoreApi.Application.Services
             return ci;
         }
 
+        public RefreshToken GenerateRefresh()
+        {
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.Now.AddDays(7),
+            };
+
+            return refreshToken;
+        }
+
+        public UserTokenDto CreateModelByUser(User user)
+        {
+            var newUserToken = new UserTokenDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                TypeOfUser = user.TypeOfUser
+            };
+
+            return newUserToken;
+        }
     }
 }
