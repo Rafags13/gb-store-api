@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿ using Microsoft.AspNetCore.Mvc;
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
 
@@ -20,6 +20,7 @@ namespace GbStoreApi.WebApi.Controllers
             try
             {
                 var token = _authenticationService.SignIn(signInDto);
+
                 return Ok(token);
             }
             catch (Exception ex)

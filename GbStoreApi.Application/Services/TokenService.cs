@@ -1,8 +1,6 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
-using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,7 +28,7 @@ namespace GbStoreApi.Application.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = GenerateClaims(user),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = credentials,
             };
             var token = handler.CreateToken(tokenDescriptor);
@@ -40,6 +38,7 @@ namespace GbStoreApi.Application.Services
         private static ClaimsIdentity GenerateClaims(UserTokenDto user)
         {
             var ci = new ClaimsIdentity();
+            ci.AddClaim(new Claim("sub", user.Id.ToString()));
             ci.AddClaim(new Claim(ClaimTypes.Name, user.Name));
             ci.AddClaim(new Claim(ClaimTypes.Email, user.Email));
             ci.AddClaim(new Claim(ClaimTypes.Role, user.TypeOfUser.ToString()));

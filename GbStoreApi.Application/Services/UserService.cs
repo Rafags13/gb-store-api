@@ -1,16 +1,10 @@
-﻿using GbStoreApi.Application.Exceptions;
-using GbStoreApi.Application.Interfaces;
+﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GbStoreApi.Application.Services
 {
@@ -66,17 +60,17 @@ namespace GbStoreApi.Application.Services
             return userCorrectTyped;
         }
 
-        public User GetByCredentials(SignInDto signInDto)
+        public User? GetByCredentials(SignInDto signInDto)
         {
             var encryptPassword = BCrypt.Net.BCrypt.HashPassword(signInDto.Password);
 
             var currentUser = _unitOfWork.User.FindOne(x =>
                 x.Email == signInDto.Email
-            ) ?? throw new KeyNotFoundException("O usuário informado não existe no sistema.");
+            );
 
-            if (!BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password))
+            if(currentUser is null || !BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password))
             {
-                throw new InvalidPasswordException("A senha informada não confere.");
+                return null;
             }
 
             return currentUser;
@@ -105,6 +99,19 @@ namespace GbStoreApi.Application.Services
             };
 
             return displayUser;
+        }
+
+        public UserType? GetUserRole()
+        {
+            var currentUserEmail = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+
+            if (currentUserEmail is null) return null;
+
+            var user = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
+
+            if (user is null) return null;
+
+            return (UserType) user.TypeOfUser;
         }
     }
 }

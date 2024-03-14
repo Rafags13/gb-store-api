@@ -2,14 +2,6 @@
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
-using System.Configuration;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.Extensions.Options;
-using Azure;
-using System.Net;
 using Microsoft.AspNetCore.Http;
 using GbStoreApi.Application.Exceptions;
 
@@ -34,9 +26,11 @@ namespace GbStoreApi.Application.Services
             _userService = userService;
         }
 
-        public string SignIn(SignInDto signInDto)
+        public string? SignIn(SignInDto signInDto)
         {
             var currentUser = _userService.GetByCredentials(signInDto);
+
+            if (currentUser is null) return null;
             
             var userToken = _tokenService.CreateModelByUser(currentUser);
 
@@ -54,6 +48,7 @@ namespace GbStoreApi.Application.Services
             var cookieOptions = new CookieOptions
             { 
                 HttpOnly = true,
+                Secure = true,
                 Expires = refreshToken.Expires,
             };
 
@@ -69,9 +64,14 @@ namespace GbStoreApi.Application.Services
 
         public string SignUp(SignUpDto signUpDto)
         {
+            if(UserAlsoExists(signUpDto.Cpf, signUpDto.Email))
+            {
+                throw new DuplicateUniqueTupleException("O E-mail ou Cpf já estão cadastrados no sistema.");
+            }
+
             var newUser = new User
             {
-                Name = signUpDto.Name,
+                Name = signUpDto.Fullname,
                 Email = signUpDto.Email,
                 Cpf = signUpDto.Cpf,
                 Password = BCrypt.Net.BCrypt.HashPassword(signUpDto.Password),
@@ -90,18 +90,25 @@ namespace GbStoreApi.Application.Services
             return "Usuário adicionado com sucesso!";
         }
 
+        private bool UserAlsoExists(string cpf, string email)
+        {
+            var user = _unitOfWork.User.FindOne(x => x.Cpf == cpf || x.Email == email);
+
+            return user != null;
+        }
+
         public string RefreshToken()
         {
             var refreshToken = _context?.HttpContext?.Request.Cookies["refreshToken"];
             var userId = _userService.GetCurrentInformations().Id;
             var currentUser = _unitOfWork.User.FindOne(x => x.Id == userId);
 
-            if(!currentUser.RefreshToken.Equals(refreshToken))
+            if (!currentUser.RefreshToken.Equals(refreshToken))
             {
                 throw new UnauthorizedAccessException("Você não possui acesso ao sistema.");
             }
 
-            if(currentUser.TokenExpires < DateTime.Now)
+            if (currentUser.TokenExpires < DateTime.Now)
             {
                 throw new UnauthorizedAccessException("Seu tempo de sessão acabou. Entre novamente.");
             }

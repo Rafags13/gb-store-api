@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Domain.Dto;
+using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 
 namespace GbStoreApi.Application.Interfaces
@@ -8,6 +9,7 @@ namespace GbStoreApi.Application.Interfaces
         IEnumerable<DisplayUserDto> GetAll();
         DisplayUserDto? GetById(int id);
         DisplayUserDto? GetCurrentInformations();
-        User GetByCredentials(SignInDto signInDto);
+        UserType? GetUserRole();
+        User? GetByCredentials(SignInDto signInDto);
     }
 }

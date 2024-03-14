@@ -3,10 +3,11 @@ using GbStoreApi.Application.Services;
 using GbStoreApi.Data.Context;
 using GbStoreApi.Data.Implementation;
 using GbStoreApi.Domain.Dto;
+using GbStoreApi.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<DataContext>(option =>
 {
     option.UseSqlServer(connectionString);
 });
+
+builder.Services.AddTransient<JwtRefreshExpiredMiddleware>();
 
 
 // Add services to the container.
@@ -63,29 +66,36 @@ builder.Services.AddSwaggerGen(opt =>
 });
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddAuthentication(x =>
-    {
+builder.Services.AddAuthentication(x =>{
         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(x =>
-    {
-        // Salva os dados de login no AuthenticationProperties
+    }).AddJwtBearer(x =>{
         x.SaveToken = true;
         var configuration = new MyConfigurationClass { PrivateKey = builder.Configuration.GetSection("Configuration").GetValue("PrivateKey", "") ?? "" };
-        // Configurações para leitura do Token
         x.TokenValidationParameters = new TokenValidationParameters
         {
-            // Chave que usamos para gerar o Token
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.PrivateKey)),
-        // Validações externas
         ValidateIssuer = false,
         ValidateAudience = false
         };
 });
 
-builder.Services.AddCors();
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("CorsPolicy",
+        builder => builder.WithOrigins("http://localhost:5173/")
+            .AllowAnyMethod()
+            .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization, "token")
+            .WithExposedHeaders("token")
+            .AllowCredentials()
+            .SetIsOriginAllowed(hostName => true)
+        );
+}
+ );
 
 var app = builder.Build();
+
+app.UseFactoryActivatedMiddleware();
 
 var scope = app.Services.CreateScope();
 
@@ -100,10 +110,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<JwtRefreshExpiredMiddleware>();
 
 app.MapControllers();
 

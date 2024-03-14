@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace GbStoreApi.Domain.Dto
+﻿namespace GbStoreApi.Domain.Dto
 {
     public class CreateProductDto
     {

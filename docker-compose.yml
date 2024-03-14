@@ -23,4 +23,4 @@ services:
       Password: "nininhatico1#"
       Database: "GbStoreDatabase"
     ports: 
-      - "8090:80"
+      - "443:443"

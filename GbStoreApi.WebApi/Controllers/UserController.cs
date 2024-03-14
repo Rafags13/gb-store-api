@@ -49,7 +49,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("CurrentInformations")]
+        [HttpGet("Current-Informations")]
         public IActionResult GetCurrentInformations()
         {
             try
@@ -57,6 +57,21 @@ namespace GbStoreApi.WebApi.Controllers
                 var currentUser = _userService.GetCurrentInformations();
 
                 return Ok(currentUser);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Current-Role")]
+        public IActionResult GetCurrentRole()
+        {
+            try
+            {
+                var role = _userService.GetUserRole();
+
+                return Ok(role);
             }
             catch (Exception ex)
             {
