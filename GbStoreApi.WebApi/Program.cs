@@ -1,10 +1,14 @@
+using Amazon.Runtime;
+using Amazon.S3;
 using GbStoreApi.Application;
 using GbStoreApi.Application.Extensions;
 using GbStoreApi.Data.Context;
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.WebApi.Middlewares;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var corsName = "corsPolicy";
 
@@ -28,17 +32,24 @@ builder.Services
 
 builder.Services.AddControllers();
 
+builder.Configuration.AddEnvironmentVariables();
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerCustomConfiguration();
 
+builder.Services.AddCustomDefaultAWSOptions(builder.Configuration);
+
+builder.Services.AddAWSService<IAmazonS3>();
+
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddCustomJwtConfiguration(builder.Configuration);
+builder.Services
+    .AddAuthentication(x => {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+     })
+    .AddCustomJwtConfiguration(builder.Configuration);
 
 builder.Services.AddCorsConfiguration(corsName);
 
