@@ -28,6 +28,7 @@ builder.Services.AddTransient<JwtRefreshExpiredMiddleware>();
 builder.Services
     .AddUserServices()
     .AddProductServices()
+    .AddFileServices()
     .AddUnitOfWork();
 
 builder.Services.AddControllers();

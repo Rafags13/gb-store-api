@@ -35,5 +35,12 @@ public static class DependencyInjectionExtensions
         return servicesCollection;
     }
 
+    public static IServiceCollection AddFileServices(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<IFileService, FileService>();
+
+        return serviceCollection;
+    }
+
 }
 
