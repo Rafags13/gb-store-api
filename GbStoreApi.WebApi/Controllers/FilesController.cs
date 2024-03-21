@@ -1,7 +1,4 @@
-﻿using Amazon.S3;
-using Amazon.S3.Model;
-using GbStoreApi.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
+﻿using GbStoreApi.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers

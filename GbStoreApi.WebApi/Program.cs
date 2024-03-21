@@ -1,4 +1,3 @@
-using Amazon.Runtime;
 using Amazon.S3;
 using GbStoreApi.Application;
 using GbStoreApi.Application.Extensions;
@@ -8,7 +7,6 @@ using GbStoreApi.WebApi.Middlewares;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 var corsName = "corsPolicy";
 

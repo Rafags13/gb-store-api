@@ -13,6 +13,9 @@ services:
       - C:\dados\volumes\sqlserver:/var/opt/mssql/data
   gbstoreapi.webapi:
     image: ${DOCKER_REGISTRY-}gbstoreapiwebapi
+    env_file: 
+    - path: .env
+      required: true
     build:
       context: .
       dockerfile: GbStoreApi.WebApi/Dockerfile
@@ -22,8 +25,8 @@ services:
       DbUser: "SA"
       Password: "nininhatico1#"
       Database: "GbStoreDatabase"
-      AWS_ACCESS_KEY_ID: "AKIAZQ3DS4TNDO4IJ7DL"
-      AWS_SECRET_ACCESS_KEY: "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"
-      AWS_REGION: "sa-east-1"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
     ports: 
       - "443:443"

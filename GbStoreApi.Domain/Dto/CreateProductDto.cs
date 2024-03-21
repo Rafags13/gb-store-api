@@ -1,14 +1,17 @@
-﻿namespace GbStoreApi.Domain.Dto
+﻿using Microsoft.AspNetCore.Http;
+
+namespace GbStoreApi.Domain.Dto
 {
     public class CreateProductDto
     {
-        public string Name { get; set; } = string.Empty;
+        public required string Name { get; set; }
         public string? Description { get; set; }
-        public decimal UnitaryPrice { get; set; }
+        public required decimal UnitaryPrice { get; set; }
         public float? DiscountPercent { get; set; }
         public int? QuotasNumber { get; set; }
-        public int CategoryId { get; set; }
-        public int BrandId { get; set; }
+        public required int CategoryId { get; set; }
+        public required int BrandId { get; set; }
         public IEnumerable<CreateStockDto> Stocks { get; set; } = Enumerable.Empty<CreateStockDto>();
+        public IEnumerable<IFormFile> Files { get; set; } = Enumerable.Empty<IFormFile>();
     }
 }

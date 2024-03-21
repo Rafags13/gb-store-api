@@ -27,7 +27,7 @@ namespace GbStoreApi.Application.Services
                 QuotasNumber = createProductDto.QuotasNumber ?? 0,
                 UnitaryPrice = createProductDto.UnitaryPrice,
                 CategoryId = createProductDto.CategoryId,
-                BrandId = createProductDto.BrandId
+                BrandId = createProductDto.BrandId,
             };
 
             _unitOfWork.Product.Add(newProduct);

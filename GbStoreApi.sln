@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbStoreApi.Application", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbStoreApi.Data", "GbStoreApi.Data\GbStoreApi.Data.csproj", "{B6FDB28B-E248-40B9-9DC1-AA4B9574D0ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GbStoreApi.WebApi", "GbStoreApi.WebApi\GbStoreApi.WebApi.csproj", "{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbStoreApi.WebApi", "GbStoreApi.WebApi\GbStoreApi.WebApi.csproj", "{7ABDD0FA-F049-4896-A7BF-52FEA47E5837}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9D374821-C439-453A-85C0-CEA7A6B6556E}"
 EndProject
