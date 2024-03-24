@@ -13,9 +13,6 @@ namespace GbStoreApi.Domain.Models
         [StringLength(50)]
         public required string Name { get; set; }
 
-        [Required]
-        public required string Url { get; set; }
-
         [ForeignKey("Product")]
         public int ProductId { get; set; }
         public Product? Product { get; set; }

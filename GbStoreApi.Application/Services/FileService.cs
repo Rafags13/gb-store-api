@@ -9,9 +9,11 @@ namespace GbStoreApi.Application.Services
     public class FileService : IFileService
     {
         private readonly IAmazonS3 _s3Client;
-        public FileService(IAmazonS3 s3Client)
+        private readonly IBucketService _bucketService;
+        public FileService(IAmazonS3 s3Client, IBucketService bucketService)
         {
             _s3Client = s3Client;
+            _bucketService = bucketService;
         }
 
         public async Task<string> CreateFile(IFormFile formFile, string bucketName, string? prefix)
@@ -27,6 +29,26 @@ namespace GbStoreApi.Application.Services
             await _s3Client.PutObjectAsync(request);
 
             return formFile.FileName;
+        }
+
+        public async Task<bool> CreateMultipleFiles(IEnumerable<IFormFile> files, string? prefix)
+        {
+            var bucketName = await _bucketService.GetCurrentPictureBucket();
+
+            files.ToList().ForEach(async file =>
+            {
+                var request = new PutObjectRequest()
+                {
+                    BucketName = bucketName,
+                    Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
+                    InputStream = file.OpenReadStream()
+                };
+
+                request.Metadata.Add("Content-Type", file.ContentType);
+                await _s3Client.PutObjectAsync(request);
+            });
+
+            return true;
         }
 
         public async Task<IEnumerable<S3ObjectDto>> GetAllFilesAsync(string bucketName, string? prefix)

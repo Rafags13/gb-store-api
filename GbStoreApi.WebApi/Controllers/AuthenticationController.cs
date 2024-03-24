@@ -44,12 +44,12 @@ namespace GbStoreApi.WebApi.Controllers
             }
         }
 
-        [HttpPost("Refresh-Token")]
-        public IActionResult Refresh()
+        [HttpPost("Refresh-Token/{userId}")]
+        public IActionResult Refresh(int subUserId)
         {
             try
             {
-                var newToken = _authenticationService.RefreshToken();
+                var newToken = _authenticationService.RefreshToken(subUserId);
 
                 return Ok(newToken);
             }

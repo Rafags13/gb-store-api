@@ -15,12 +15,13 @@ namespace GbStoreApi.WebApi.Controllers
         {
             _productService = productService;
         }
+
         [HttpPost]
-        public IActionResult Create([FromBody] CreateProductDto createProductDto)
+        public async Task<IActionResult> Create([FromBody] CreateProductDto createProductDto)
         {
             try
             {
-                var success = _productService.CreateProduct(createProductDto);
+                var success = await _productService.CreateProduct(createProductDto);
 
                 if(success)
                 {

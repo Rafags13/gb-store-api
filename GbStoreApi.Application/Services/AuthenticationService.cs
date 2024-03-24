@@ -4,6 +4,7 @@ using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
 using GbStoreApi.Application.Exceptions;
+using System.Security.Claims;
 
 namespace GbStoreApi.Application.Services
 {
@@ -97,11 +98,10 @@ namespace GbStoreApi.Application.Services
             return user != null;
         }
 
-        public string RefreshToken()
+        public string RefreshToken(int subUserId)
         {
             var refreshToken = _context?.HttpContext?.Request.Cookies["refreshToken"];
-            var userId = _userService.GetCurrentInformations().Id;
-            var currentUser = _unitOfWork.User.FindOne(x => x.Id == userId);
+            var currentUser = _unitOfWork.User.FindOne(x => x.Id == subUserId);
 
             if (!currentUser.RefreshToken.Equals(refreshToken))
             {
@@ -117,7 +117,7 @@ namespace GbStoreApi.Application.Services
             string newToken = _tokenService.Generate(userToken);
 
             var newRefreshToken = _tokenService.GenerateRefresh();
-            SetRefreshToken(newRefreshToken, userId);
+            SetRefreshToken(newRefreshToken, subUserId);
 
             return newToken;
         }

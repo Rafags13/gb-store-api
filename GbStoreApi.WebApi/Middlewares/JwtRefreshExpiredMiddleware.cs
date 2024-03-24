@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace GbStoreApi.WebApi.Middlewares
@@ -30,23 +31,26 @@ namespace GbStoreApi.WebApi.Middlewares
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_jwtSettings.PrivateKey);
-                
+
                 SecurityToken validatedToken;
+
                 var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ValidateLifetime = true,
+                    ValidateLifetime = false,
                 }, out validatedToken);
 
-                // Se o token estiver expirado
                 if (validatedToken.ValidTo < DateTime.UtcNow)
                 {
-                    var newToken = _authenticationService.RefreshToken();
+                    var subId = int.Parse(principal.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                    var newToken = _authenticationService.RefreshToken(subId);
+                    context.Request.Headers.Remove("Token");
+                    context.Request.Headers.Add("Token", new StringValues(newToken));
                     context.Response.Headers.Add("Token", new StringValues(newToken));
-                }
+                }                 
             }
 
             await next(context);

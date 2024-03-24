@@ -1,4 +1,5 @@
 using Amazon.S3;
+using EntityFrameworkCore.UnitOfWork.Extensions;
 using GbStoreApi.Application;
 using GbStoreApi.Application.Extensions;
 using GbStoreApi.Data.Context;
@@ -28,6 +29,9 @@ builder.Services
     .AddProductServices()
     .AddFileServices()
     .AddUnitOfWork();
+
+builder.Services.AddUnitOfWork();
+builder.Services.AddUnitOfWork<DataContext>();
 
 builder.Services.AddControllers();
 
@@ -71,9 +75,8 @@ app.UseHttpsRedirection();
 app.UseCors(corsName);
 
 app.UseAuthentication();
-app.UseAuthorization();
 
-app.UseMiddleware<JwtRefreshExpiredMiddleware>();
+app.UseAuthorization();
 
 app.MapControllers();
 

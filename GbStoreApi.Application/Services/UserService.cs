@@ -62,13 +62,14 @@ namespace GbStoreApi.Application.Services
 
         public User? GetByCredentials(SignInDto signInDto)
         {
-            var encryptPassword = BCrypt.Net.BCrypt.HashPassword(signInDto.Password);
 
             var currentUser = _unitOfWork.User.FindOne(x =>
                 x.Email == signInDto.Email
             );
 
-            if(currentUser is null || !BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password))
+            var passwordsMatch = BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password);
+
+            if (currentUser is null || !BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password))
             {
                 return null;
             }
@@ -78,11 +79,6 @@ namespace GbStoreApi.Application.Services
 
         public DisplayUserDto? GetCurrentInformations()
         {
-            if (!_context.HttpContext.User.Identity.IsAuthenticated)
-            {
-                throw new UnauthorizedAccessException("Você precisa se autenticar para obter mais informações");
-            }
-
             var currentUserEmail = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
             var currentUser = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
             if (currentUser is null)
@@ -103,7 +99,7 @@ namespace GbStoreApi.Application.Services
 
         public UserType? GetUserRole()
         {
-            var currentUserEmail = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            var currentUserEmail = GetCurrentInformations().Email;
 
             if (currentUserEmail is null) return null;
 

@@ -14,7 +14,9 @@ public static class DependencyInjectionExtensions
         serviceCollection.AddScoped<ISizeService, SizeService>();
         serviceCollection.AddScoped<IColorService, ColorService>();
         serviceCollection.AddScoped<IStockService, StockService>();
+        serviceCollection.AddScoped<IPictureService, PictureService>();
         serviceCollection.AddScoped<IProductService, ProductService>();
+
         serviceCollection.AddScoped<ICategoryService, CategoryService>();
 
         return serviceCollection;
@@ -37,6 +39,7 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddFileServices(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddScoped<IBucketService, BucketService>();
         serviceCollection.AddScoped<IFileService, FileService>();
 
         return serviceCollection;

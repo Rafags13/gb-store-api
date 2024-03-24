@@ -15,7 +15,8 @@ namespace GbStoreApi.Data.Implementation
             Stock = new StockRepository(_context);
             Color = new ColorRepository(_context);
             Size = new SizeRepository(_context);
-            Brand = new BrandRepository(_context);  
+            Brand = new BrandRepository(_context);
+            Picture = new PictureRepository(_context);
         }
 
         public IUserRepository User { get; private set; }
@@ -25,6 +26,7 @@ namespace GbStoreApi.Data.Implementation
         public IColorRepository Color { get; private set; }
         public ISizeRepository Size { get; private set; }
         public IBrandRepository Brand { get; private set; }
+        public IPictureRepository Picture { get; private set; }
 
         public int Save()
         {

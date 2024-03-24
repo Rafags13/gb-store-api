@@ -6,6 +6,6 @@ namespace GbStoreApi.Application.Interfaces
     {
         string? SignIn(SignInDto signInDto);
         string SignUp(SignUpDto signUpDto);
-        string RefreshToken();
+        string RefreshToken(int subUserId);
     }
 }

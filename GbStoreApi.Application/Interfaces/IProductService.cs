@@ -4,6 +4,6 @@ namespace GbStoreApi.Application.Interfaces
 {
     public interface IProductService
     {
-        bool CreateProduct(CreateProductDto createProductDto);
+        Task<bool> CreateProduct(CreateProductDto createProductDto);
     }
 }

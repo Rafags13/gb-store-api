@@ -12,6 +12,5 @@ namespace GbStoreApi.Domain.Dto
         public required int CategoryId { get; set; }
         public required int BrandId { get; set; }
         public IEnumerable<CreateStockDto> Stocks { get; set; } = Enumerable.Empty<CreateStockDto>();
-        public IEnumerable<IFormFile> Files { get; set; } = Enumerable.Empty<IFormFile>();
     }
 }
