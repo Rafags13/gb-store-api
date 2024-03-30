@@ -49,7 +49,7 @@ namespace GbStoreApi.Application.Services
 
             var currentProductId = _unitOfWork.Product.FindOne(x => x.Name == createProductDto.Name).Id;
 
-            var newStockToProduct = new CreateStockWithIdDto { ProductId = currentProductId, Variants = createProductDto.Stocks };
+            var newStockToProduct = new CreateStockWithIdDto { ProductId = currentProductId, Variants = createProductDto.Stock };
 
             var createStockSuccess = _stockService.CreateMultipleStock(newStockToProduct) > 0;
 
@@ -68,6 +68,16 @@ namespace GbStoreApi.Application.Services
             //_pictureService.CreateMultiplePictures(picturesWithProductId);
 
             return true;
+        }
+
+        public DisplayVariantsDto GetCurrentVariants()
+        {
+            var colors = _unitOfWork.Color.GetAll().Select(x => new DisplayColorDto { Id = x.Id, Name = x.Name });
+            var sizes = _unitOfWork.Size.GetAll().Select(x => new DisplaySizeDto { Id = x.Id, Name = x.Name });
+
+            var currentVariants = new DisplayVariantsDto { Colors = colors, Sizes = sizes };
+
+            return currentVariants;
         }
     }
 }

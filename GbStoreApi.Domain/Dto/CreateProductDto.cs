@@ -4,13 +4,14 @@ namespace GbStoreApi.Domain.Dto
 {
     public class CreateProductDto
     {
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public required decimal UnitaryPrice { get; set; }
+        public decimal UnitaryPrice { get; set; }
         public float? DiscountPercent { get; set; }
         public int? QuotasNumber { get; set; }
-        public required int CategoryId { get; set; }
-        public required int BrandId { get; set; }
-        public IEnumerable<CreateStockDto> Stocks { get; set; } = Enumerable.Empty<CreateStockDto>();
+        public int CategoryId { get; set; }
+        public int BrandId { get; set; }
+        public IEnumerable<CreateStockDto> Stock { get; set; } = Enumerable.Empty<CreateStockDto>();
+        public IEnumerable<IFormFile> Photos { get; set; } = Enumerable.Empty<IFormFile>();
     }
 }

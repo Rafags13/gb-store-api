@@ -30,9 +30,6 @@ builder.Services
     .AddFileServices()
     .AddUnitOfWork();
 
-builder.Services.AddUnitOfWork();
-builder.Services.AddUnitOfWork<DataContext>();
-
 builder.Services.AddControllers();
 
 builder.Configuration.AddEnvironmentVariables();
@@ -58,11 +55,11 @@ builder.Services.AddCorsConfiguration(corsName);
 
 var app = builder.Build();
 
-app.UseFactoryActivatedMiddleware();
-
 var scope = app.Services.CreateScope();
 
 scope.ServiceProvider.GetService<DataContext>()?.Database.Migrate();
+
+app.UseFactoryActivatedMiddleware();
 
 if (app.Environment.IsDevelopment())
 {
@@ -75,6 +72,8 @@ app.UseHttpsRedirection();
 app.UseCors(corsName);
 
 app.UseAuthentication();
+
+app.UseMiddleware<JwtRefreshExpiredMiddleware>();
 
 app.UseAuthorization();
 

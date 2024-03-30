@@ -50,10 +50,10 @@ namespace GbStoreApi.WebApi.Middlewares
                     context.Request.Headers.Remove("Token");
                     context.Request.Headers.Add("Token", new StringValues(newToken));
                     context.Response.Headers.Add("Token", new StringValues(newToken));
-                }                 
-            }
+                }
 
-            await next(context);
+                await next(context);
+            }
         }
 
     }

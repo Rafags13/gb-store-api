@@ -35,5 +35,20 @@ namespace GbStoreApi.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Current-Variants")]
+        public IActionResult GetCurrentVariants()
+        {
+            try
+            {
+                var currentVariants = _productService.GetCurrentVariants();
+
+                return Ok(currentVariants);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
