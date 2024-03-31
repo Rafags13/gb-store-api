@@ -52,8 +52,9 @@ namespace GbStoreApi.WebApi.Middlewares
                     context.Response.Headers.Add("Token", new StringValues(newToken));
                 }
 
-                await next(context);
+                
             }
+            await next(context);
         }
 
     }

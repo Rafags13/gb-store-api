@@ -4,7 +4,6 @@ using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
 using GbStoreApi.Application.Exceptions;
-using System.Security.Claims;
 
 namespace GbStoreApi.Application.Services
 {

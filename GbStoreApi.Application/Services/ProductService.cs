@@ -3,6 +3,8 @@ using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace GbStoreApi.Application.Services
 {
@@ -26,9 +28,9 @@ namespace GbStoreApi.Application.Services
         }
         public async Task<bool> CreateProduct(CreateProductDto createProductDto)
         {
-            //var successCreateImages = await _fileService.CreateMultipleFiles(createProductDto.Files);
+            var successCreateImages = await _fileService.CreateMultipleFiles(createProductDto.Photos);
 
-            //if (!successCreateImages) throw new CantCreateProductException("Alguma das fotos falhou ao ser incluida.");
+            if (!successCreateImages) throw new CantCreateProductException("Alguma das fotos falhou ao ser incluida.");
 
             var newProduct = new Product { 
                 Name = createProductDto.Name,
@@ -52,20 +54,23 @@ namespace GbStoreApi.Application.Services
             var newStockToProduct = new CreateStockWithIdDto { ProductId = currentProductId, Variants = createProductDto.Stock };
 
             var createStockSuccess = _stockService.CreateMultipleStock(newStockToProduct) > 0;
+            if (!createStockSuccess) throw new CantCreateProductException("Não foi possível criar os estoques. Fale com o administrador do sistema.");
 
-            //var picturesToCreate = createProductDto.Files.Select(x =>
-            //    new CreatePictureDto
-            //    {
-            //        Name = x.Name
-            //    });
+            var picturesToCreate = createProductDto.Photos.Select(x =>
+                new CreatePictureDto
+                {
+                    Name = x.Name
+                });
 
-            //if (!picturesToCreate.Any()) return false;
+            if (!picturesToCreate.Any()) return false;
 
-            //var picturesWithProductId = new CreateMultiplePicturesDto {
-            //    Pictures = picturesToCreate, ProductId = currentProductId 
-            //};
+            var picturesWithProductId = new CreateMultiplePicturesDto
+            {
+                Pictures = picturesToCreate,
+                ProductId = currentProductId
+            };
 
-            //_pictureService.CreateMultiplePictures(picturesWithProductId);
+            _pictureService.CreateMultiplePictures(picturesWithProductId);
 
             return true;
         }

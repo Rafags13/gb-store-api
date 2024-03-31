@@ -21,7 +21,7 @@ namespace GbStoreApi.Application.Services
                     ProductId = createStockDto.ProductId,
                     ColorId = x.ColorId,
                     SizeId = x.SizeId,
-                    Count = x.Count
+                    Count = x.StockSize
                 });
 
             _unitOfWork.Stock.AddRange(stocks);

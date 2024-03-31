@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace GbStoreApi.Domain.Dto
 {
@@ -11,7 +12,11 @@ namespace GbStoreApi.Domain.Dto
         public int? QuotasNumber { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }
-        public IEnumerable<CreateStockDto> Stock { get; set; } = Enumerable.Empty<CreateStockDto>();
-        public IEnumerable<IFormFile> Photos { get; set; } = Enumerable.Empty<IFormFile>();
+        public string StockSerialized { get; set; } = string.Empty;
+        public List<CreateStockDto>? Stock { get {
+                var stocks = JsonConvert.DeserializeObject<List<CreateStockDto>>(StockSerialized);
+                return stocks;
+            } }
+        public List<IFormFile> Photos { get; set; }
     }
 }

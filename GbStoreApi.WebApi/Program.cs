@@ -55,10 +55,6 @@ builder.Services.AddCorsConfiguration(corsName);
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-
-scope.ServiceProvider.GetService<DataContext>()?.Database.Migrate();
-
 app.UseFactoryActivatedMiddleware();
 
 if (app.Environment.IsDevelopment())
@@ -72,8 +68,6 @@ app.UseHttpsRedirection();
 app.UseCors(corsName);
 
 app.UseAuthentication();
-
-app.UseMiddleware<JwtRefreshExpiredMiddleware>();
 
 app.UseAuthorization();
 

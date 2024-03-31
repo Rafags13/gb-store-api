@@ -79,12 +79,11 @@ namespace GbStoreApi.Application.Services
 
         public DisplayUserDto? GetCurrentInformations()
         {
-            var currentUserEmail = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
+            var currentUserEmail = _context.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            if(string.IsNullOrEmpty(currentUserEmail)) return null;
+
             var currentUser = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
-            if (currentUser is null)
-            {
-                throw new Exception("Não foi possível encontrar o usuário requisitado.");
-            }
+            if (currentUser is null) return null;
 
             var displayUser = new DisplayUserDto { 
                 Id = currentUser.Id,
@@ -99,7 +98,7 @@ namespace GbStoreApi.Application.Services
 
         public UserType? GetUserRole()
         {
-            var currentUserEmail = GetCurrentInformations().Email;
+            var currentUserEmail = GetCurrentInformations()?.Email;
 
             if (currentUserEmail is null) return null;
 

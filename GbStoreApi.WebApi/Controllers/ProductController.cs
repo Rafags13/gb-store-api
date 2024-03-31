@@ -2,6 +2,7 @@
 using GbStoreApi.Domain.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GbStoreApi.WebApi.Controllers
 {
@@ -17,7 +18,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProductDto createProductDto)
+        public async Task<IActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
             try
             {
