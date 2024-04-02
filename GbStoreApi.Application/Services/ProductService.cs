@@ -28,10 +28,6 @@ namespace GbStoreApi.Application.Services
         }
         public async Task<bool> CreateProduct(CreateProductDto createProductDto)
         {
-            var successCreateImages = await _fileService.CreateMultipleFiles(createProductDto.Photos);
-
-            if (!successCreateImages) throw new CantCreateProductException("Alguma das fotos falhou ao ser incluida.");
-
             var newProduct = new Product { 
                 Name = createProductDto.Name,
                 Description = createProductDto.Description ?? "",
@@ -48,7 +44,6 @@ namespace GbStoreApi.Application.Services
                 throw new CantCreateProductException("Não foi possível criar o produto informado.");
             }
 
-
             var currentProductId = _unitOfWork.Product.FindOne(x => x.Name == createProductDto.Name).Id;
 
             var newStockToProduct = new CreateStockWithIdDto { ProductId = currentProductId, Variants = createProductDto.Stock };
@@ -56,10 +51,12 @@ namespace GbStoreApi.Application.Services
             var createStockSuccess = _stockService.CreateMultipleStock(newStockToProduct) > 0;
             if (!createStockSuccess) throw new CantCreateProductException("Não foi possível criar os estoques. Fale com o administrador do sistema.");
 
-            var picturesToCreate = createProductDto.Photos.Select(x =>
+            var picturesName = await _fileService.CreateMultipleFiles(createProductDto.Photos);
+
+            var picturesToCreate = picturesName.Select(name =>
                 new CreatePictureDto
                 {
-                    Name = x.Name
+                    Name = name,
                 });
 
             if (!picturesToCreate.Any()) return false;

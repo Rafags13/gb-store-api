@@ -18,6 +18,7 @@ namespace GbStoreApi.Application.Services
 
         public async Task<string> CreateFile(IFormFile formFile, string bucketName, string? prefix)
         {
+           
             var request = new PutObjectRequest()
             {
                 BucketName = bucketName,
@@ -26,29 +27,50 @@ namespace GbStoreApi.Application.Services
             };
 
             request.Metadata.Add("Content-Type", formFile.ContentType);
-            await _s3Client.PutObjectAsync(request);
+             await _s3Client.PutObjectAsync(request);
 
             return formFile.FileName;
         }
 
-        public async Task<bool> CreateMultipleFiles(IEnumerable<IFormFile> files, string? prefix)
+        public string CreateFileSync(IFormFile formFile, string bucketName, string? prefix)
+        {
+            var randomNameFromFile = GenerateRandomName();
+            var request = new PutObjectRequest()
+            {
+                BucketName = bucketName,
+                Key = string.IsNullOrEmpty(prefix) ? randomNameFromFile : $"{prefix?.TrimEnd('/')}/{randomNameFromFile}",
+                InputStream = formFile.OpenReadStream()
+            };
+
+            request.Metadata.Add("Content-Type", formFile.ContentType);
+            var response = _s3Client.PutObjectAsync(request).Result;
+
+            return randomNameFromFile;
+        }
+
+        public async Task<List<string>> CreateMultipleFiles(IEnumerable<IFormFile> files, string? prefix)
         {
             var bucketName = await _bucketService.GetCurrentPictureBucket();
+            var pictureNames = new List<string>();
 
-            files.ToList().ForEach(async file =>
+            files.ToList().ForEach(file =>
             {
-                var request = new PutObjectRequest()
-                {
-                    BucketName = bucketName,
-                    Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
-                    InputStream = file.OpenReadStream()
-                };
-
-                request.Metadata.Add("Content-Type", file.ContentType);
-                await _s3Client.PutObjectAsync(request);
+                var fileName = CreateFileSync(file, bucketName, "");
+                pictureNames.Add(fileName);
             });
 
-            return true;
+            return pictureNames;
+        }
+
+        private static string GenerateRandomName()
+        {
+            long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            Guid guid = Guid.NewGuid();
+
+            string randomName = $"{timestamp}_{guid}";
+
+            return randomName;
         }
 
         public async Task<IEnumerable<S3ObjectDto>> GetAllFilesAsync(string bucketName, string? prefix)
