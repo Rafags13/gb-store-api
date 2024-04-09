@@ -28,7 +28,7 @@ builder.Services
     .AddUserServices()
     .AddProductServices()
     .AddFileServices()
-    .AddUnitOfWork();
+    .AddDifferentUnitOfWork();
 
 builder.Services.AddControllers();
 

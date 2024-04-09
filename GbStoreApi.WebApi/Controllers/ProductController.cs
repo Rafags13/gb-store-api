@@ -2,7 +2,6 @@
 using GbStoreApi.Domain.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace GbStoreApi.WebApi.Controllers
 {
@@ -15,6 +14,41 @@ namespace GbStoreApi.WebApi.Controllers
         public ProductController(IProductService productService)
         {
             _productService = productService;
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var products = _productService.GetAll();
+
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Filters")]
+        public IActionResult GetByFilters(
+            [FromQuery] string[]? Tamanhos,
+            [FromQuery] string[]? Cores,
+            [FromQuery] string? Category
+            )
+        {
+            try
+            {
+                var filters = new CatalogFilterDto { Category = Category, Cores = Cores, Tamanhos = Tamanhos};
+                var products = _productService.GetByFilters(filters);
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -51,5 +85,7 @@ namespace GbStoreApi.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        
     }
 }

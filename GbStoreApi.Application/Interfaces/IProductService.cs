@@ -5,7 +5,8 @@ namespace GbStoreApi.Application.Interfaces
     public interface IProductService
     {
         Task<bool> CreateProduct(CreateProductDto createProductDto);
-
-        DisplayVariantsDto GetCurrentVariants();
+        DisplayVariantsDto? GetCurrentVariants();
+        IEnumerable<DisplayProductDto>? GetAll();
+        IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters);
     }
 }

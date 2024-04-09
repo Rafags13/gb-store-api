@@ -39,5 +39,6 @@ namespace GbStoreApi.Domain.Models
         public Brand? Brand { get; set; }
 
         public ICollection<ProductStock>? Stocks { get; set; }
+        public ICollection<Picture>? Pictures { get; set; }
     }
 }

@@ -1,11 +1,12 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace GbStoreApi.Application.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
         T GetById(int id);
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
         T FindOne(Expression<Func<T, bool>> predicate);
         void Add(T Entity);

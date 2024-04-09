@@ -1,5 +1,7 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Data.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace GbStoreApi.Data.Implementation
@@ -14,6 +16,11 @@ namespace GbStoreApi.Data.Implementation
         public void Add(T Entity)
         {
             _context.Set<T>().Add(Entity);
+        }
+
+        public async Task AddAsync(T Entity)
+        {
+            await _context.Set<T>().AddAsync(Entity);
         }
 
         public void AddRange(IEnumerable<T> entities)
@@ -31,9 +38,9 @@ namespace GbStoreApi.Data.Implementation
             return _context.Set<T>().FirstOrDefault(predicate);
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return _context.Set<T>().ToList();
+            return _context.Set<T>().AsQueryable();
         }
 
         public T GetById(int id)
@@ -50,5 +57,15 @@ namespace GbStoreApi.Data.Implementation
         {
             _context.Set<T>().RemoveRange(entities);
         }
+
+        //public static IIncludableQueryable<TEntity, TProperty> Include<TEntity, TProperty>(this IQueryable<TEntity> source, Expression<Func<TEntity, TProperty>> navigationPropertyPath) where TEntity : class
+        //{
+        //    return source.Include(navigationPropertyPath);
+        //}
+
+        //public static IIncludableQueryable<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludableQueryable<TEntity, IEnumerable<TPreviousProperty>> source, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath) where TEntity : class
+        //{
+        //    return source.ThenInclude(navigationPropertyPath);
+        //}
     }
 }

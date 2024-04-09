@@ -31,7 +31,7 @@ public static class DependencyInjectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddUnitOfWork(this IServiceCollection servicesCollection)
+    public static IServiceCollection AddDifferentUnitOfWork(this IServiceCollection servicesCollection)
     {
         servicesCollection.AddTransient<IUnitOfWork, UnitOfWork>();
         return servicesCollection;
