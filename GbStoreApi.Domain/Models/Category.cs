@@ -13,6 +13,11 @@ namespace GbStoreApi.Domain.Models
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
-        public ICollection<Product>? Products { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
+
+        public Category()
+        {
+            Products = new List<Product>();
+        }
     }
 }

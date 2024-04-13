@@ -38,7 +38,13 @@ namespace GbStoreApi.Domain.Models
         public int BrandId { get; set; }
         public Brand? Brand { get; set; }
 
-        public ICollection<ProductStock>? Stocks { get; set; }
-        public ICollection<Picture>? Pictures { get; set; }
+        public virtual ICollection<ProductStock> Stocks { get; set; }
+        public virtual ICollection<Picture> Pictures { get; set; }
+
+        public Product()
+        {
+            Stocks = new List<ProductStock>();
+            Pictures = new List<Picture>();
+        }
     }
 }

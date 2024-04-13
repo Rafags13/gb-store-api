@@ -57,15 +57,5 @@ namespace GbStoreApi.Data.Implementation
         {
             _context.Set<T>().RemoveRange(entities);
         }
-
-        //public static IIncludableQueryable<TEntity, TProperty> Include<TEntity, TProperty>(this IQueryable<TEntity> source, Expression<Func<TEntity, TProperty>> navigationPropertyPath) where TEntity : class
-        //{
-        //    return source.Include(navigationPropertyPath);
-        //}
-
-        //public static IIncludableQueryable<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludableQueryable<TEntity, IEnumerable<TPreviousProperty>> source, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath) where TEntity : class
-        //{
-        //    return source.ThenInclude(navigationPropertyPath);
-        //}
     }
 }
