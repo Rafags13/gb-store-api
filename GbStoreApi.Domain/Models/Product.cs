@@ -38,6 +38,11 @@ namespace GbStoreApi.Domain.Models
         public int BrandId { get; set; }
         public Brand? Brand { get; set; }
 
+        [NotMapped]
+        public decimal PriceWithDiscount { get {
+                return UnitaryPrice / (decimal)(1 - DiscountPercent ?? 0);
+            }}
+
         public virtual ICollection<ProductStock> Stocks { get; set; }
         public virtual ICollection<Picture> Pictures { get; set; }
 

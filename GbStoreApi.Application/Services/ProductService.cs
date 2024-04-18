@@ -134,7 +134,7 @@ namespace GbStoreApi.Application.Services
                 Name = product.Name,
                 RealPrice = product.UnitaryPrice,
                 DiscountPercent = product.DiscountPercent,
-                PriceWithDiscount = product.UnitaryPrice / (decimal)(1 - product.DiscountPercent ?? 0),
+                PriceWithDiscount = product.PriceWithDiscount,
                 PhotoUrlId = product.Pictures.FirstOrDefault()?.Name ?? "",
                 VariantNames = product.Stocks.Select(stocks => stocks.Color!.Name)
                                                  .Concat(product.Stocks.Select(color => color.Size!.Name)).Distinct()
@@ -149,6 +149,40 @@ namespace GbStoreApi.Application.Services
             var currentVariants = new DisplayVariantsDto { Colors = colors, Sizes = sizes };
 
             return currentVariants;
+        }
+
+        public ProductSpecificationsDto? GetProductSpecificationById(int productId)
+        {
+            var currentProduct =
+                _unitOfWork
+                .Product
+                .GetAll()
+                .Include(x => x.Stocks)
+                .Include(x => x.Pictures)
+                .Include(x => x.Category)
+                .Include(x => x.Stocks)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.Stocks)
+                .ThenInclude(x => x.Size)
+                .AsNoTracking()
+                .FirstOrDefault(predicate: x => x.Id == productId);
+
+            if (currentProduct is null) throw new ProductNotFoundException("O produto especificado não existe no sistema.");
+
+            return new ProductSpecificationsDto {
+                Id = productId,
+                Name = currentProduct.Name,
+                Description = currentProduct.Description ?? "",
+                Stocks = currentProduct.Stocks.Select(x => new StockDto {
+                    Amount = x.Count, 
+                    ColorName = x.Color.Name,
+                    SizeName = x.Size.Name
+                }),
+                Category = currentProduct.Category.Name,
+                RealPrice = currentProduct.UnitaryPrice,
+                PriceWithDiscount = currentProduct.PriceWithDiscount,
+                ProductPictureIds = currentProduct.Pictures.Select(x => x.Name),
+            };
         }
     }
 }

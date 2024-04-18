@@ -8,5 +8,6 @@ namespace GbStoreApi.Application.Interfaces
         DisplayVariantsDto? GetCurrentVariants();
         IEnumerable<DisplayProductDto>? GetAll();
         IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters);
+        ProductSpecificationsDto? GetProductSpecificationById(int productId);
     }
 }

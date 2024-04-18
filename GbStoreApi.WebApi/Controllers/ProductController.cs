@@ -86,6 +86,21 @@ namespace GbStoreApi.WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet("Informations/{productId:int}")]
+        public IActionResult GetProductSpecificationById([FromRoute] int productId)
+        {
+            try
+            {
+                var currentProduct = _productService.GetProductSpecificationById(productId);
+
+                return Ok(currentProduct);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         
     }
 }
