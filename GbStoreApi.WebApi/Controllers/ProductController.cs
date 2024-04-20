@@ -101,6 +101,21 @@ namespace GbStoreApi.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
+        [AllowAnonymous]
+        [HttpGet("GetAllFilters")]
+        public IActionResult GetAllFilters()
+        {
+            try
+            {
+                var allFilters = _productService.GetAllFilters();
+
+                return Ok(allFilters);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

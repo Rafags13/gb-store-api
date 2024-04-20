@@ -184,5 +184,25 @@ namespace GbStoreApi.Application.Services
                 ProductPictureIds = currentProduct.Pictures.Select(x => x.Name),
             };
         }
+
+        public DisplayFiltersDto GetAllFilters()
+        {
+            var allColors = _unitOfWork.Color.GetAll().Select(x => x.Name).ToList();
+            var allBrands = _unitOfWork.Brand.GetAll().Select(x => x.Name).ToList();
+            var allSizes = _unitOfWork.Size.GetAll().Select(x => x.Name).ToList();
+            var allCatogories = _unitOfWork.Category.GetAll().Select(x => x.Name).ToList();
+
+            allCatogories.Insert(0, "Todas");
+
+            var filters = new DisplayFiltersDto
+            {
+                Brands = allBrands,
+                Categories = allCatogories,
+                Colors = allColors,
+                Sizes = allSizes,
+            };
+
+            return filters;
+        }
     }
 }

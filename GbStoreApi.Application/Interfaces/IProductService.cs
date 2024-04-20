@@ -9,5 +9,6 @@ namespace GbStoreApi.Application.Interfaces
         IEnumerable<DisplayProductDto>? GetAll();
         IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters);
         ProductSpecificationsDto? GetProductSpecificationById(int productId);
+        DisplayFiltersDto GetAllFilters();
     }
 }
