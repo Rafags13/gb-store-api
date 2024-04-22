@@ -174,6 +174,7 @@ namespace GbStoreApi.Application.Services
                 Name = currentProduct.Name,
                 Description = currentProduct.Description ?? "",
                 Stocks = currentProduct.Stocks.Select(x => new StockDto {
+                    StockId = x.Id,
                     Amount = x.Count, 
                     ColorName = x.Color.Name,
                     SizeName = x.Size.Name
@@ -203,6 +204,23 @@ namespace GbStoreApi.Application.Services
             };
 
             return filters;
+        }
+
+        public IEnumerable<StockAvaliableByIdDto> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
+        {
+            var onlyStockIds = countStockByItsIdDtos.Select(x => x.StockId);
+            var stocksDeterminedByItsCount = _unitOfWork
+                .Stock
+                .GetAll()
+                .AsEnumerable()
+                .IntersectBy(onlyStockIds, x => x.Id)
+                .Select(x => new StockAvaliableByIdDto
+                {
+                    StockId = x.Id,
+                    IsAvaliable = countStockByItsIdDtos.Single(y => y.StockId == x.Id).StockCount <= x.Count,
+                });
+
+            return stocksDeterminedByItsCount;
         }
     }
 }

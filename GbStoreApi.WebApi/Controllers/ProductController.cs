@@ -117,5 +117,21 @@ namespace GbStoreApi.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("GetAvaliableStocks")]
+        public IActionResult GetAvaliableStocks([FromBody] IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
+        {
+            try
+            {
+                var avaliableStocks = _productService.GetAvaliableStocks(countStockByItsIdDtos);
+
+                return Ok(avaliableStocks);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

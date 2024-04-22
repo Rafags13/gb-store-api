@@ -5,7 +5,7 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>9d374821-c439-453a-85c0-cea7a6b6556e</ProjectGuid>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <!--<DockerLaunchAction>LaunchBrowser</DockerLaunchAction>-->
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>gbstoreapi.webapi</DockerServiceName>
   </PropertyGroup>
