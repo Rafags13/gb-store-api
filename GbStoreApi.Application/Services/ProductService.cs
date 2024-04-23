@@ -1,14 +1,11 @@
-﻿using Amazon.S3.Model;
+﻿using AutoMapper;
 using GbStoreApi.Application.Exceptions;
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Data.Extensions;
 using GbStoreApi.Domain.Dto;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
-using LinqKit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace GbStoreApi.Application.Services
 {
@@ -18,17 +15,20 @@ namespace GbStoreApi.Application.Services
         private readonly IStockService _stockService;
         private readonly IFileService _fileService;
         private readonly IPictureService _pictureService;
+        private readonly IMapper _mapper;
         public ProductService(
             IUnitOfWork unitOfWork,
             IStockService stockService,
             IFileService fileService,
-            IPictureService pictureService
+            IPictureService pictureService,
+            IMapper mapper
            )
         {
             _unitOfWork = unitOfWork;
             _stockService = stockService;
             _fileService = fileService;
             _pictureService = pictureService;
+            _mapper = mapper;
         }
         public async Task<bool> CreateProduct(CreateProductDto createProductDto)
         {
@@ -85,23 +85,10 @@ namespace GbStoreApi.Application.Services
                 .Include(stock => stock.Stocks)
                 .ThenInclude(color => color.Color)
                 .Include(stock => stock.Stocks)
-                .ThenInclude(size => size.Size).Take(25).ToList();
+                .ThenInclude(size => size.Size).Take(25).Select(_mapper.Map<DisplayProductDto>);
 
-            var products =
-                productsReference
-                .Select(product => new DisplayProductDto
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    RealPrice = product.UnitaryPrice,
-                    DiscountPercent = product.DiscountPercent,
-                    PriceWithDiscount = product.UnitaryPrice / (decimal)(1 - product.DiscountPercent ?? 0),
-                    PhotoUrlId = product.Pictures.FirstOrDefault()?.Name ?? "",
-                    VariantNames = product.Stocks.Select(stocks => stocks.Color!.Name)
-                                                 .Concat(product.Stocks.Select(color => color.Size!.Name)).Distinct()
-                });
 
-            return products;
+            return productsReference;
         }
 
         public IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters)
@@ -120,25 +107,10 @@ namespace GbStoreApi.Application.Services
                 .FilterByCategoryIfWasInformed(filters.Category)
                 .FilterByColorsIfWereInformed(filters.Cores)
                 .FilterBySizesIfWereInformed(filters.Tamanhos)
-                .ToList()
-                ;
+                .AsNoTracking()
+                .Select(_mapper.Map<DisplayProductDto>);
 
-                return CreateListOfDtos(productsFiltered);
-        }
-        
-        private static IEnumerable<DisplayProductDto> CreateListOfDtos(IEnumerable<Product> products)
-        {
-            return products.ToList().Select(product => new DisplayProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                RealPrice = product.UnitaryPrice,
-                DiscountPercent = product.DiscountPercent,
-                PriceWithDiscount = product.PriceWithDiscount,
-                PhotoUrlId = product.Pictures.FirstOrDefault()?.Name ?? "",
-                VariantNames = product.Stocks.Select(stocks => stocks.Color!.Name)
-                                                 .Concat(product.Stocks.Select(color => color.Size!.Name)).Distinct()
-            });
+                return productsFiltered;
         }
 
         public DisplayVariantsDto? GetCurrentVariants()
@@ -168,22 +140,7 @@ namespace GbStoreApi.Application.Services
                 .FirstOrDefault(predicate: x => x.Id == productId);
 
             if (currentProduct is null) throw new ProductNotFoundException("O produto especificado não existe no sistema.");
-
-            return new ProductSpecificationsDto {
-                Id = productId,
-                Name = currentProduct.Name,
-                Description = currentProduct.Description ?? "",
-                Stocks = currentProduct.Stocks.Select(x => new StockDto {
-                    StockId = x.Id,
-                    Amount = x.Count, 
-                    ColorName = x.Color.Name,
-                    SizeName = x.Size.Name
-                }),
-                Category = currentProduct.Category.Name,
-                RealPrice = currentProduct.UnitaryPrice,
-                PriceWithDiscount = currentProduct.PriceWithDiscount,
-                ProductPictureIds = currentProduct.Pictures.Select(x => x.Name),
-            };
+            return _mapper.Map<ProductSpecificationsDto>(currentProduct);
         }
 
         public DisplayFiltersDto GetAllFilters()

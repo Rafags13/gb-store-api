@@ -22,6 +22,8 @@ builder.Services.AddDbContext<DataContext>(option =>
 
 builder.Services.AddTransient<JwtRefreshExpiredMiddleware>();
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services
     .AddUserServices()
     .AddProductServices()
@@ -29,6 +31,8 @@ builder.Services
     .AddDifferentUnitOfWork();
 
 builder.Services.AddControllers();
+
+builder.Services.AddMappers();
 
 builder.Configuration.AddEnvironmentVariables();
 
