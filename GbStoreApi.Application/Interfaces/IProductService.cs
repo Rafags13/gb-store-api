@@ -2,6 +2,7 @@
 using GbStoreApi.Domain.Dto.Product.Catalogs;
 using GbStoreApi.Domain.Dto.Stocks;
 using GbStoreApi.Domain.Dto.Stocks.Filters;
+using GbStoreApi.Domain.Dto.Generic;
 
 namespace GbStoreApi.Application.Interfaces
 {
@@ -9,7 +10,7 @@ namespace GbStoreApi.Application.Interfaces
     {
         Task<bool> CreateProduct(CreateProductDto createProductDto);
         DisplayVariantsDto? GetCurrentVariants();
-        IEnumerable<DisplayProductDto>? GetAll();
+        ResponseDto<IEnumerable<DisplayProductDto>>? GetAll();
         IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters);
         ProductSpecificationsDto? GetProductSpecificationById(int productId);
         DisplayFiltersDto GetAllFilters();

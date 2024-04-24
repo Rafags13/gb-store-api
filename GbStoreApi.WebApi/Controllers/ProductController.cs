@@ -18,14 +18,15 @@ namespace GbStoreApi.WebApi.Controllers
             _productService = productService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetAll()
         {
             try
             {
-                var products = _productService.GetAll();
+                var response = _productService.GetAll();
 
-                return Ok(products);
+                return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)
             {

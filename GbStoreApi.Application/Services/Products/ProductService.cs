@@ -12,6 +12,8 @@ using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Dto.Pictures;
 using GbStoreApi.Domain.Dto.Colors;
 using GbStoreApi.Domain.Dto.Sizes;
+using GbStoreApi.Domain.Dto.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace GbStoreApi.Application.Services.Products
 {
@@ -79,7 +81,7 @@ namespace GbStoreApi.Application.Services.Products
             return true;
         }
 
-        public IEnumerable<DisplayProductDto>? GetAll()
+        public ResponseDto<IEnumerable<DisplayProductDto>>? GetAll()
         {
             var productsReference =
                 _unitOfWork.Product
@@ -88,10 +90,14 @@ namespace GbStoreApi.Application.Services.Products
                 .Include(stock => stock.Stocks)
                 .ThenInclude(color => color.Color)
                 .Include(stock => stock.Stocks)
-                .ThenInclude(size => size.Size).Take(25).Select(_mapper.Map<DisplayProductDto>);
+                .ThenInclude(size => size.Size)
+                .Paginate()
+                .Select(_mapper.Map<DisplayProductDto>) ?? Enumerable.Empty<DisplayProductDto>();
 
+            if (!productsReference.Any())
+                return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status404NotFound, "Nenhum produto foi encontrado.");
 
-            return productsReference;
+            return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status200OK);
         }
 
         public IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters)
