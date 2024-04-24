@@ -1,4 +1,4 @@
-﻿using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Domain.Dto.Pictures;
 
 namespace GbStoreApi.Application.Interfaces
 {
@@ -6,7 +6,7 @@ namespace GbStoreApi.Application.Interfaces
     {
         Task<string> GetPictures();
         Task<string> GetPictureById();
-        void CreatePicture(CreatePictureDto createPicture);
-        void CreateMultiplePictures(CreateMultiplePicturesDto picturesToCreate);
+        void CreatePicture(string createPicture);
+        void CreateMultiplePictures(PicturesGroupedByProductDto picturesToCreate);
     }
 }

@@ -2,7 +2,6 @@ using Amazon.S3;
 using GbStoreApi.Application;
 using GbStoreApi.Application.Extensions;
 using GbStoreApi.Data.Context;
-using GbStoreApi.Domain.Dto;
 using GbStoreApi.WebApi.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

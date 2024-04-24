@@ -1,5 +1,7 @@
 ﻿using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Domain.Dto;
+using GbStoreApi.Domain.Dto.Product.Catalogs;
+using GbStoreApi.Domain.Dto.Products;
+using GbStoreApi.Domain.Dto.Stocks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

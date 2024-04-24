@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using GbStoreApi.Domain.Dto;
+using GbStoreApi.Domain.Dto.Products;
+using GbStoreApi.Domain.Dto.Stocks;
 using GbStoreApi.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
 

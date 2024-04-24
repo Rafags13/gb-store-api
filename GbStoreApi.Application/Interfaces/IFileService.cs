@@ -1,5 +1,5 @@
 ﻿using Amazon.S3.Model;
-using GbStoreApi.Domain.Dto;
+using GbStoreApi.Domain.Dto.AmazonBuckets;
 using Microsoft.AspNetCore.Http;
 
 namespace GbStoreApi.Application.Interfaces

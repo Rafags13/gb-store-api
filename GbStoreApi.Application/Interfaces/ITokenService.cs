@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Domain.Models;
-using GbStoreApi.Domain.Dto;
+using GbStoreApi.Domain.Dto.Authentications;
+using GbStoreApi.Domain.Dto.Users;
 
 namespace GbStoreApi.Application.Interfaces
 {

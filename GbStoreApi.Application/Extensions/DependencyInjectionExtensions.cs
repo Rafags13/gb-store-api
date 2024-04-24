@@ -1,5 +1,15 @@
 ﻿using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Application.Services;
+using GbStoreApi.Application.Services.AmazonBuckets;
+using GbStoreApi.Application.Services.Authentication;
+using GbStoreApi.Application.Services.Authentications;
+using GbStoreApi.Application.Services.Brands;
+using GbStoreApi.Application.Services.Categories;
+using GbStoreApi.Application.Services.Colors;
+using GbStoreApi.Application.Services.Pictures;
+using GbStoreApi.Application.Services.Products;
+using GbStoreApi.Application.Services.Sizes;
+using GbStoreApi.Application.Services.Stock;
+using GbStoreApi.Application.Services.Users;
 using GbStoreApi.Data.Implementation;
 using GbStoreApi.Domain.Repository;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,7 @@
-﻿using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Domain.Dto.Products;
+using GbStoreApi.Domain.Dto.Product.Catalogs;
+using GbStoreApi.Domain.Dto.Stocks;
+using GbStoreApi.Domain.Dto.Stocks.Filters;
 
 namespace GbStoreApi.Application.Interfaces
 {

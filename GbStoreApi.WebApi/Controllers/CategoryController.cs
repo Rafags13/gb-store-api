@@ -1,5 +1,4 @@
 ﻿using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Domain.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

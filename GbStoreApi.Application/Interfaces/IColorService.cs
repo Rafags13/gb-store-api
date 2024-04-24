@@ -1,4 +1,4 @@
-﻿using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Domain.Dto.Colors;
 
 namespace GbStoreApi.Application.Interfaces
 {

@@ -1,9 +1,9 @@
-﻿using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Domain.Dto.Stocks;
 
 namespace GbStoreApi.Application.Interfaces
 {
     public interface IStockService
     {
-        int CreateMultipleStock(CreateStockWithIdDto createStockDto);
+        int CreateMultipleStock(CreateStockByProductIdDto createStockDto);
     }
 }

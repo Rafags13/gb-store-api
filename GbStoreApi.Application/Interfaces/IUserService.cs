@@ -1,4 +1,5 @@
-﻿using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Domain.Dto.Authentications;
+using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 

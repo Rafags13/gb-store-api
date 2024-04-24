@@ -1,5 +1,5 @@
-﻿using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Application.Extensions;
+using GbStoreApi.Application.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;

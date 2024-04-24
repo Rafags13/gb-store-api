@@ -1,6 +1,6 @@
-﻿ using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Domain.Dto;
+using GbStoreApi.Domain.Dto.Authentications;
 
 namespace GbStoreApi.WebApi.Controllers
 {

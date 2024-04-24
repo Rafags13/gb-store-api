@@ -1,4 +1,4 @@
-﻿using GbStoreApi.Domain.Dto;
+﻿using GbStoreApi.Domain.Dto.Authentications;
 
 namespace GbStoreApi.Application.Interfaces
 {
