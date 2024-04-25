@@ -100,27 +100,27 @@ namespace GbStoreApi.Application.Services.Products
             return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status200OK);
         }
 
-        public IEnumerable<DisplayProductDto> GetByFilters(CatalogFilterDto filters)
+        public PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters)
         {
-
             var productsFiltered =
                 _unitOfWork.Product
                 .GetAll()
-                .Include(x => x.Stocks)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.Pictures)
-                .Include(x => x.Stocks)
-                .ThenInclude(x => x.Color)
-                .Include(x => x.Stocks)
-                .ThenInclude(x => x.Size)
+                .WithPicturesFromStock()
+                .WithSizes()
+                .WithColors()
                 .FilterByCategoryIfWasInformed(filters.Category)
                 .FilterByColorsIfWereInformed(filters.Cores)
                 .FilterBySizesIfWereInformed(filters.Tamanhos)
-                .Paginate()
+                .Paginate(page: filters.Page)
                 .AsNoTracking()
                 .Select(_mapper.Map<DisplayProductDto>);
 
-            return productsFiltered;
+            return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
+                productsFiltered, 
+                StatusCodes.Status200OK,
+                filters.Page,
+                filters.PageSize
+                );
         }
 
         public DisplayVariantsDto? GetCurrentVariants()

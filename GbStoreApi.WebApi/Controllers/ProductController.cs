@@ -35,18 +35,25 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("Filters")]
+        [HttpGet("Filters/{page}")]
         public IActionResult GetByFilters(
             [FromQuery] string[]? Tamanhos,
             [FromQuery] string[]? Cores,
-            [FromQuery] string? Category
+            [FromQuery] string? Category,
+            [FromRoute] int page = 0
             )
         {
             try
             {
-                var filters = new CatalogFilterDto { Category = Category, Cores = Cores, Tamanhos = Tamanhos};
-                var products = _productService.GetByFilters(filters);
-                return Ok(products);
+                var filters = new CatalogFilterDto { 
+                    Category = Category,
+                    Cores = Cores,
+                    Tamanhos = Tamanhos,
+                    Page = page,
+                    PageSize = 20,
+                };
+                var response = _productService.GetByFilters(filters);
+                return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)
             {

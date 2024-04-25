@@ -5,6 +5,23 @@ namespace GbStoreApi.Data.Extensions
 {
     public static class ProductExtensions
     {
+        public static IQueryable<Product> WithPicturesFromStock(this IQueryable<Product> products)
+        {
+            return products
+                .Include(x => x.Stocks)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.Pictures);
+        }
+        public static IQueryable<Product> WithColors(this IQueryable<Product> products)
+        {
+            return products.Include(x => x.Stocks)
+                .ThenInclude(x => x.Color);
+        }
+        public static IQueryable<Product> WithSizes(this IQueryable<Product> products)
+        {
+            return products.Include(x => x.Stocks)
+                .ThenInclude(x => x.Size);
+        }
         public static IQueryable<Product> FilterByCategoryIfWasInformed(this IQueryable<Product> products, string? categoryName)
         {
             return products.Include(x => x.Category).Where(x => string.IsNullOrEmpty(categoryName) || x.Category!.Name == categoryName);
