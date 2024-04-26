@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GbStoreApi.Domain.Dto.Brands;
+using GbStoreApi.Domain.Dto.Categories;
 using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Stocks;
@@ -47,6 +48,10 @@ namespace GbStoreApi.Application.Extensions
 
                 #region Size
                 configuration.CreateMap<DisplaySizeDto, Size>().ReverseMap();
+                #endregion
+
+                #region Category
+                configuration.CreateMap<DisplayCategoryDto, Category>().ReverseMap();
                 #endregion
             });
 

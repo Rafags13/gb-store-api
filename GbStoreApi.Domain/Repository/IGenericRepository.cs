@@ -11,9 +11,10 @@ namespace GbStoreApi.Application.Interfaces
         T FindOne(Expression<Func<T, bool>> predicate);
         void Add(T Entity);
         void AddRange(IEnumerable<T> entities);
-        void Remove(T Entity);
+        T Remove(T Entity);
         void RemoveRange(IEnumerable<T> entities);
         bool Contains();
         bool Contains(Expression<Func<T, bool>> predicate);
+        T Update(T entity);
     }
 }

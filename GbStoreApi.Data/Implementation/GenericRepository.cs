@@ -38,6 +38,15 @@ namespace GbStoreApi.Data.Implementation
         {
             return _context.Set<T>().FirstOrDefault(predicate);
         }
+        public T Update(T entity)
+        {
+            return _context.Set<T>().Update(entity).Entity;
+        }
+
+        public T Remove(T entity)
+        {
+            return _context.Set<T>().Remove(entity).Entity;
+        }
 
         public IQueryable<T> GetAll()
         {
@@ -47,11 +56,6 @@ namespace GbStoreApi.Data.Implementation
         public T GetById(int id)
         {
             return _context.Set<T>().Find(id);
-        }
-
-        public void Remove(T entity)
-        {
-            _context.Set<T>().Remove(entity);
         }
 
         public void RemoveRange(IEnumerable<T> entities)

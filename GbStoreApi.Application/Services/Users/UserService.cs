@@ -28,11 +28,8 @@ namespace GbStoreApi.Application.Services.Users
         }
         public ResponseDto<IEnumerable<DisplayUserDto>> GetAll()
         {
-            var users = _unitOfWork.User.GetAll().Select(user => _mapper.Map<DisplayUserDto>(user));
-            if (!users.Any() || users is null)
-                return new ResponseDto<IEnumerable<DisplayUserDto>>(
-                    statusCode: StatusCodes.Status404NotFound, 
-                    "Não existe nenhum usuário cadastrado no sistema.");
+            var users = _unitOfWork.User.GetAll().Select(user => _mapper.Map<DisplayUserDto>(user)) ??
+                Enumerable.Empty<DisplayUserDto>().AsQueryable();
 
             return new ResponseDto<IEnumerable<DisplayUserDto>>(users, StatusCodes.Status200OK);
         }

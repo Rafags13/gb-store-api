@@ -44,10 +44,8 @@ namespace GbStoreApi.Application.Services.Brands
 
         public ResponseDto<IEnumerable<DisplayBrandDto>> GetAll()
         {
-            var brands = _unitOfWork.Brand.GetAll().Select(brand => _mapper.Map<DisplayBrandDto>(brand));
-
-            if(!brands.Any())
-                return new ResponseDto<IEnumerable<DisplayBrandDto>>(brands, StatusCodes.Status400BadRequest, "Nenhuma marca foi encontrada.");
+            var brands = _unitOfWork.Brand.GetAll().Select(brand => _mapper.Map<DisplayBrandDto>(brand))
+                ?? Enumerable.Empty<DisplayBrandDto>().AsQueryable();
 
             return new ResponseDto<IEnumerable<DisplayBrandDto>>(brands, StatusCodes.Status200OK);
         }

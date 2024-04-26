@@ -2,6 +2,7 @@
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Sizes;
+using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
@@ -35,9 +36,8 @@ namespace GbStoreApi.Application.Services.Sizes
 
         public ResponseDto<IEnumerable<DisplaySizeDto>> GetAll()
         {
-            var allSizes = _unitOfWork.Size.GetAll().Select(size => _mapper.Map<DisplaySizeDto>(size));
-            if (!allSizes.Any() || allSizes is null)
-                return new ResponseDto<IEnumerable<DisplaySizeDto>>(StatusCodes.Status404NotFound, "Não existe nenhum tamanho cadastrado.");
+            var allSizes = _unitOfWork.Size.GetAll().Select(size => _mapper.Map<DisplaySizeDto>(size)) ??
+                Enumerable.Empty<DisplaySizeDto>().AsQueryable();
 
             return new ResponseDto<IEnumerable<DisplaySizeDto>>(allSizes, StatusCodes.Status200OK);
         }

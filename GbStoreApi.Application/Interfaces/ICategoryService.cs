@@ -1,14 +1,15 @@
 ﻿using GbStoreApi.Domain.Dto.Categories;
+using GbStoreApi.Domain.Dto.Generic;
 
 namespace GbStoreApi.Application.Interfaces
 {
     public interface ICategoryService
     {
-        IEnumerable<CategoryDto> GetAll();
-        CategoryDto? GetById(int id);
-        CategoryDto? GetByName(string name);
-        CategoryDto Create(string categoryName);
-        CategoryDto Update(UpdateCategoryDto updateCategoryDto);
-        CategoryDto Delete(int id);
+        ResponseDto<IEnumerable<DisplayCategoryDto>> GetAll();
+        ResponseDto<DisplayCategoryDto> GetById(int id);
+        ResponseDto<DisplayCategoryDto> GetByName(string name);
+        ResponseDto<DisplayCategoryDto> Create(string categoryName);
+        ResponseDto<DisplayCategoryDto> Update(UpdateCategoryDto updateCategoryDto);
+        ResponseDto<DisplayCategoryDto> Delete(int id);
     }
 }
