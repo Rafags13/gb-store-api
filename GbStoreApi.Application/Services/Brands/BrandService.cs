@@ -21,7 +21,7 @@ namespace GbStoreApi.Application.Services.Brands
             _mapper = mapper;
         }
 
-        public DisplayBrandDto Create(string brandName)
+        public ResponseDto<DisplayBrandDto> Create(string brandName)
         {
             var newBrand = new Brand { Name = brandName };
             if (BrandExists(brandName)) throw new ArgumentException("A marca informada já existe no sistema.");
@@ -29,14 +29,17 @@ namespace GbStoreApi.Application.Services.Brands
             _unitOfWork.Brand.Add(newBrand);
             _unitOfWork.Save();
 
-            var currentBrand = GetByName(newBrand.Name);
+            var response = GetByName(newBrand.Name);
 
-            return currentBrand;
+            if (response.StatusCode != StatusCodes.Status200OK || response.Value is null)
+                return new ResponseDto<DisplayBrandDto>(response.StatusCode, response.Message!);
+
+            return new ResponseDto<DisplayBrandDto>(response.Value, StatusCodes.Status200OK);
         }
 
         private bool BrandExists(string brandName)
         {
-            return GetByName(brandName) != null;
+            return _unitOfWork.Brand.Contains(x => x.Name == brandName);
         }
 
         public ResponseDto<IEnumerable<DisplayBrandDto>> GetAll()
@@ -49,26 +52,28 @@ namespace GbStoreApi.Application.Services.Brands
             return new ResponseDto<IEnumerable<DisplayBrandDto>>(brands, StatusCodes.Status200OK);
         }
 
-        public DisplayBrandDto? GetById(int id)
+        public ResponseDto<DisplayBrandDto> GetById(int id)
         {
             var currentBrand = _unitOfWork.Brand.GetById(id);
 
-            if (currentBrand is null) return null;
+            if (currentBrand is null)
+                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status404NotFound, "Não existe nehuma marca com esse Id.");
 
-            var displayBrand = _mapper.Map<DisplayBrandDto>(currentBrand);
+            var brand = _mapper.Map<DisplayBrandDto>(currentBrand);
 
-            return displayBrand;
+            return new ResponseDto<DisplayBrandDto>(brand, StatusCodes.Status200OK);
         }
 
-        public DisplayBrandDto? GetByName(string brandName)
+        public ResponseDto<DisplayBrandDto> GetByName(string brandName)
         {
             var currentBrand = _unitOfWork.Brand.FindOne(x => x.Name == brandName);
 
-            if (currentBrand is null) return null;
+            if (currentBrand is null)
+                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status404NotFound, "Não existe nehuma marca com esse Id.");
 
-            var displayBrand = _mapper.Map<DisplayBrandDto>(currentBrand);
+            var brand = _mapper.Map<DisplayBrandDto>(currentBrand);
 
-            return displayBrand;
+            return new ResponseDto<DisplayBrandDto>(brand, StatusCodes.Status200OK);
         }
     }
 }

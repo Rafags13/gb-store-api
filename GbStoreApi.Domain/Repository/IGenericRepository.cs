@@ -13,5 +13,7 @@ namespace GbStoreApi.Application.Interfaces
         void AddRange(IEnumerable<T> entities);
         void Remove(T Entity);
         void RemoveRange(IEnumerable<T> entities);
+        bool Contains();
+        bool Contains(Expression<Func<T, bool>> predicate);
     }
 }

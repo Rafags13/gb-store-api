@@ -18,32 +18,30 @@ namespace GbStoreApi.WebApi.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            try
-            {
-                var brands = _brandService.GetAll();
-
-                return Ok(brands);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _brandService.GetAll();
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
 
         public IActionResult Create([FromBody] string brandName)
         {
-            try
-            {
-                var createdBrand = _brandService.Create(brandName);
+            var response = _brandService.Create(brandName);
+            return StatusCode(response.StatusCode, response);
+        }
 
-                return Ok(createdBrand);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        [HttpGet("{id:int}")]
+        public IActionResult GetById([FromRoute] int id)
+        {
+            var response = _brandService.GetById(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("{name}")]
+        public IActionResult GetById([FromRoute] string name)
+        {
+            var response = _brandService.GetByName(name);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

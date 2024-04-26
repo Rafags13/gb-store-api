@@ -6,8 +6,8 @@ namespace GbStoreApi.Application.Interfaces
     public interface IBrandService
     {
         ResponseDto<IEnumerable<DisplayBrandDto>> GetAll();
-        DisplayBrandDto? GetById(int id);
-        DisplayBrandDto? GetByName(string brandName);
-        DisplayBrandDto Create(string brandName);
+        ResponseDto<DisplayBrandDto> GetById(int id);
+        ResponseDto<DisplayBrandDto> GetByName(string brandName);
+        ResponseDto<DisplayBrandDto> Create(string brandName);
     }
 }

@@ -1,4 +1,5 @@
-﻿using GbStoreApi.Application.Interfaces;
+﻿using Amazon.Auth.AccessControlPolicy;
+using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -56,6 +57,16 @@ namespace GbStoreApi.Data.Implementation
         public void RemoveRange(IEnumerable<T> entities)
         {
             _context.Set<T>().RemoveRange(entities);
+        }
+
+        public bool Contains()
+        {
+            return _context.Set<T>().Any();
+        }
+
+        public bool Contains(Expression<Func<T, bool>> predicate)
+        {
+            return _context.Set<T>().Any(predicate);
         }
     }
 }
