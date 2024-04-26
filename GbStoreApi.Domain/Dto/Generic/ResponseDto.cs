@@ -1,6 +1,6 @@
 ﻿namespace GbStoreApi.Domain.Dto.Generic
 {
-    public class ResponseDto<T> where T : class
+    public class ResponseDto<T>
     {
         public T? Value { get; set; }
         public int StatusCode { get; set; }
@@ -16,6 +16,12 @@
         {
             Value = value;
             StatusCode = statusCode;
+        }
+
+        public ResponseDto(int statusCode, string message)
+        {
+            StatusCode = statusCode;
+            Message = message;
         }
 
         public ResponseDto() 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -16,68 +17,33 @@ namespace GbStoreApi.WebApi.Controllers
             _userService = userService;
         }
 
-        [Authorize]
+        
         [HttpGet]
         public IActionResult GetAll()
         {
-            try
-            {
-                var users = _userService.GetAll();
-
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _userService.GetAll();
+            return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize]
         [HttpGet("{id}")]
         public IActionResult GetById(int id) 
         {
-            try
-            {
-                var user = _userService.GetById(id);
-
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _userService.GetById(id);
+            return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize]
         [HttpGet("Current-Informations")]
         public IActionResult GetCurrentInformations()
         {
-            try
-            {
-                var currentUser = _userService.GetCurrentInformations();
-
-                return Ok(currentUser);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _userService.GetCurrentInformations();
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet("Current-Role")]
         public IActionResult GetCurrentRole()
         {
-            try
-            {
-                var role = _userService.GetUserRole();
-
-                return Ok(role);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _userService.GetUserRole();
+            return StatusCode(response.StatusCode, response);
         }
-
     }
 }

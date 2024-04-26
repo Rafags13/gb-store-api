@@ -1,5 +1,7 @@
-﻿using GbStoreApi.Application.Interfaces;
+﻿using AutoMapper;
+using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Authentications;
+using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
@@ -13,52 +15,41 @@ namespace GbStoreApi.Application.Services.Users
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _context;
+        private readonly IMapper _mapper;
         public UserService(
             IUnitOfWork unitOfWork,
-            IHttpContextAccessor context
+            IHttpContextAccessor context,
+            IMapper mapper
             )
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            _mapper = mapper;
         }
-        public IEnumerable<DisplayUserDto> GetAll()
+        public ResponseDto<IEnumerable<DisplayUserDto>> GetAll()
         {
-            var users =
-                _unitOfWork.User.GetAll()
-                    .Select(x => new DisplayUserDto
-                    {
-                        Cpf = x.Cpf,
-                        Email = x.Email,
-                        Id = x.Id,
-                        Name = x.Name,
-                        TypeOfUser = (UserType)x.TypeOfUser,
-                    });
+            var users = _unitOfWork.User.GetAll().Select(user => _mapper.Map<DisplayUserDto>(user));
+            if (!users.Any() || users is null)
+                return new ResponseDto<IEnumerable<DisplayUserDto>>(
+                    statusCode: StatusCodes.Status404NotFound, 
+                    "Não existe nenhum usuário cadastrado no sistema.");
 
-            return users;
+            return new ResponseDto<IEnumerable<DisplayUserDto>>(users, StatusCodes.Status200OK);
         }
 
-        public DisplayUserDto? GetById(int id)
+        public ResponseDto<DisplayUserDto> GetById(int id)
         {
 
             var selectedUser =
                 _unitOfWork.User.GetById(id);
 
             if (selectedUser is null)
-            {
-                throw new Exception("Usuário não encontrado");
-            }
-
-            var userCorrectTyped = new DisplayUserDto
-            {
-                Id = selectedUser.Id,
-                Name = selectedUser.Name,
-                Cpf = selectedUser.Cpf,
-                Email = selectedUser.Email,
-                TypeOfUser = (UserType)selectedUser.TypeOfUser
-            };
+                return new ResponseDto<DisplayUserDto>(StatusCodes.Status404NotFound, "Nenhum usuário encontrado.");
+            
+            var userMapped = _mapper.Map<DisplayUserDto>(selectedUser);
 
 
-            return userCorrectTyped;
+            return new ResponseDto<DisplayUserDto>(userMapped, StatusCodes.Status200OK);
         }
 
         public User? GetByCredentials(SignInDto signInDto)
@@ -78,37 +69,29 @@ namespace GbStoreApi.Application.Services.Users
             return currentUser;
         }
 
-        public DisplayUserDto? GetCurrentInformations()
+        public ResponseDto<DisplayUserDto> GetCurrentInformations()
         {
             var currentUserEmail = _context.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(currentUserEmail)) return null;
+            if (string.IsNullOrEmpty(currentUserEmail))
+                return new ResponseDto<DisplayUserDto>(StatusCodes.Status401Unauthorized, "Usuário inválido");
 
             var currentUser = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
-            if (currentUser is null) return null;
+            if (currentUser is null)
+                return new ResponseDto<DisplayUserDto>(StatusCodes.Status404NotFound, "Não foi encontrado nenhum usuário com esse e-mail.");
 
-            var displayUser = new DisplayUserDto
-            {
-                Id = currentUser.Id,
-                Cpf = currentUser.Cpf,
-                Email = currentUser.Email,
-                Name = currentUser.Name,
-                TypeOfUser = (UserType)currentUser.TypeOfUser
-            };
+            var displayUser = _mapper.Map<DisplayUserDto>(currentUser);
 
-            return displayUser;
+            return new ResponseDto<DisplayUserDto>(displayUser, StatusCodes.Status200OK);
         }
 
-        public UserType? GetUserRole()
+        public ResponseDto<UserType> GetUserRole()
         {
-            var currentUserEmail = GetCurrentInformations()?.Email;
+            var response = GetCurrentInformations();
 
-            if (currentUserEmail is null) return null;
+            if (response.StatusCode != StatusCodes.Status200OK || response.Value is null)
+                return new ResponseDto<UserType>(response.StatusCode, response.Message!);
 
-            var user = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
-
-            if (user is null) return null;
-
-            return (UserType)user.TypeOfUser;
+            return new ResponseDto<UserType>(response.Value.TypeOfUser, StatusCodes.Status200OK);
         }
     }
 }

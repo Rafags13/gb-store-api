@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using GbStoreApi.Domain.Dto.Brands;
 using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Dto.Stocks;
+using GbStoreApi.Domain.Dto.Users;
+using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +15,7 @@ namespace GbStoreApi.Application.Extensions
         {
             var config = new MapperConfiguration(configuration =>
             {
+                #region Product
                 configuration.CreateMap<Product, DisplayProductDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
                     .ForMember(member => member.PhotoUrlId, map => map.MapFrom(x => x.Pictures.FirstOrDefault().Name))
@@ -28,6 +32,17 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(member => member.StockId, map => map.MapFrom(x => x.Id))
                     .ForMember(member => member.Amount, map => map.MapFrom(x => x.Count))
                     .ReverseMap();
+                #endregion
+
+                #region Brand
+                configuration.CreateMap<Brand, DisplayBrandDto>();
+                #endregion
+
+                #region User
+                configuration.CreateMap<DisplayUserDto, User>();
+                configuration.CreateMap<User, DisplayUserDto>()
+                    .ForMember(member => member.TypeOfUser, map => map.MapFrom(x => (UserType)x.TypeOfUser));
+                #endregion
             });
 
             IMapper mapper = config.CreateMapper();

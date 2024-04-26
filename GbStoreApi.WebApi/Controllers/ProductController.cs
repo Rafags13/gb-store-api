@@ -43,22 +43,15 @@ namespace GbStoreApi.WebApi.Controllers
             [FromRoute] int page = 0
             )
         {
-            try
-            {
-                var filters = new CatalogFilterDto { 
-                    Category = Category,
-                    Cores = Cores,
-                    Tamanhos = Tamanhos,
-                    Page = page,
-                    PageSize = 20,
-                };
-                var response = _productService.GetByFilters(filters);
-                return StatusCode(response.StatusCode, response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var filters = new CatalogFilterDto { 
+                Category = Category,
+                Cores = Cores,
+                Tamanhos = Tamanhos,
+                Page = page,
+                PageSize = 20,
+            };
+            var response = _productService.GetByFilters(filters);
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]

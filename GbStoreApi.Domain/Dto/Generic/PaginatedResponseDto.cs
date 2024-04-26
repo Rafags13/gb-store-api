@@ -14,5 +14,11 @@
             Page = page;
             PageSize = pageSize;
         }
+
+        public PaginatedResponseDto(int statusCode, string message, int page, int pageSize): base(statusCode, message)
+        {
+            Page = page;
+            PageSize = pageSize;
+        }
     }
 }

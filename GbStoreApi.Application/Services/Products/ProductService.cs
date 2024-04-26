@@ -115,6 +115,14 @@ namespace GbStoreApi.Application.Services.Products
                 .AsNoTracking()
                 .Select(_mapper.Map<DisplayProductDto>);
 
+            if (!productsFiltered.Any() || productsFiltered.Count() == 0)
+                return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
+                    StatusCodes.Status404NotFound, 
+                    "Não foi encontrado nenhum produto.",
+                    filters.Page,
+                    filters.PageSize
+                    );
+
             return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
                 productsFiltered, 
                 StatusCodes.Status200OK,
