@@ -1,12 +1,13 @@
-﻿using GbStoreApi.Domain.Dto.Sizes;
+﻿using GbStoreApi.Domain.Dto.Generic;
+using GbStoreApi.Domain.Dto.Sizes;
 
 namespace GbStoreApi.Application.Interfaces
 {
     public interface ISizeService
     {
-        IEnumerable<DisplaySizeDto> GetAll();
-        DisplaySizeDto? GetById(int id);
-        DisplaySizeDto? GetByName(string sizeName);
-        DisplaySizeDto Create(string sizeName);
+        ResponseDto<IEnumerable<DisplaySizeDto>> GetAll();
+        ResponseDto<DisplaySizeDto> GetById(int id);
+        ResponseDto<DisplaySizeDto> GetByName(string sizeName);
+        ResponseDto<DisplaySizeDto> Create(string sizeName);
     }
 }

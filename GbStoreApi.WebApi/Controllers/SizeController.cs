@@ -18,31 +18,15 @@ namespace GbStoreApi.WebApi.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            try
-            {
-                var sizes = _sizeService.GetAll();
-
-                return Ok(sizes);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _sizeService.GetAll();
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
         public IActionResult Create([FromBody] string sizeName)
         {
-            try
-            {
-                var createdSize = _sizeService.Create(sizeName);
-
-                return Ok(createdSize);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = _sizeService.Create(sizeName);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

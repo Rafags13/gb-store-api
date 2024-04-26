@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GbStoreApi.Domain.Dto.Brands;
 using GbStoreApi.Domain.Dto.Products;
+using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Stocks;
 using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.enums;
@@ -42,6 +43,10 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<DisplayUserDto, User>();
                 configuration.CreateMap<User, DisplayUserDto>()
                     .ForMember(member => member.TypeOfUser, map => map.MapFrom(x => (UserType)x.TypeOfUser));
+                #endregion
+
+                #region Size
+                configuration.CreateMap<DisplaySizeDto, Size>().ReverseMap();
                 #endregion
             });
 
