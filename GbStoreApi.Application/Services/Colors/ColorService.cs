@@ -1,70 +1,111 @@
-﻿using GbStoreApi.Application.Interfaces;
+﻿using AutoMapper;
+using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Colors;
+using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace GbStoreApi.Application.Services.Colors
 {
     public class ColorService : IColorService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public ColorService(IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        public ColorService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper
+            )
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
-        public DisplayColorDto CreateColor(string colorName)
+        public ResponseDto<DisplayColorDto> CreateColor(string colorName)
         {
-            if (ColorAlsoExists(colorName))
-            {
-                throw new ArgumentException("A cor informada já existe no sistema.");
-            }
-
+            if (_unitOfWork.Color.Contains(color => color.Name == colorName))
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status400BadRequest, "A cor informada já existe no sistema.");
+            
             var newColor = new Color { Name = colorName };
             _unitOfWork.Color.Add(newColor);
             _unitOfWork.Save();
 
-            var currentColor = GetByName(colorName);
+            var currentColor = _unitOfWork.Color.GetByName(colorName);
+            var createdColor = _mapper.Map<DisplayColorDto>(currentColor);
 
-            return currentColor;
+            return new ResponseDto<DisplayColorDto>(createdColor, StatusCodes.Status200OK);
         }
 
-        private bool ColorAlsoExists(string colorName)
+        public ResponseDto<DisplayColorDto> Delete(int id)
         {
-            var color = GetByName(colorName);
+            var currentColor = 
+                _unitOfWork
+                .Color
+                .GetByIdAndReturnsQueryable(id)
+                .Include(x => x.Stocks)
+                .FirstOrDefault();
 
-            return color != null;
+            if (currentColor is null)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status404NotFound, "Não existe nenhuma cor com esse nome.");
+
+            if(currentColor.Stocks is not null)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status400BadRequest,
+                    "A cor selecionada está relacionada a outros produtos. Delete a relação para remover esta cor.");
+
+            var removedColor = _unitOfWork.Color.Remove(currentColor);
+            _unitOfWork.Save();
+
+            var colorToResponse = _mapper.Map<DisplayColorDto>(removedColor);
+
+            return new ResponseDto<DisplayColorDto>(colorToResponse, StatusCodes.Status200OK);
         }
 
-        public IEnumerable<DisplayColorDto> GetAll()
+        public ResponseDto<IEnumerable<DisplayColorDto>> GetAll()
         {
-            return _unitOfWork.Color.GetAll().Select(x => new DisplayColorDto { Id = x.Id, Name = x.Name });
+            var colors = _unitOfWork.Color.GetAll().Select(color => _mapper.Map<DisplayColorDto>(color));
+
+            return new ResponseDto<IEnumerable<DisplayColorDto>>(colors, StatusCodes.Status200OK);
         }
 
-        public DisplayColorDto? GetById(int id)
+        public ResponseDto<DisplayColorDto> GetById(int id)
         {
             var currentColor = _unitOfWork.Color.FindOne(x => x.Id == id);
 
-            if (currentColor == null)
-            {
-                return null;
-            }
+            if (currentColor is null)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status404NotFound, "Não existe nenhuma cor com o Id informado.");
 
-            var colorDisplay = new DisplayColorDto { Id = currentColor.Id, Name = currentColor.Name };
-            return colorDisplay;
+            var color = _mapper.Map<DisplayColorDto>(currentColor);
 
+            return new ResponseDto<DisplayColorDto>(color, StatusCodes.Status200OK);
         }
 
-        public DisplayColorDto? GetByName(string colorName)
+        public ResponseDto<DisplayColorDto> GetByName(string colorName)
         {
             var currentColor = _unitOfWork.Color.FindOne(x => x.Name == colorName);
 
             if (currentColor == null)
-            {
-                return null;
-            }
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status404NotFound, "Não existe nenhuma cor com o Id informado.");
 
-            var colorDisplay = new DisplayColorDto { Id = currentColor.Id, Name = currentColor.Name };
-            return colorDisplay;
+            var color = _mapper.Map<DisplayColorDto>(currentColor);
+
+            return new ResponseDto<DisplayColorDto>(color, StatusCodes.Status200OK);
+        }
+
+        public ResponseDto<DisplayColorDto> Update(UpdateColorDto updateColorDto)
+        {
+            var currentColor = _unitOfWork.Color.GetByName(updateColorDto.OldColorName);
+
+            if (currentColor is null)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status404NotFound, "Não existe nenhuma cor com esse nome.");
+
+            currentColor.Name = updateColorDto.NewColorName;
+            var updatedColor = _unitOfWork.Color.Update(currentColor);
+            _unitOfWork.Save();
+            
+            var colorToResponse = _mapper.Map<DisplayColorDto>(updatedColor);
+
+            return new ResponseDto<DisplayColorDto>(colorToResponse, StatusCodes.Status200OK);
+
         }
     }
 }

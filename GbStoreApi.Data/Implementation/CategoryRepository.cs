@@ -15,12 +15,17 @@ namespace GbStoreApi.Data.Implementation
 
         public Category? GetOneByName(string name)
         {
-            return _dataContext.Set<Category>().FirstOrDefault(x => x.Name == name);
+            return _dataContext.Categories.FirstOrDefault(x => x.Name == name);
         }
 
         public Category? GetOneById(int id)
         {
-            return _dataContext.Set<Category>().FirstOrDefault(x => x.Id == id);
+            return _dataContext.Categories.FirstOrDefault(x => x.Id == id);
+        }
+
+        public IQueryable<Category> GetByIdAndReturnsQueryable(int id)
+        {
+            return _dataContext.Categories.Where(x => x.Id == id).AsQueryable();
         }
     }
 }

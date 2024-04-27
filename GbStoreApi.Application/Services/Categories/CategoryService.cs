@@ -5,6 +5,7 @@ using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace GbStoreApi.Application.Services.Categories
 {
@@ -88,10 +89,19 @@ namespace GbStoreApi.Application.Services.Categories
 
         public ResponseDto<DisplayCategoryDto> Delete(int id)
         {
-            var currentCategory = _unitOfWork.Category.GetOneById(id);
+            var currentCategory =
+                _unitOfWork
+                .Category
+                .GetByIdAndReturnsQueryable(id)
+                .Include(x => x.Products)
+                .FirstOrDefault();
 
             if(currentCategory is null)
                 return new ResponseDto<DisplayCategoryDto>(StatusCodes.Status404NotFound, "Não existe nenhuma categoria com esse nome");
+
+            if(currentCategory.Products is not null)
+                return new ResponseDto<DisplayCategoryDto>(StatusCodes.Status400BadRequest,
+                    "Não é possível excluir essa categoria, pois está relacionada um produto. Remova a relação para excluí-la.");
 
             var deletedCategory = _unitOfWork.Category.Remove(currentCategory);
             _unitOfWork.Save();

@@ -5,5 +5,7 @@ namespace GbStoreApi.Domain.Repository
 {
     public interface IColorRepository : IGenericRepository<Color>
     {
+        Color? GetByName(string name);
+        IQueryable<Color> GetByIdAndReturnsQueryable(int id);
     }
 }

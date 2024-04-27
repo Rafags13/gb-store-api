@@ -7,5 +7,6 @@ namespace GbStoreApi.Domain.Repository
     {
         Category? GetOneByName(string name);
         Category? GetOneById (int id);
+        IQueryable<Category> GetByIdAndReturnsQueryable(int id);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GbStoreApi.Domain.Dto.Brands;
 using GbStoreApi.Domain.Dto.Categories;
+using GbStoreApi.Domain.Dto.Colors;
 using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Stocks;
@@ -52,6 +53,10 @@ namespace GbStoreApi.Application.Extensions
 
                 #region Category
                 configuration.CreateMap<DisplayCategoryDto, Category>().ReverseMap();
+                #endregion
+
+                #region Color
+                configuration.CreateMap<DisplayColorDto, Color>().ReverseMap();
                 #endregion
             });
 

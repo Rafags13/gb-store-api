@@ -1,8 +1,5 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using GbStoreApi.Application.Interfaces;
+﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Data.Context;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace GbStoreApi.Data.Implementation
