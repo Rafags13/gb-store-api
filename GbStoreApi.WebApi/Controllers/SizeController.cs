@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto.Sizes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
@@ -23,13 +24,6 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] string sizeName)
-        {
-            var response = _sizeService.Create(sizeName);
-            return StatusCode(response.StatusCode, response);
-        }
-
         [HttpGet("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
@@ -42,6 +36,27 @@ namespace GbStoreApi.WebApi.Controllers
         {
             var response = _sizeService.GetByName(name);
             return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] string sizeName)
+        {
+            var response = _sizeService.Create(sizeName);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] UpdateSizeDto updateSizeDto)
+        {
+            var response = _sizeService.Update(updateSizeDto);
+            return StatusCode(response.StatusCode, updateSizeDto);
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            var response = _sizeService.Delete(id);
+            return StatusCode(response.StatusCode, id);
         }
     }
 }

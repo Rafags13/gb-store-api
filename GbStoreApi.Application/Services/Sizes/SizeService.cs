@@ -2,10 +2,10 @@
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Sizes;
-using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace GbStoreApi.Application.Services.Sizes
 {
@@ -32,6 +32,30 @@ namespace GbStoreApi.Application.Services.Sizes
                 return new ResponseDto<DisplaySizeDto>(response.StatusCode, response.Message!);
 
             return new ResponseDto<DisplaySizeDto>(response.Value, response.StatusCode);
+        }
+
+        public ResponseDto<DisplaySizeDto> Delete(int id)
+        {
+            var currentSize =
+                _unitOfWork
+                .Size
+                .GetByIdAndReturnsQueryable(id)
+                .Include(x => x.Stocks)
+                .FirstOrDefault();
+
+            if (currentSize is null)
+                return new ResponseDto<DisplaySizeDto>(StatusCodes.Status404NotFound, "Não existe nenhum tamanho com esse Id.");
+
+            if (currentSize.Stocks is not null)
+                return new ResponseDto<DisplaySizeDto>(StatusCodes.Status400BadRequest,
+                    "Não é possível excluir esse tamanho, pois este está ligado a um produto. Exclua esta relação para por excluí-lo");
+
+            var removedSize = _unitOfWork.Size.Remove(currentSize);
+            _unitOfWork.Save();
+
+            var sizeToResponse = _mapper.Map<DisplaySizeDto>(removedSize);
+
+            return new ResponseDto<DisplaySizeDto>(sizeToResponse, StatusCodes.Status200OK);
         }
 
         public ResponseDto<IEnumerable<DisplaySizeDto>> GetAll()
@@ -62,6 +86,22 @@ namespace GbStoreApi.Application.Services.Sizes
             var size = _mapper.Map<DisplaySizeDto>(currentSize);
 
             return new ResponseDto<DisplaySizeDto>(size, StatusCodes.Status200OK);
+        }
+
+        public ResponseDto<DisplaySizeDto> Update(UpdateSizeDto updateSizeDto)
+        {
+            var currentSize = _unitOfWork.Size.GetByName(updateSizeDto.OldSizeName);
+
+            if (currentSize is null)
+                return new ResponseDto<DisplaySizeDto>(StatusCodes.Status404NotFound, "Não existe nenhum tamanho com esse nome.");
+
+            currentSize.Name = updateSizeDto.NewSizeName;
+
+            var updatedSize = _unitOfWork.Size.Update(currentSize);
+            _unitOfWork.Save();
+            var sizeToResponse = _mapper.Map<DisplaySizeDto>(updatedSize);
+
+            return new ResponseDto<DisplaySizeDto>(sizeToResponse, StatusCodes.Status200OK);
         }
     }
 }
