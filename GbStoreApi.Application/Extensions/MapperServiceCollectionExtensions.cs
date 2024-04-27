@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GbStoreApi.Domain.Dto.Authentications;
 using GbStoreApi.Domain.Dto.Brands;
 using GbStoreApi.Domain.Dto.Categories;
 using GbStoreApi.Domain.Dto.Colors;
@@ -45,6 +46,10 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<DisplayUserDto, User>();
                 configuration.CreateMap<User, DisplayUserDto>()
                     .ForMember(member => member.TypeOfUser, map => map.MapFrom(x => (UserType)x.TypeOfUser));
+                configuration.CreateMap<UserTokenDto, User>().ReverseMap();
+                configuration.CreateMap<SignUpDto, User>()
+                    .ForMember(member => member.Password, map => map.MapFrom(x => BCrypt.Net.BCrypt.HashPassword(x.Password)))
+                    .ForMember(member => member.TypeOfUser, map => map.MapFrom(x => (int) x.TypeOfUser));
                 #endregion
 
                 #region Size

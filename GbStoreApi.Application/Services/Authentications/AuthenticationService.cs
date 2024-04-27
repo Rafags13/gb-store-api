@@ -4,6 +4,9 @@ using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
 using GbStoreApi.Application.Exceptions;
 using GbStoreApi.Domain.Dto.Authentications;
+using AutoMapper;
+using GbStoreApi.Domain.Dto.Users;
+using GbStoreApi.Domain.Dto.Generic;
 
 namespace GbStoreApi.Application.Services.Authentications
 {
@@ -13,26 +16,30 @@ namespace GbStoreApi.Application.Services.Authentications
         private readonly ITokenService _tokenService;
         private readonly IHttpContextAccessor _context;
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
         public AuthenticationService(
             IUnitOfWork unitOfWork,
             ITokenService tokenService,
             IHttpContextAccessor context,
-            IUserService userService
+            IUserService userService,
+            IMapper mapper
             )
         {
             _unitOfWork = unitOfWork;
             _tokenService = tokenService;
             _context = context;
             _userService = userService;
+            _mapper = mapper;
         }
 
-        public string? SignIn(SignInDto signInDto)
+        public ResponseDto<string> SignIn(SignInDto signInDto)
         {
             var currentUser = _userService.GetByCredentials(signInDto);
 
-            if (currentUser is null) return null;
+            if (currentUser is null)
+                return new ResponseDto<string>(StatusCodes.Status404NotFound, "Não existe nenhum usuário com essas credenciais.");
 
-            var userToken = _tokenService.CreateModelByUser(currentUser);
+            var userToken = _mapper.Map<UserTokenDto>(currentUser);
 
             var token = _tokenService.Generate(userToken);
 
@@ -40,7 +47,7 @@ namespace GbStoreApi.Application.Services.Authentications
 
             SetRefreshToken(refreshToken, currentUser.Id);
 
-            return token;
+            return new ResponseDto<string>(token, StatusCodes.Status200OK);
         }
 
         private void SetRefreshToken(RefreshToken refreshToken, int userId)
@@ -62,32 +69,19 @@ namespace GbStoreApi.Application.Services.Authentications
             _unitOfWork.Save();
         }
 
-        public string SignUp(SignUpDto signUpDto)
+        public ResponseDto<string> SignUp(SignUpDto signUpDto)
         {
             if (UserAlsoExists(signUpDto.Cpf, signUpDto.Email))
-            {
-                throw new DuplicateUniqueTupleException("O E-mail ou Cpf já estão cadastrados no sistema.");
-            }
+                return new ResponseDto<string>(StatusCodes.Status400BadRequest, "O E-mail ou Cpf já estão cadastrados no sistema.");
 
-            var newUser = new User
-            {
-                Name = signUpDto.Fullname,
-                Email = signUpDto.Email,
-                Cpf = signUpDto.Cpf,
-                Password = BCrypt.Net.BCrypt.HashPassword(signUpDto.Password),
-                BirthdayDate = signUpDto.BirthdayDate,
-                TypeOfUser = (int)signUpDto.TypeOfUser,
-            };
+            var newUser = _mapper.Map<User>(signUpDto);
 
             _unitOfWork.User.Add(newUser);
 
-            var responseId = _unitOfWork.Save();
-            if (responseId <= 0)
-            {
-                throw new Exception("Não foi possível adicionar esse usuário ao sistema.");
-            }
-
-            return "Usuário adicionado com sucesso!";
+            if (_unitOfWork.Save() <= 0)
+                return new ResponseDto<string>(StatusCodes.Status400BadRequest, "Não foi possível adicionar esse usuário ao sistema.");
+            
+            return new ResponseDto<string>(StatusCodes.Status200OK, "Usuário adicionado com sucesso!");
         }
 
         private bool UserAlsoExists(string cpf, string email)
@@ -112,7 +106,7 @@ namespace GbStoreApi.Application.Services.Authentications
                 throw new UnauthorizedAccessException("Seu tempo de sessão acabou. Entre novamente.");
             }
 
-            var userToken = _tokenService.CreateModelByUser(currentUser);
+            var userToken = _mapper.Map<UserTokenDto>(currentUser);
             string newToken = _tokenService.Generate(userToken);
 
             var newRefreshToken = _tokenService.GenerateRefresh();

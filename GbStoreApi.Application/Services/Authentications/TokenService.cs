@@ -58,18 +58,5 @@ namespace GbStoreApi.Application.Services.Authentication
 
             return refreshToken;
         }
-
-        public UserTokenDto CreateModelByUser(Domain.Models.User user)
-        {
-            var newUserToken = new UserTokenDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                TypeOfUser = user.TypeOfUser
-            };
-
-            return newUserToken;
-        }
     }
 }

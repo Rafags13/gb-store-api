@@ -17,39 +17,25 @@ namespace GbStoreApi.WebApi.Controllers
         [HttpPost("Login")]
         public IActionResult SignIn([FromBody] SignInDto signInDto)
         {
-            try
-            {
-                var token = _authenticationService.SignIn(signInDto);
+            var response = _authenticationService.SignIn(signInDto);
 
-                return Ok(token);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost("Register")]
         public IActionResult SignUp([FromBody] SignUpDto signUpDto)
         {
-            try
-            {
-                var message = _authenticationService.SignUp(signUpDto);
+            var response = _authenticationService.SignUp(signUpDto);
 
-                return Ok(message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost("Refresh-Token/{userId}")]
-        public IActionResult Refresh(int subUserId)
+        public IActionResult Refresh(int userId)
         {
             try
             {
-                var newToken = _authenticationService.RefreshToken(subUserId);
+                var newToken = _authenticationService.RefreshToken(userId);
 
                 return Ok(newToken);
             }

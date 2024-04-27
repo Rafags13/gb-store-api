@@ -25,6 +25,9 @@ namespace GbStoreApi.WebApi.Middlewares
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
+            if (context.Request.Method == "OPTIONS")
+                await next(context);
+
             var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
             if (!string.IsNullOrEmpty(token))
