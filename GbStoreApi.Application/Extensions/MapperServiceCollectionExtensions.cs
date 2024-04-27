@@ -50,6 +50,10 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<SignUpDto, User>()
                     .ForMember(member => member.Password, map => map.MapFrom(x => BCrypt.Net.BCrypt.HashPassword(x.Password)))
                     .ForMember(member => member.TypeOfUser, map => map.MapFrom(x => (int) x.TypeOfUser));
+                configuration.CreateMap<RefreshToken, User>()
+                    .ForMember(member => member.RefreshToken, map => map.MapFrom(x => x.Token))
+                    .ForMember(member => member.TokenCreated, map => map.MapFrom(x => x.Created))
+                    .ForMember(member => member.TokenExpires, map => map.MapFrom(x => x.Expires));
                 #endregion
 
                 #region Size

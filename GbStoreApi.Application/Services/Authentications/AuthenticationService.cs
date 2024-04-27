@@ -57,14 +57,12 @@ namespace GbStoreApi.Application.Services.Authentications
                 HttpOnly = true,
                 Secure = true,
                 Expires = refreshToken.Expires,
-            };
+            }; 
 
             _context.HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
 
             var currentUser = _unitOfWork.User.FindOne(x => x.Id == userId);
-            currentUser.RefreshToken = refreshToken.Token;
-            currentUser.TokenCreated = refreshToken.Created;
-            currentUser.TokenExpires = refreshToken.Expires;
+            _mapper.Map(refreshToken, currentUser);
 
             _unitOfWork.Save();
         }
