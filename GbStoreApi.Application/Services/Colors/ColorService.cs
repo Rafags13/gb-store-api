@@ -21,6 +21,8 @@ namespace GbStoreApi.Application.Services.Colors
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
+        #region [CRUD]
         public ResponseDto<DisplayColorDto> CreateColor(string colorName)
         {
             if (_unitOfWork.Color.Contains(color => color.Name == colorName))
@@ -107,5 +109,6 @@ namespace GbStoreApi.Application.Services.Colors
             return new ResponseDto<DisplayColorDto>(colorToResponse, StatusCodes.Status200OK);
 
         }
+        #endregion
     }
 }

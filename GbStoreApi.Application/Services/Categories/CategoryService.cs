@@ -22,6 +22,7 @@ namespace GbStoreApi.Application.Services.Categories
             _mapper = mapper;
         }
 
+        #region [CRUD]
         public ResponseDto<IEnumerable<DisplayCategoryDto>> GetAll()
         {
             var categories = _unitOfWork.Category.GetAll().Select(category => _mapper.Map<DisplayCategoryDto>(category));
@@ -109,5 +110,7 @@ namespace GbStoreApi.Application.Services.Categories
 
             return new ResponseDto<DisplayCategoryDto>(categoryToResponse, StatusCodes.Status200OK);
         }
+
+#endregion
     }
 }

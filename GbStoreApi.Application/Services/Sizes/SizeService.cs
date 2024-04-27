@@ -20,7 +20,7 @@ namespace GbStoreApi.Application.Services.Sizes
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
+        #region [CRUD]
         public ResponseDto<DisplaySizeDto> Create(string sizeName)
         {
             var newSize = new Size { Name = sizeName };
@@ -103,5 +103,6 @@ namespace GbStoreApi.Application.Services.Sizes
 
             return new ResponseDto<DisplaySizeDto>(sizeToResponse, StatusCodes.Status200OK);
         }
+        #endregion
     }
 }

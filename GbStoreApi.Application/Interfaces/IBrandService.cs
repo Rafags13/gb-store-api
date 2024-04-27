@@ -9,5 +9,7 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<DisplayBrandDto> GetById(int id);
         ResponseDto<DisplayBrandDto> GetByName(string brandName);
         ResponseDto<DisplayBrandDto> Create(string brandName);
+        ResponseDto<DisplayBrandDto> Update(UpdateBrandDto updateBrandDto);
+        ResponseDto<DisplayBrandDto> Delete(int id);
     }
 }
