@@ -10,6 +10,7 @@
         IColorRepository Color { get; }
         IBrandRepository Brand { get; }
         IPictureRepository Picture { get; }
+        IAddressRepository Address { get; }
 
         int Save();
     }

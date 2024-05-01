@@ -1,10 +1,12 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Address;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
+    //uncomment this after [Authorize]
     [ApiController]
     public class AddressController : ControllerBase
     {

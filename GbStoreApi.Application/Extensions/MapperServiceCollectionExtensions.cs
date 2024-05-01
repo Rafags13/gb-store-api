@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GbStoreApi.Domain.Dto.Address;
 using GbStoreApi.Domain.Dto.Authentications;
 using GbStoreApi.Domain.Dto.Brands;
 using GbStoreApi.Domain.Dto.Categories;
@@ -68,6 +69,11 @@ namespace GbStoreApi.Application.Extensions
 
                 #region Color
                 configuration.CreateMap<DisplayColorDto, Color>().ReverseMap();
+                #endregion
+
+                #region Address
+                configuration.CreateMap<Address, DisplayAddressDto>();
+                configuration.CreateMap<CreateAddressDto, Address>();
                 #endregion
             });
 
