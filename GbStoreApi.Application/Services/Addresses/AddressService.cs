@@ -41,7 +41,13 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId(int userId)
         {
-            throw new NotImplementedException();
+            var userExists = _unitOfWork.User.Contains(x => x.Id == userId);
+            if (!userExists)
+                return new ResponseDto<IEnumerable<DisplayAddressDto>>(StatusCodes.Status404NotFound, "O usuário informado não existe.");
+
+            var addressesByUserId = _unitOfWork.Address.GetAll().Where(x => x.UserId == userId).Select(_mapper.Map<DisplayAddressDto>);
+
+            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addressesByUserId, StatusCodes.Status200OK);
         }
 
         public ResponseDto<DisplayAddressDto> GetById(int id)

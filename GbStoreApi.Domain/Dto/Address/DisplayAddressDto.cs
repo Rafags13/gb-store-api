@@ -1,7 +1,14 @@
 ﻿namespace GbStoreApi.Domain.Dto.Address
 {
-    public class DisplayAddressDto : CreateAddressDto
+    public class DisplayAddressDto
     {
         public int Id { get; set; }
+        public required string ZipCode { get; set; }
+        public required string StreetName { get; set; }
+        public required string Neighbourhood { get; set; }
+        public required string City { get; set; }
+        public required string State { get; set; }
+        public int Number { get; set; }
+        public string? Complement { get; set; }
     }
 }
