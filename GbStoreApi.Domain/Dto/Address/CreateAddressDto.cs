@@ -9,5 +9,6 @@
         public required string State { get; set; }
         public int Number { get; set; }
         public string? Complement { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Application.Services.Address;
+using GbStoreApi.Application.Services.Addresses;
 using GbStoreApi.Application.Services.AmazonBuckets;
 using GbStoreApi.Application.Services.Authentication;
 using GbStoreApi.Application.Services.Authentications;
