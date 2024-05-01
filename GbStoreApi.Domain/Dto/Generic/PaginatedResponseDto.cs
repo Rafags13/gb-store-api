@@ -4,15 +4,18 @@
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
-        public PaginatedResponseDto(T value, int statusCode, string message, int page, int pageSize): base(value, statusCode, message) 
+        public int Total { get; set; }
+        public PaginatedResponseDto(T value, int statusCode, string message, int page, int pageSize, int total): base(value, statusCode, message) 
         {
             Page = page;
             PageSize = pageSize;
+            Total = total;
         }
-        public PaginatedResponseDto(T value, int statusCode, int page, int pageSize): base(value, statusCode) 
+        public PaginatedResponseDto(T value, int statusCode, int page, int pageSize, int total): base(value, statusCode) 
         {
             Page = page;
             PageSize = pageSize;
+            Total = total;
         }
 
         public PaginatedResponseDto(int statusCode, string message, int page, int pageSize): base(statusCode, message)

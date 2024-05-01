@@ -40,7 +40,7 @@ namespace GbStoreApi.Application.Services.Authentication
         private static ClaimsIdentity GenerateClaims(UserTokenDto user)
         {
             var ci = new ClaimsIdentity();
-            ci.AddClaim(new Claim("sub", user.Id.ToString()));
+            ci.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
             ci.AddClaim(new Claim(ClaimTypes.Name, user.Name));
             ci.AddClaim(new Claim(ClaimTypes.Email, user.Email));
             ci.AddClaim(new Claim(ClaimTypes.Role, user.TypeOfUser.ToString()));

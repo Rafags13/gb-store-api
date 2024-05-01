@@ -49,30 +49,31 @@ namespace GbStoreApi.Application.Services.Users
             return new ResponseDto<DisplayUserDto>(userMapped, StatusCodes.Status200OK);
         }
 
-        public User? GetByCredentials(SignInDto signInDto)
+        public ResponseDto<User> GetByCredentials(SignInDto signInDto)
         {
-
             var currentUser = _unitOfWork.User.FindOne(x =>
                 x.Email == signInDto.Email
             );
 
+            if (currentUser is null)
+                return new ResponseDto<User>(StatusCodes.Status404NotFound, "Não existe nenhum usuário com esse e-mail. Tente Novamente.");
+
             var passwordsMatch = BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password);
 
-            if (currentUser is null || !BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password))
-            {
-                return null;
-            }
-
-            return currentUser;
+            if (!passwordsMatch)
+                return new ResponseDto<User>(StatusCodes.Status404NotFound, "A senha informada está incorreta. Tente Novamente.");
+            
+            return new ResponseDto<User>(currentUser, StatusCodes.Status200OK);
         }
 
         public ResponseDto<DisplayUserDto> GetCurrentInformations()
         {
-            var currentUserEmail = _context.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(currentUserEmail))
+            var currentUserId = _context.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(currentUserId))
                 return new ResponseDto<DisplayUserDto>(StatusCodes.Status401Unauthorized, "Usuário inválido");
 
-            var currentUser = _unitOfWork.User.FindOne(x => x.Email == currentUserEmail);
+            var currentUser = _unitOfWork.User.FindOne(x => x.Id == int.Parse(currentUserId));
             if (currentUser is null)
                 return new ResponseDto<DisplayUserDto>(StatusCodes.Status404NotFound, "Não foi encontrado nenhum usuário com esse e-mail.");
 
@@ -89,6 +90,23 @@ namespace GbStoreApi.Application.Services.Users
                 return new ResponseDto<UserType>(response.StatusCode, response.Message!);
 
             return new ResponseDto<UserType>(response.Value.TypeOfUser, StatusCodes.Status200OK);
+        }
+
+        public ResponseDto<bool> Update(UpdateUserDto updateUserDto)
+        {
+            var currentUser = _unitOfWork.User.GetAll().FirstOrDefault(x => x.Cpf == updateUserDto.Cpf);
+
+            if (currentUser is null)
+                return new ResponseDto<bool>(StatusCodes.Status404NotFound, "Não existe nenhum usuário com esse cpf.");
+
+            _mapper.Map(updateUserDto, currentUser);
+
+            _unitOfWork.User.Update(currentUser);
+
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível salvar as alterações do usuário.");
+
+            return new ResponseDto<bool>(true, StatusCodes.Status200OK);
         }
     }
 }

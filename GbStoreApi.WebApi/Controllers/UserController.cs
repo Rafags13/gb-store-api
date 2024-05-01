@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,6 +44,13 @@ namespace GbStoreApi.WebApi.Controllers
         public IActionResult GetCurrentRole()
         {
             var response = _userService.GetUserRole();
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] UpdateUserDto updateDto)
+        {
+            var response = _userService.Update(updateDto);
             return StatusCode(response.StatusCode, response);
         }
     }

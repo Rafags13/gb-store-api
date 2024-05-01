@@ -54,6 +54,8 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(member => member.RefreshToken, map => map.MapFrom(x => x.Token))
                     .ForMember(member => member.TokenCreated, map => map.MapFrom(x => x.Created))
                     .ForMember(member => member.TokenExpires, map => map.MapFrom(x => x.Expires));
+
+                configuration.CreateMap<UpdateUserDto, User>();
                 #endregion
 
                 #region Size

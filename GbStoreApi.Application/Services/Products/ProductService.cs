@@ -102,20 +102,30 @@ namespace GbStoreApi.Application.Services.Products
 
         public PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters)
         {
-            var productsFiltered =
-                _unitOfWork.Product
+            var productsFiltered = _unitOfWork.Product
                 .GetAll()
                 .WithPicturesFromStock()
                 .WithSizes()
                 .WithColors()
                 .FilterByCategoryIfWasInformed(filters.Category)
                 .FilterByColorsIfWereInformed(filters.Cores)
-                .FilterBySizesIfWereInformed(filters.Tamanhos)
-                .Paginate(page: filters.Page)
-                .AsNoTracking()
-                .Select(_mapper.Map<DisplayProductDto>);
+                .FilterBySizesIfWereInformed(filters.Tamanhos);
 
-            if (!productsFiltered.Any() || productsFiltered.Count() == 0)
+            var dontExistsProductsInThisPage = !productsFiltered.Paginate(page: filters.Page, pageSize: filters.PageSize).Any();
+
+            var INITIAL_PAGE = 0;
+
+            if (dontExistsProductsInThisPage)
+                filters.Page = INITIAL_PAGE;
+
+            var totalFiltered = productsFiltered.Count();
+
+            var paginatedProducts = productsFiltered
+                .Paginate(page: filters.Page, pageSize: filters.PageSize)
+                .AsNoTracking()
+                .Select(_mapper.Map<DisplayProductDto>).ToList();
+
+            if (!paginatedProducts.Any() || paginatedProducts.Count() == 0)
                 return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
                     StatusCodes.Status404NotFound, 
                     "Não foi encontrado nenhum produto.",
@@ -124,10 +134,11 @@ namespace GbStoreApi.Application.Services.Products
                     );
 
             return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
-                productsFiltered, 
+                paginatedProducts,
                 StatusCodes.Status200OK,
                 filters.Page,
-                filters.PageSize
+                filters.PageSize,
+                totalFiltered
                 );
         }
 

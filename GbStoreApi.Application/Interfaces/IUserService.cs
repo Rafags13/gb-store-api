@@ -12,6 +12,7 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<DisplayUserDto> GetById(int id);
         ResponseDto<DisplayUserDto> GetCurrentInformations();
         ResponseDto<UserType> GetUserRole();
-        User? GetByCredentials(SignInDto signInDto);
+        ResponseDto<bool> Update(UpdateUserDto updateUserDto);
+        ResponseDto<User> GetByCredentials(SignInDto signInDto);
     }
 }

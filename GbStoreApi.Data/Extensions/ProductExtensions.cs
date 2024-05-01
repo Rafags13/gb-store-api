@@ -63,7 +63,7 @@ namespace GbStoreApi.Data.Extensions
         
         public static IQueryable<Product> Paginate(this IQueryable<Product> products, int page = 0, int pageSize = 20)
         {
-            return products.Skip(page).Take(pageSize);
+            return products.Skip(page * pageSize).Take(pageSize);
         }
     }
 }

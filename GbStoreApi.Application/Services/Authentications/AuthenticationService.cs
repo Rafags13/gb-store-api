@@ -2,7 +2,6 @@
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
-using GbStoreApi.Application.Exceptions;
 using GbStoreApi.Domain.Dto.Authentications;
 using AutoMapper;
 using GbStoreApi.Domain.Dto.Users;
@@ -36,16 +35,16 @@ namespace GbStoreApi.Application.Services.Authentications
         {
             var currentUser = _userService.GetByCredentials(signInDto);
 
-            if (currentUser is null)
-                return new ResponseDto<string>(StatusCodes.Status404NotFound, "Não existe nenhum usuário com essas credenciais.");
+            if (currentUser.StatusCode != StatusCodes.Status200OK || currentUser.Value is null)
+                return new ResponseDto<string>(currentUser.StatusCode, currentUser.Message!);
 
-            var userToken = _mapper.Map<UserTokenDto>(currentUser);
+            var userToken = _mapper.Map<UserTokenDto>(currentUser.Value);
 
             var token = _tokenService.Generate(userToken);
 
             var refreshToken = _tokenService.GenerateRefresh();
 
-            SetRefreshToken(refreshToken, currentUser.Id);
+            SetRefreshToken(refreshToken, currentUser.Value.Id);
 
             return new ResponseDto<string>(token, StatusCodes.Status200OK);
         }
