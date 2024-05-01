@@ -74,6 +74,7 @@ namespace GbStoreApi.Application.Extensions
                 #region Address
                 configuration.CreateMap<Address, DisplayAddressDto>();
                 configuration.CreateMap<CreateAddressDto, Address>();
+                configuration.CreateMap<UpdateAddressDto, Address>();
                 #endregion
             });
 

@@ -9,5 +9,7 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<IEnumerable<DisplayAddressDto>> GetAll();
         ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId();
         ResponseDto<DisplayAddressDto> GetById(int id);
+        ResponseDto<bool> Update(UpdateAddressDto updateAddressDto, string zipCode);
+        ResponseDto<bool> Remove(string zipCode);
     }
 }

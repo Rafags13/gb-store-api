@@ -1,11 +1,12 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Address;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
-    //uncomment this after [Authorize]
+    [Authorize]
     [ApiController]
     public class AddressController : ControllerBase
     {
@@ -41,6 +42,20 @@ namespace GbStoreApi.WebApi.Controllers
         public IActionResult Post([FromBody] CreateAddressDto createAddressDto)
         {
             var response = _addressService.Create(createAddressDto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut("{zipCode}")]
+        public IActionResult Update([FromBody] UpdateAddressDto updateAddressDto, [FromRoute] string zipCode)
+        {
+            var response = _addressService.Update(updateAddressDto, zipCode);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpDelete("{zipCode}")]
+        public IActionResult Remove([FromRoute] string zipCode)
+        {
+            var response = _addressService.Remove(zipCode);
             return StatusCode(response.StatusCode, response);
         }
     }

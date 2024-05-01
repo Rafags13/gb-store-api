@@ -71,5 +71,30 @@ namespace GbStoreApi.Application.Services.Addresses
         {
             throw new NotImplementedException();
         }
+        public ResponseDto<bool> Update(UpdateAddressDto updateAddressDto, string zipCode)
+        {
+            var currentLoggedUser = _userService.GetCurrentInformations();
+            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
+                return new ResponseDto<bool>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
+
+            var currentUserId = currentLoggedUser.Value.Id;
+
+            var currentAddressFromUser = _unitOfWork.Address.Find(x => x.ZipCode == zipCode && x.UserId == currentUserId).SingleOrDefault();
+            if (currentAddressFromUser is null)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço do qual não é seu!");
+
+            _mapper.Map(updateAddressDto, currentAddressFromUser);
+            _unitOfWork.Address.Update(currentAddressFromUser);
+
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível editar o endereço. Tente Novamente.");
+
+            return new ResponseDto<bool>(true, StatusCodes.Status200OK);
+        }
+
+        public ResponseDto<bool> Remove(string zipCode)
+        {
+            throw new NotImplementedException();
+        }        
     }
 }
