@@ -12,17 +12,28 @@ namespace GbStoreApi.Application.Services.Addresses
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
         public AddressService(
             IUnitOfWork unitOfWork,
-            IMapper mapper
+            IMapper mapper,
+            IUserService userService
             )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userService = userService;
         }
         public ResponseDto<bool> Create(CreateAddressDto createAddressDto)
         {
-            var address = _mapper.Map<Address>(createAddressDto);
+            var currentLoggedUser = _userService.GetCurrentInformations();
+            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
+                return new ResponseDto<bool>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
+
+            var currentUserId = currentLoggedUser.Value.Id;
+            var address = _mapper.Map<Address>(createAddressDto, (opt) =>
+            {
+                opt.AfterMap((_, address) => address.UserId = currentUserId);
+            });
 
             _unitOfWork.Address.Add(address);
 
@@ -39,13 +50,19 @@ namespace GbStoreApi.Application.Services.Addresses
             return new ResponseDto<IEnumerable<DisplayAddressDto>>(addresses, StatusCodes.Status200OK);
         }
 
-        public ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId(int userId)
+        public ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId()
         {
-            var userExists = _unitOfWork.User.Contains(x => x.Id == userId);
+            var currentLoggedUser = _userService.GetCurrentInformations();
+            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
+                return new ResponseDto<IEnumerable<DisplayAddressDto>>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
+
+            var currentUserId = currentLoggedUser.Value.Id;
+
+            var userExists = _unitOfWork.User.Contains(x => x.Id == currentLoggedUser.Value.Id);
             if (!userExists)
                 return new ResponseDto<IEnumerable<DisplayAddressDto>>(StatusCodes.Status404NotFound, "O usuário informado não existe.");
 
-            var addressesByUserId = _unitOfWork.Address.GetAll().Where(x => x.UserId == userId).Select(_mapper.Map<DisplayAddressDto>);
+            var addressesByUserId = _unitOfWork.Address.GetAll().Where(x => x.UserId == currentUserId).Select(_mapper.Map<DisplayAddressDto>);
 
             return new ResponseDto<IEnumerable<DisplayAddressDto>>(addressesByUserId, StatusCodes.Status200OK);
         }

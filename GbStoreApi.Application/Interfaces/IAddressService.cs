@@ -7,7 +7,7 @@ namespace GbStoreApi.Application.Interfaces
     {
         ResponseDto<bool> Create(CreateAddressDto createAddressDto);
         ResponseDto<IEnumerable<DisplayAddressDto>> GetAll();
-        ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId(int userId);
+        ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId();
         ResponseDto<DisplayAddressDto> GetById(int id);
     }
 }

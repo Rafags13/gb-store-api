@@ -2,6 +2,5 @@
 {
     public class CreateAddressDto : DisplayAddressDto
     {
-        public int UserId { get; set; }
     }
 }

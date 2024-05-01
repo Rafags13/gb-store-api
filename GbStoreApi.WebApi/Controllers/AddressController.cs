@@ -30,10 +30,10 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpGet("/GetAllByUser/{userId:int}")]
-        public IActionResult GetByUserId(int userId)
+        [HttpGet("GetAllByUser")]
+        public IActionResult GetByUserId()
         {
-            var response = _addressService.GetAllByUserId(userId);
+            var response = _addressService.GetAllByUserId();
             return StatusCode(response.StatusCode, response);
         }
 
