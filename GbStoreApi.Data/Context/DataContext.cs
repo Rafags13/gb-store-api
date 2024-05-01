@@ -15,5 +15,6 @@ namespace GbStoreApi.Data.Context
         public DbSet<Size> Sizes { get; set; }
         public DbSet<ProductStock> ProductStocks { get; set; }
         public DbSet<Picture> Pictures { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }

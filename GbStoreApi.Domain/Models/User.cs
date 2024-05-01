@@ -37,5 +37,7 @@ namespace GbStoreApi.Domain.Models
         [Required]
         [EnumDataType(typeof(UserType))]
         public int TypeOfUser { get; set; }
+
+        public virtual ICollection<Address>? Addresses { get; set; }
     }
 }

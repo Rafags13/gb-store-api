@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Application.Services.Address;
 using GbStoreApi.Application.Services.AmazonBuckets;
 using GbStoreApi.Application.Services.Authentication;
 using GbStoreApi.Application.Services.Authentications;
@@ -32,13 +33,13 @@ public static class DependencyInjectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddUserServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddUserServices(this IServiceCollection servicesCollection)
     {
-        serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();
-        serviceCollection.AddScoped<IUserService, UserService>();
-        serviceCollection.AddScoped<ITokenService, TokenService>();
+        servicesCollection.AddScoped<IAuthenticationService, AuthenticationService>();
+        servicesCollection.AddScoped<IUserService, UserService>();
+        servicesCollection.AddScoped<ITokenService, TokenService>();
 
-        return serviceCollection;
+        return servicesCollection;
     }
 
     public static IServiceCollection AddDifferentUnitOfWork(this IServiceCollection servicesCollection)
@@ -47,12 +48,19 @@ public static class DependencyInjectionExtensions
         return servicesCollection;
     }
 
-    public static IServiceCollection AddFileServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddFileServices(this IServiceCollection servicesCollection)
     {
-        serviceCollection.AddScoped<IBucketService, BucketService>();
-        serviceCollection.AddScoped<IFileService, FileService>();
+        servicesCollection.AddScoped<IBucketService, BucketService>();
+        servicesCollection.AddScoped<IFileService, FileService>();
 
-        return serviceCollection;
+        return servicesCollection;
+    }
+
+    public static IServiceCollection AddAddressService(this IServiceCollection servicesCollection)
+    {
+        servicesCollection.AddScoped<IAddressService, AddressService>();
+
+        return servicesCollection;
     }
 
 }
