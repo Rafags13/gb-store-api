@@ -5,6 +5,7 @@ using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
+using System.Reflection.Emit;
 
 namespace GbStoreApi.Application.Services.Addresses
 {
@@ -71,20 +72,30 @@ namespace GbStoreApi.Application.Services.Addresses
         {
             throw new NotImplementedException();
         }
-        public ResponseDto<bool> Update(UpdateAddressDto updateAddressDto, string zipCode)
+
+        private ResponseDto<Address> GetCurrentAddressByZipCode(string zipCode)
         {
             var currentLoggedUser = _userService.GetCurrentInformations();
             if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
-                return new ResponseDto<bool>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
+                return new ResponseDto<Address>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
 
             var currentUserId = currentLoggedUser.Value.Id;
 
             var currentAddressFromUser = _unitOfWork.Address.Find(x => x.ZipCode == zipCode && x.UserId == currentUserId).SingleOrDefault();
             if (currentAddressFromUser is null)
-                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço do qual não é seu!");
+                return new ResponseDto<Address>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço do qual não é seu!");
 
-            _mapper.Map(updateAddressDto, currentAddressFromUser);
-            _unitOfWork.Address.Update(currentAddressFromUser);
+            return new ResponseDto<Address>(currentAddressFromUser, StatusCodes.Status200OK);
+        }
+        public ResponseDto<bool> Update(UpdateAddressDto updateAddressDto)
+        {
+            var response = GetCurrentAddressByZipCode(updateAddressDto.ZipCode);
+
+            if (response.Value is null || response.StatusCode != StatusCodes.Status200OK)
+                return new ResponseDto<bool>(response.StatusCode, response.Message!);
+
+            _mapper.Map(updateAddressDto, response.Value);
+            _unitOfWork.Address.Update(response.Value);
 
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível editar o endereço. Tente Novamente.");
@@ -94,7 +105,16 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<bool> Remove(string zipCode)
         {
-            throw new NotImplementedException();
+            var response = GetCurrentAddressByZipCode(zipCode);
+
+            if (response.Value is null || response.StatusCode != StatusCodes.Status200OK)
+                return new ResponseDto<bool>(response.StatusCode, response.Message!);
+
+            _unitOfWork.Address.Remove(response.Value);
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível remover o endereço. Tente Novamente.");
+
+            return new ResponseDto<bool>(true, StatusCodes.Status200OK);
         }        
     }
 }

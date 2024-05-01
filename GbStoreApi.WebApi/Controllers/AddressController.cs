@@ -45,10 +45,10 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPut("{zipCode}")]
-        public IActionResult Update([FromBody] UpdateAddressDto updateAddressDto, [FromRoute] string zipCode)
+        [HttpPut()]
+        public IActionResult Update([FromBody] UpdateAddressDto updateAddressDto)
         {
-            var response = _addressService.Update(updateAddressDto, zipCode);
+            var response = _addressService.Update(updateAddressDto);
             return StatusCode(response.StatusCode, response);
         }
 
