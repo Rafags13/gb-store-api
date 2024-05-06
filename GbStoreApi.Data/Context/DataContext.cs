@@ -28,7 +28,7 @@ namespace GbStoreApi.Data.Context
                     Email = "admin@gmail.com", // this can be also changed or updated in future 
                     Password = "$2a$11$t6XFpMSG74tuVVOCidtmQeXdqyteWbTBIqe29uC98goiLtzqiZdzC",
                     BirthdayDate =  DateTime.Now,
-                    TypeOfUser = (int)UserType.Administrator,
+                    TypeOfUser = UserType.Administrator,
                 });
         }
     }

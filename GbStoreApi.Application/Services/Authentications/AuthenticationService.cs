@@ -55,7 +55,7 @@ namespace GbStoreApi.Application.Services.Authentications
             {
                 HttpOnly = true,
                 Secure = true,
-                Expires = refreshToken.Expires,
+                Expires = refreshToken.TokenExpires,
             }; 
 
             _context.HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);

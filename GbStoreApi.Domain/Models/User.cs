@@ -35,8 +35,7 @@ namespace GbStoreApi.Domain.Models
         public DateTime? TokenExpires { get; set; }
 
         [Required]
-        [EnumDataType(typeof(UserType))]
-        public int TypeOfUser { get; set; }
+        public UserType TypeOfUser { get; set; }
 
         public virtual ICollection<Address>? Addresses { get; set; }
     }

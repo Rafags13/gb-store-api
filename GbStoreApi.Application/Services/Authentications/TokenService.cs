@@ -57,7 +57,7 @@ namespace GbStoreApi.Application.Services.Authentication
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(7),
+                TokenExpires = DateTime.Now.AddDays(7),
             };
 
             return refreshToken;
