@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "Administrator")]
     public class BrandController : ControllerBase
     {
         private readonly IBrandService _brandService;

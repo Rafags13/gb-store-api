@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -17,7 +17,6 @@ namespace GbStoreApi.WebApi.Controllers
         {
             _userService = userService;
         }
-
         
         [HttpGet]
         public IActionResult GetAll()
@@ -33,6 +32,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator,Common")]
         [HttpGet("Current-Informations")]
         public IActionResult GetCurrentInformations()
         {
@@ -40,6 +40,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator,Common")]
         [HttpGet("Current-Role")]
         public IActionResult GetCurrentRole()
         {
@@ -47,6 +48,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator,Common")]
         [HttpPut]
         public IActionResult Update([FromBody] UpdateUserDto updateDto)
         {

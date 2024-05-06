@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     [Route("[controller]")]
     public class ColorController : ControllerBase

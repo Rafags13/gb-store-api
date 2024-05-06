@@ -32,7 +32,7 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
             return formFile.FileName;
         }
 
-        public string CreateFileSync(IFormFile formFile, string bucketName, string? prefix)
+        private string CreateFileSync(IFormFile formFile, string bucketName, string? prefix)
         {
             var randomNameFromFile = GenerateRandomName();
             var request = new PutObjectRequest()

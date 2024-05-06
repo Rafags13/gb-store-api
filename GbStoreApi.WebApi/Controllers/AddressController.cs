@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Administrator,Common")]
     [ApiController]
     public class AddressController : ControllerBase
     {
@@ -17,6 +17,8 @@ namespace GbStoreApi.WebApi.Controllers
         {
             _addressService = addressService;
         }
+
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -24,6 +26,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpGet("{id:int}")]
         public IActionResult Get(int id)
         {

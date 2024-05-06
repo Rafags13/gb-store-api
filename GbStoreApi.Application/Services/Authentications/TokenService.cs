@@ -1,7 +1,9 @@
 ﻿using GbStoreApi.Application.Extensions;
 using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Constants;
 using GbStoreApi.Domain.Dto.Authentications;
 using GbStoreApi.Domain.Dto.Users;
+using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -39,11 +41,13 @@ namespace GbStoreApi.Application.Services.Authentication
 
         private static ClaimsIdentity GenerateClaims(UserTokenDto user)
         {
+            var userType = AdminProfileConstants.USER_ID == user.Id ? UserType.Administrator : UserType.Common;
+
             var ci = new ClaimsIdentity();
             ci.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
             ci.AddClaim(new Claim(ClaimTypes.Name, user.Name));
             ci.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-            ci.AddClaim(new Claim(ClaimTypes.Role, user.TypeOfUser.ToString()));
+            ci.AddClaim(new Claim(ClaimTypes.Role, (userType).ToString()));
 
             return ci;
         }

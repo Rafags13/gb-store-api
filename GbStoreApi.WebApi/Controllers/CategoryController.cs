@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     public class CategoryController : ControllerBase
     {

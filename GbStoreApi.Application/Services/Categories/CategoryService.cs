@@ -60,7 +60,6 @@ namespace GbStoreApi.Application.Services.Categories
             return new ResponseDto<DisplayCategoryDto>(response.Value, StatusCodes.Status201Created);
         }
 
-
         public ResponseDto<DisplayCategoryDto> GetByName(string categoryName)
         {
             var currentCategory = _unitOfWork.Category.FindOne(x => x.Name == categoryName);
@@ -72,6 +71,7 @@ namespace GbStoreApi.Application.Services.Categories
 
             return new ResponseDto<DisplayCategoryDto>(category, StatusCodes.Status200OK);
         }
+
         public ResponseDto<DisplayCategoryDto> Update(UpdateCategoryDto updateCategoryDto)
         {
             var currentCategory = _unitOfWork.Category.GetOneByName(updateCategoryDto.OldCategoryName);

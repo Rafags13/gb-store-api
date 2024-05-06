@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GbStoreApi.Domain.Models;
+using GbStoreApi.Domain.enums;
 
 namespace GbStoreApi.Data.Context
 {
@@ -16,5 +17,19 @@ namespace GbStoreApi.Data.Context
         public DbSet<ProductStock> ProductStocks { get; set; }
         public DbSet<Picture> Pictures { get; set; }
         public DbSet<Address> Addresses { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(
+                new User { 
+                    Id = 1,
+                    Name = "Administrador",
+                    Cpf = "00000000000",
+                    Email = "admin@gmail.com", // this can be also changed or updated in future 
+                    Password = "$2a$11$t6XFpMSG74tuVVOCidtmQeXdqyteWbTBIqe29uC98goiLtzqiZdzC",
+                    BirthdayDate =  DateTime.Now,
+                    TypeOfUser = (int)UserType.Administrator,
+                });
+        }
     }
 }

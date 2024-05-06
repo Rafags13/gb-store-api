@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ProductController : ControllerBase
@@ -18,7 +17,7 @@ namespace GbStoreApi.WebApi.Controllers
             _productService = productService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -34,7 +33,6 @@ namespace GbStoreApi.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("Filters/{page}")]
         public IActionResult GetByFilters(
             [FromQuery] string[]? Tamanhos,
@@ -54,6 +52,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
@@ -89,7 +88,6 @@ namespace GbStoreApi.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("Informations/{productId:int}")]
         public IActionResult GetProductSpecificationById([FromRoute] int productId)
         {
@@ -105,7 +103,6 @@ namespace GbStoreApi.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("GetAllFilters")]
         public IActionResult GetAllFilters()
         {
@@ -121,7 +118,6 @@ namespace GbStoreApi.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("GetAvaliableStocks")]
         public IActionResult GetAvaliableStocks([FromBody] IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
         {

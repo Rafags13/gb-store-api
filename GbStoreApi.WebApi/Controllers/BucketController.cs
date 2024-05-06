@@ -1,12 +1,11 @@
-﻿using Amazon;
-using Amazon.S3;
+﻿using Amazon.S3;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     public class BucketController : ControllerBase
     {

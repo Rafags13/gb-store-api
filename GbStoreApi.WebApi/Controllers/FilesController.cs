@@ -1,9 +1,11 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     public class FilesController : ControllerBase
     {

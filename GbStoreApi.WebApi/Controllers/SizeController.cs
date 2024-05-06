@@ -2,11 +2,10 @@
 using GbStoreApi.Domain.Dto.Sizes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 
 namespace GbStoreApi.WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     [Route("[controller]")]
     public class SizeController : ControllerBase

@@ -57,7 +57,6 @@ namespace GbStoreApi.Application.Services.Users
 
             if (currentUser is null)
                 return new ResponseDto<User>(StatusCodes.Status404NotFound, "Não existe nenhum usuário com esse e-mail. Tente Novamente.");
-
             var passwordsMatch = BCrypt.Net.BCrypt.Verify(signInDto.Password, currentUser.Password);
 
             if (!passwordsMatch)
