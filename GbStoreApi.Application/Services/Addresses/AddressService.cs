@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Constants;
 using GbStoreApi.Domain.Dto.Address;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Models;
@@ -114,7 +115,37 @@ namespace GbStoreApi.Application.Services.Addresses
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível remover o endereço. Tente Novamente.");
 
-            return new ResponseDto<bool>(true, StatusCodes.Status200OK);
-        }        
+            return new ResponseDto<bool>(StatusCodes.Status200OK);
+        }
+
+        public ResponseDto<int> GetAddressIdByZipCode(string zipcode)
+        {
+            var currentLoggedUser = _userService.GetCurrentInformations();
+            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
+                return new ResponseDto<int>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
+
+            var currentUserId = currentLoggedUser.Value.Id;
+
+            var currentAddressId =
+                _unitOfWork
+                .Address
+                .GetAll()
+                .FirstOrDefault(predicate: x => x.ZipCode == zipcode && x.UserId == currentUserId);
+
+            if (currentAddressId is null)
+                return new ResponseDto<int>(StatusCodes.Status404NotFound, "Não foi possível encontrar o endereço.");
+
+            return new ResponseDto<int>(currentAddressId.Id, StatusCodes.Status200OK);
+        }
+
+        public ResponseDto<int> GetAddressIdFromStorePickup()
+        {
+            var address = _unitOfWork.Address.GetAll().FirstOrDefault(predicate: x => x.UserId == AdminProfileConstants.USER_ID);
+
+            if (address is null)
+                return new ResponseDto<int>(StatusCodes.Status400BadRequest, "Não foi possível buscar o endereço da loja.");
+
+            return new ResponseDto<int>(address.Id, StatusCodes.Status200OK);
+        }
     }
 }

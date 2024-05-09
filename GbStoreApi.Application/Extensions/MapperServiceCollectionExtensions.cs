@@ -5,6 +5,7 @@ using GbStoreApi.Domain.Dto.Brands;
 using GbStoreApi.Domain.Dto.Categories;
 using GbStoreApi.Domain.Dto.Colors;
 using GbStoreApi.Domain.Dto.Products;
+using GbStoreApi.Domain.Dto.Purchases;
 using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Stocks;
 using GbStoreApi.Domain.Dto.Users;
@@ -76,6 +77,13 @@ namespace GbStoreApi.Application.Extensions
 
                 #region [Product]
                 configuration.CreateMap<CreateProductDto, Product>();
+                #endregion
+
+                #region [Purchase]
+                configuration.CreateMap<BuyProductDto, Purchase>()
+                    .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.Items))
+                    .ForMember(dest => dest.FinalPrice, opt => opt.MapFrom(src => src.Items.Sum(x => x.ProductStockPrice)));
+                configuration.CreateMap<CreateOrderItemDto, OrderItems>();
                 #endregion
             });
 

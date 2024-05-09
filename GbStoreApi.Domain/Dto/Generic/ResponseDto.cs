@@ -24,6 +24,12 @@
             Message = message;
         }
 
+        public ResponseDto(int statusCode)
+        {
+            StatusCode = statusCode;
+            Value = default;
+        }
+
         public ResponseDto() 
         {
         }

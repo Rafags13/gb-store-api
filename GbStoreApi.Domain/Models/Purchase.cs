@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,6 +13,11 @@ namespace GbStoreApi.Domain.Models
 
         [ForeignKey("Address")]
         public int DeliveryAddressId { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal FinalPrice { get; set; }
+
         public virtual Address DeliveryAddress { get; set; }
 
         public string? DeliveryInstructions { get; set; }
@@ -20,15 +26,5 @@ namespace GbStoreApi.Domain.Models
 
         public virtual ICollection<OrderItems> OrderItems { get; set; }
 
-        [NotMapped]
-        public decimal FinalPrice { get {
-                var fullPrice =
-                    OrderItems
-                        .Select(x => new {
-                            PriceByProduct = x.ProductCount * x.Stock.Product.UnitaryPrice})
-                        .Sum(x => x.PriceByProduct);
-
-                return fullPrice;
-            }}
     }
 }

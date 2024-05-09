@@ -8,6 +8,8 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<bool> Create(CreateAddressDto createAddressDto);
         ResponseDto<IEnumerable<DisplayAddressDto>> GetAll();
         ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId();
+        ResponseDto<int> GetAddressIdByZipCode(string zipcode);
+        ResponseDto<int> GetAddressIdFromStorePickup();
         ResponseDto<DisplayAddressDto> GetById(int id);
         ResponseDto<bool> Update(UpdateAddressDto updateAddressDto);
         ResponseDto<bool> Remove(string zipCode);
