@@ -20,7 +20,7 @@ namespace GbStoreApi.Application.Extensions
         {
             var config = new MapperConfiguration(configuration =>
             {
-                #region Product
+                #region [Product]
                 configuration.CreateMap<Product, DisplayProductDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
                     .ForMember(member => member.PhotoUrlId, map => map.MapFrom(x => x.Pictures.FirstOrDefault().Name))
@@ -39,11 +39,11 @@ namespace GbStoreApi.Application.Extensions
                     .ReverseMap();
                 #endregion
 
-                #region Brand
+                #region [Brand]
                 configuration.CreateMap<Brand, DisplayBrandDto>();
                 #endregion
 
-                #region User
+                #region [User]
                 configuration.CreateMap<DisplayUserDto, User>();
                 configuration.CreateMap<User, DisplayUserDto>();
                 configuration.CreateMap<UserTokenDto, User>().ReverseMap();
@@ -56,22 +56,26 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<UpdateUserDto, User>();
                 #endregion
 
-                #region Size
+                #region [Size]
                 configuration.CreateMap<DisplaySizeDto, Size>().ReverseMap();
                 #endregion
 
-                #region Category
+                #region [Category]
                 configuration.CreateMap<DisplayCategoryDto, Category>().ReverseMap();
                 #endregion
 
-                #region Color
+                #region [Color]
                 configuration.CreateMap<DisplayColorDto, Color>().ReverseMap();
                 #endregion
 
-                #region Address
+                #region [Address]
                 configuration.CreateMap<Address, DisplayAddressDto>();
                 configuration.CreateMap<CreateAddressDto, Address>();
                 configuration.CreateMap<UpdateAddressDto, Address>();
+                #endregion
+
+                #region [Product]
+                configuration.CreateMap<CreateProductDto, Product>();
                 #endregion
             });
 

@@ -18,6 +18,7 @@ namespace GbStoreApi.Data.Implementation
             Brand = new BrandRepository(_context);
             Picture = new PictureRepository(_context);
             Address = new AddressRepository(_context);
+            Purchase = new PurchaseRepository(_context);
         }
 
         public IUserRepository User { get; private set; }
@@ -29,6 +30,7 @@ namespace GbStoreApi.Data.Implementation
         public IBrandRepository Brand { get; private set; }
         public IPictureRepository Picture { get; private set; }
         public IAddressRepository Address { get; private set; }
+        public IPurchaseRepository Purchase { get; private set; }
 
         public int Save()
         {

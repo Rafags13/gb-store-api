@@ -10,7 +10,7 @@ namespace GbStoreApi.Application.Interfaces
     {
         Task<bool> CreateProduct(CreateProductDto createProductDto);
         DisplayVariantsDto? GetCurrentVariants();
-        ResponseDto<IEnumerable<DisplayProductDto>>? GetAll();
+        ResponseDto<IEnumerable<DisplayProductDto>> GetAll();
         PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters);
         ProductSpecificationsDto? GetProductSpecificationById(int productId);
         DisplayFiltersDto GetAllFilters();

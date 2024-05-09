@@ -11,6 +11,7 @@
         IBrandRepository Brand { get; }
         IPictureRepository Picture { get; }
         IAddressRepository Address { get; }
+        IPurchaseRepository Purchase { get; }
 
         int Save();
     }

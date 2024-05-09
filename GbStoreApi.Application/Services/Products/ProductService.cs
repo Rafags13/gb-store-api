@@ -40,18 +40,10 @@ namespace GbStoreApi.Application.Services.Products
         }
         public async Task<bool> CreateProduct(CreateProductDto createProductDto)
         {
-            var newProduct = new Product
-            {
-                Name = createProductDto.Name,
-                Description = createProductDto.Description ?? "",
-                DiscountPercent = createProductDto.DiscountPercent ?? 0.0f,
-                QuotasNumber = createProductDto.QuotasNumber ?? 0,
-                UnitaryPrice = createProductDto.UnitaryPrice,
-                CategoryId = createProductDto.CategoryId,
-                BrandId = createProductDto.BrandId,
-            };
+            var newProduct = _mapper.Map<Product>(createProductDto);
 
             _unitOfWork.Product.Add(newProduct);
+
             if (_unitOfWork.Save() < 1)
             {
                 throw new CantCreateProductException("Não foi possível criar o produto informado.");
@@ -76,12 +68,12 @@ namespace GbStoreApi.Application.Services.Products
                 ProductId = currentProductId
             };
 
-            _pictureService.CreateMultiplePictures(picturesWithProductId);
+            _pictureService.CreateMultiplePictures(picturesWithProductId); // refactor
 
             return true;
         }
 
-        public ResponseDto<IEnumerable<DisplayProductDto>>? GetAll()
+        public ResponseDto<IEnumerable<DisplayProductDto>> GetAll()
         {
             var productsReference =
                 _unitOfWork.Product

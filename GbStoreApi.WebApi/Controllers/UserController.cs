@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GbStoreApi.WebApi.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Common,Administrator")]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -17,7 +17,8 @@ namespace GbStoreApi.WebApi.Controllers
         {
             _userService = userService;
         }
-        
+
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -25,6 +26,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpGet("{id}")]
         public IActionResult GetById(int id) 
         {
@@ -32,7 +34,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize(Roles = "Administrator,Common")]
+        [Authorize(Roles = "Common,Administrator")]
         [HttpGet("Current-Informations")]
         public IActionResult GetCurrentInformations()
         {
@@ -40,7 +42,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize(Roles = "Administrator,Common")]
+        [Authorize(Roles = "Common,Administrator")]
         [HttpGet("Current-Role")]
         public IActionResult GetCurrentRole()
         {
@@ -48,7 +50,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize(Roles = "Administrator,Common")]
+        [Authorize(Roles = "Common,Administrator")]
         [HttpPut]
         public IActionResult Update([FromBody] UpdateUserDto updateDto)
         {

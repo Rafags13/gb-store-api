@@ -8,6 +8,7 @@ using GbStoreApi.Application.Services.Categories;
 using GbStoreApi.Application.Services.Colors;
 using GbStoreApi.Application.Services.Pictures;
 using GbStoreApi.Application.Services.Products;
+using GbStoreApi.Application.Services.Purchases;
 using GbStoreApi.Application.Services.Sizes;
 using GbStoreApi.Application.Services.Stock;
 using GbStoreApi.Application.Services.Users;
@@ -59,6 +60,13 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddAddressService(this IServiceCollection servicesCollection)
     {
         servicesCollection.AddScoped<IAddressService, AddressService>();
+
+        return servicesCollection;
+    }
+
+    public static IServiceCollection AddPurchaseService(this IServiceCollection servicesCollection)
+    {
+        servicesCollection.AddScoped<IPurchaseService, PurchaseService>();
 
         return servicesCollection;
     }
