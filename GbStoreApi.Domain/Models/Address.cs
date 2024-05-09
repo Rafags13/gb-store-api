@@ -37,5 +37,7 @@ namespace GbStoreApi.Domain.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
         public User UserOwner { get; set; }
+
+        public virtual ICollection<Purchase>? PurchasesInThisAddress { get; set; }
     }
 }

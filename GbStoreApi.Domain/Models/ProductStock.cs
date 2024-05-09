@@ -23,5 +23,7 @@ namespace GbStoreApi.Domain.Models
         [ForeignKey("Size")]
         public int SizeId { get; set; }
         public Size? Size { get; set; }
+
+        public virtual ICollection<OrderItems>? OrderProductStockItems { get; set; }
     }
 }

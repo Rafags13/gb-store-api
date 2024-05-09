@@ -4,6 +4,7 @@ using GbStoreApi.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GbStoreApi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240508021334_CreatePurchaseTable")]
+    partial class CreatePurchaseTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,32 +128,6 @@ namespace GbStoreApi.Data.Migrations
                     b.ToTable("Colors");
                 });
 
-            modelBuilder.Entity("GbStoreApi.Domain.Models.OrderItems", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductStockId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PurchaseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductStockId");
-
-                    b.HasIndex("PurchaseId");
-
-                    b.ToTable("OrderItems");
-                });
-
             modelBuilder.Entity("GbStoreApi.Domain.Models.Picture", b =>
                 {
                     b.Property<int>("Id")
@@ -260,9 +237,6 @@ namespace GbStoreApi.Data.Migrations
                     b.Property<string>("DeliveryInstructions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TypeOfDelivery")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DeliveryAddressId");
@@ -338,7 +312,7 @@ namespace GbStoreApi.Data.Migrations
                         new
                         {
                             Id = 1,
-                            BirthdayDate = new DateTime(2024, 5, 8, 9, 22, 20, 907, DateTimeKind.Local).AddTicks(7902),
+                            BirthdayDate = new DateTime(2024, 5, 7, 22, 13, 34, 329, DateTimeKind.Local).AddTicks(5791),
                             Cpf = "00000000000",
                             Email = "admin@gmail.com",
                             Name = "Administrador",
@@ -357,25 +331,6 @@ namespace GbStoreApi.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("UserOwner");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.OrderItems", b =>
-                {
-                    b.HasOne("GbStoreApi.Domain.Models.ProductStock", "Stock")
-                        .WithMany("OrderProductStockItems")
-                        .HasForeignKey("ProductStockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GbStoreApi.Domain.Models.Purchase", "Purchase")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Purchase");
-
-                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Picture", b =>
@@ -438,7 +393,7 @@ namespace GbStoreApi.Data.Migrations
             modelBuilder.Entity("GbStoreApi.Domain.Models.Purchase", b =>
                 {
                     b.HasOne("GbStoreApi.Domain.Models.Address", "DeliveryAddress")
-                        .WithMany("PurchasesInThisAddress")
+                        .WithMany("Purchases")
                         .HasForeignKey("DeliveryAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -448,7 +403,7 @@ namespace GbStoreApi.Data.Migrations
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Address", b =>
                 {
-                    b.Navigation("PurchasesInThisAddress");
+                    b.Navigation("Purchases");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Brand", b =>
@@ -471,16 +426,6 @@ namespace GbStoreApi.Data.Migrations
                     b.Navigation("Pictures");
 
                     b.Navigation("Stocks");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.ProductStock", b =>
-                {
-                    b.Navigation("OrderProductStockItems");
-                });
-
-            modelBuilder.Entity("GbStoreApi.Domain.Models.Purchase", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Size", b =>
