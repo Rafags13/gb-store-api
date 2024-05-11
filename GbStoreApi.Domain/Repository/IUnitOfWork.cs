@@ -1,4 +1,6 @@
-﻿namespace GbStoreApi.Domain.Repository
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+
+namespace GbStoreApi.Domain.Repository
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -12,7 +14,7 @@
         IPictureRepository Picture { get; }
         IAddressRepository Address { get; }
         IPurchaseRepository Purchase { get; }
-
+        DatabaseFacade GetContext();
         int Save();
     }
 }

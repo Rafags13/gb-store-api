@@ -8,6 +8,7 @@ namespace GbStoreApi.Domain.Dto.Purchases
         public IEnumerable<CreateOrderItemDto> Items { get; set; }
         public string? DeliveryInstructions { get; set; }
         public DeliveryType TypeOfDelivery { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         public BuyProductDto()
         {

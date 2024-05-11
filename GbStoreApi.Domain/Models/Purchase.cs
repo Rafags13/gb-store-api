@@ -23,6 +23,7 @@ namespace GbStoreApi.Domain.Models
         public string? DeliveryInstructions { get; set; }
 
         public DeliveryType TypeOfDelivery { get; set; }
+        public PaymentMethod TypeOfPayment { get; set; }
 
         public virtual ICollection<OrderItems> OrderItems { get; set; }
 

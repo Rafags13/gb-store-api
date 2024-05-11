@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Data.Context;
 using GbStoreApi.Domain.Repository;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace GbStoreApi.Data.Implementation
 {
@@ -40,6 +41,11 @@ namespace GbStoreApi.Data.Implementation
         public void Dispose()
         {
             _context.Dispose();
+        }
+
+        public DatabaseFacade GetContext()
+        {
+            return _context.Database;
         }
     }
 }
