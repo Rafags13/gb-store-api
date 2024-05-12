@@ -81,14 +81,14 @@ namespace GbStoreApi.Application.Services.Users
             return new ResponseDto<DisplayUserDto>(displayUser, StatusCodes.Status200OK);
         }
 
-        public ResponseDto<UserType> GetUserRole()
+        public ResponseDto<string> GetUserRole()
         {
             var response = GetCurrentInformations();
 
             if (response.StatusCode != StatusCodes.Status200OK || response.Value is null)
-                return new ResponseDto<UserType>(response.StatusCode, response.Message!);
+                return new ResponseDto<string>(response.StatusCode, response.Message!);
 
-            return new ResponseDto<UserType>(response.Value.TypeOfUser, StatusCodes.Status200OK);
+            return new ResponseDto<string>(response.Value.TypeOfUser.ToString(), StatusCodes.Status200OK);
         }
 
         public ResponseDto<bool> Update(UpdateUserDto updateUserDto)

@@ -42,7 +42,7 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize(Roles = "Common,Administrator")]
+        [AllowAnonymous]
         [HttpGet("Current-Role")]
         public IActionResult GetCurrentRole()
         {
