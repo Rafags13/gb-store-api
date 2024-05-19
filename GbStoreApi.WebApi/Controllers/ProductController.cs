@@ -35,16 +35,16 @@ namespace GbStoreApi.WebApi.Controllers
 
         [HttpGet("Filters/{page}")]
         public IActionResult GetByFilters(
-            [FromQuery] string[]? Tamanhos,
-            [FromQuery] string[]? Cores,
+            [FromQuery] string[]? Sizes,
+            [FromQuery] string[]? Colors,
             [FromQuery] string? Category,
             [FromRoute] int page = 0
             )
         {
             var filters = new CatalogFilterDto { 
                 Category = Category,
-                Cores = Cores,
-                Tamanhos = Tamanhos,
+                Colors = Colors,
+                Sizes = Sizes,
                 Page = page,
                 PageSize = 20,
             };

@@ -100,8 +100,8 @@ namespace GbStoreApi.Application.Services.Products
                 .WithSizes()
                 .WithColors()
                 .FilterByCategoryIfWasInformed(filters.Category)
-                .FilterByColorsIfWereInformed(filters.Cores)
-                .FilterBySizesIfWereInformed(filters.Tamanhos);
+                .FilterByColorsIfWereInformed(filters.Colors)
+                .FilterBySizesIfWereInformed(filters.Sizes);
 
             var dontExistsProductsInThisPage = !productsFiltered.Paginate(page: filters.Page, pageSize: filters.PageSize).Any();
 
