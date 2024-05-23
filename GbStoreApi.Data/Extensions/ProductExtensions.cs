@@ -1,5 +1,7 @@
-﻿using GbStoreApi.Domain.Models;
+﻿using GbStoreApi.Domain.Enums;
+using GbStoreApi.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace GbStoreApi.Data.Extensions
 {
@@ -49,7 +51,6 @@ namespace GbStoreApi.Data.Extensions
             return products
                 .SelectMany(x => x.Stocks)
                 .GroupBy(x => x.ProductId)
-                .AsEnumerable()
                 .Where(stock =>
                     !sizes.Any() ||
                      sizes.All(sizeName => stock
@@ -64,6 +65,11 @@ namespace GbStoreApi.Data.Extensions
         public static IQueryable<Product> Paginate(this IQueryable<Product> products, int page = 0, int pageSize = 20)
         {
             return products.Skip(page * pageSize).Take(pageSize);
+        }
+
+        public static IQueryable<Product> OrderBy(this IQueryable<Product> products, string direction, string fieldName)
+        {
+            return products.OrderBy($"{fieldName} {direction}");
         }
     }
 }

@@ -63,7 +63,9 @@ app.UseFactoryActivatedMiddleware();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(config => {
+        config.DisplayRequestDuration();
+    });
 }
 
 app.UseHttpsRedirection();

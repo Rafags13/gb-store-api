@@ -14,6 +14,7 @@ using GbStoreApi.Domain.Dto.Colors;
 using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Http;
+using GbStoreApi.Domain.Enums;
 
 namespace GbStoreApi.Application.Services.Products
 {
@@ -101,7 +102,12 @@ namespace GbStoreApi.Application.Services.Products
                 .WithColors()
                 .FilterByCategoryIfWasInformed(filters.Category)
                 .FilterByColorsIfWereInformed(filters.Colors)
-                .FilterBySizesIfWereInformed(filters.Sizes);
+                .FilterBySizesIfWereInformed(filters.Sizes)
+                .OrderBy(direction: filters.Direction ?? "ascending", fieldName: filters.OrderBy ?? "");
+            // refactor this query
+
+            // Implement here a function that Recieves the name of field and orderBy it, with
+            // no conditional compensation for any existent field
 
             var dontExistsProductsInThisPage = !productsFiltered.Paginate(page: filters.Page, pageSize: filters.PageSize).Any();
 

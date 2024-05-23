@@ -2,6 +2,7 @@
 using GbStoreApi.Domain.Dto.Product.Catalogs;
 using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Dto.Stocks;
+using GbStoreApi.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,8 @@ namespace GbStoreApi.WebApi.Controllers
             [FromQuery] string[]? Sizes,
             [FromQuery] string[]? Colors,
             [FromQuery] string? Category,
+            [FromQuery] string? OrderBy,
+            [FromQuery] string? Direction,
             [FromRoute] int page = 0
             )
         {
@@ -46,6 +49,8 @@ namespace GbStoreApi.WebApi.Controllers
                 Colors = Colors,
                 Sizes = Sizes,
                 Page = page,
+                Direction = Direction,
+                OrderBy = OrderBy,
                 PageSize = 20,
             };
             var response = _productService.GetByFilters(filters);
