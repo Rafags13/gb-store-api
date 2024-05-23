@@ -14,5 +14,6 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<string> GetUserRole();
         ResponseDto<bool> Update(UpdateUserDto updateUserDto);
         ResponseDto<User> GetByCredentials(SignInDto signInDto);
+        ResponseDto<bool> UpdatePassword(UpdatePasswordDto updatePasswordDto);
     }
 }

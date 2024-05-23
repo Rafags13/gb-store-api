@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +56,18 @@ namespace GbStoreApi.WebApi.Controllers
         public IActionResult Update([FromBody] UpdateUserDto updateDto)
         {
             var response = _userService.Update(updateDto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [Authorize(Roles = "Common,Administrator")]
+        [HttpPut("Password")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<bool>))]
+        public IActionResult UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
+        {
+            var response = _userService.UpdatePassword(updatePasswordDto);
             return StatusCode(response.StatusCode, response);
         }
     }

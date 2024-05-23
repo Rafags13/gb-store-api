@@ -107,5 +107,26 @@ namespace GbStoreApi.Application.Services.Users
 
             return new ResponseDto<bool>(true, StatusCodes.Status200OK);
         }
+
+        public ResponseDto<bool> UpdatePassword(UpdatePasswordDto updatePasswordDto)
+        {
+            var currentUserResponse = GetCurrentInformations();
+
+            var currentUser = _unitOfWork.User.FindOne(x => x.Id == currentUserResponse.Value.Id);
+            if (currentUser is null)
+                return new ResponseDto<bool>(StatusCodes.Status404NotFound, "Não foi possível encontrar o usuário");
+
+            var isSamePassword = BCrypt.Net.BCrypt.Verify(updatePasswordDto.OldPassword, currentUser.Password);
+            if (!isSamePassword)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "A senha informada não é equivalente à antiga.");
+
+            currentUser.Password = BCrypt.Net.BCrypt.HashPassword(updatePasswordDto.NewPassword);
+            _unitOfWork.User.Update(currentUser);
+
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<bool>(StatusCodes.Status422UnprocessableEntity, "Não foi possível atualizar a senha.");
+
+            return new ResponseDto<bool>(StatusCodes.Status200OK);
+        }
     }
 }
