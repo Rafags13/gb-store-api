@@ -23,5 +23,12 @@ namespace GbStoreApi.WebApi.Controllers
             var response = _purchaseService.BuyProduct(buyProductDto);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var response = _purchaseService.GetAll();
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

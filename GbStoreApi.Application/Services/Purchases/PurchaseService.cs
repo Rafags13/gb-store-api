@@ -15,14 +15,17 @@ namespace GbStoreApi.Application.Services.Purchases
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAddressService _addressService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         public PurchaseService(
             IUnitOfWork unitOfWork,
             IAddressService addressService,
+            IUserService userService,
             IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _addressService = addressService;
+            _userService = userService;
             _mapper = mapper;
         }
         public ResponseDto<bool> BuyProduct(BuyProductDto buyProductDto)
@@ -48,6 +51,29 @@ namespace GbStoreApi.Application.Services.Purchases
 
             return new ResponseDto<bool>(StatusCodes.Status200OK);
                 
+        }
+
+        public ResponseDto<IEnumerable<PurchaseSpecificationDto>> GetAll()
+        {
+            var currentUser = _userService.GetCurrentInformations();
+
+            if (currentUser.StatusCode != StatusCodes.Status200OK || currentUser.Value is null)
+                return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentUser.StatusCode, currentUser.Message!);
+
+            var currentBoughts =
+                _unitOfWork.Purchase
+                .GetAll()
+                .Include(x => x.DeliveryAddress)
+                    .ThenInclude(x => x.UserOwner)
+                .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Stock)
+                        .ThenInclude(x => x.Product)
+                            .ThenInclude(x => x.Pictures)
+                .Include(x => x.OrderItems)
+                .Select(_mapper.Map<PurchaseSpecificationDto>)
+                .Where(x => x.BoughterId == currentUser.Value.Id);
+
+            return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentBoughts, StatusCodes.Status200OK);
         }
 
         private bool SomeStockIsUnavaliable(IEnumerable<CreateOrderItemDto> items)

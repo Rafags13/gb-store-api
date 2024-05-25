@@ -84,6 +84,12 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.Items))
                     .ForMember(dest => dest.FinalPrice, opt => opt.MapFrom(src => src.Items.Sum(x => x.ProductStockPrice)));
                 configuration.CreateMap<CreateOrderItemDto, OrderItems>();
+                configuration.CreateMap<Purchase, PurchaseSpecificationDto>()
+                    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
+                    .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.DeliveryAddress.ZipCode))
+                    .ForMember(dest => dest.BoughterId, opt => opt.MapFrom(src => src.DeliveryAddress.UserId))
+                    .ForMember(dest => dest.ProductUrl, opt=> opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name));
+
                 #endregion
             });
 

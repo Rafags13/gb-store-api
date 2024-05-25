@@ -6,5 +6,6 @@ namespace GbStoreApi.Application.Interfaces
     public interface IPurchaseService
     {
         ResponseDto<bool> BuyProduct(BuyProductDto buyProductDto);
+        ResponseDto<IEnumerable<PurchaseSpecificationDto>> GetAll();
     }
 }
