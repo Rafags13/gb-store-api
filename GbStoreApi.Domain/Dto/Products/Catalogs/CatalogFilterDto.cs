@@ -11,5 +11,23 @@ namespace GbStoreApi.Domain.Dto.Product.Catalogs
         public string? OrderBy { get; set; }
         public string? Direction { get; set; }
         public string? Category = string.Empty;
+
+        public void Deconstruct(
+            out int Page,
+            out int PageSize,
+            out string[]? Sizes,
+            out string[]? Colors,
+            out string? OrderBy,
+            out string? Direction,
+            out string? Category)
+        {
+            Page = this.Page;
+            PageSize = this.PageSize;
+            Sizes = this.Sizes;
+            Colors = this.Colors;
+            OrderBy = this.OrderBy;
+            Direction = this.Direction;
+            Category = this.Category;
+        }
     }
 }

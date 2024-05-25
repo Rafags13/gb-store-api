@@ -3,7 +3,6 @@ using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Authentications;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Users;
-using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;

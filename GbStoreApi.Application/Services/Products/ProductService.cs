@@ -84,8 +84,8 @@ namespace GbStoreApi.Application.Services.Products
                 .ThenInclude(color => color.Color)
                 .Include(stock => stock.Stocks)
                 .ThenInclude(size => size.Size)
-                .Paginate()
-                .Select(_mapper.Map<DisplayProductDto>) ?? Enumerable.Empty<DisplayProductDto>();
+                .Select(x => _mapper.Map<DisplayProductDto>(x))
+                .Paginate();
 
             if (!productsReference.Any())
                 return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status404NotFound, "Nenhum produto foi encontrado.");
@@ -95,48 +95,28 @@ namespace GbStoreApi.Application.Services.Products
 
         public PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters)
         {
+            (int Page, int PageSize, string[]? Sizes, string[]? Colors, string? OrderBy, string? Direction, string? Category) = filters;
+
             var productsFiltered = _unitOfWork.Product
                 .GetAll()
-                .WithPicturesFromStock()
+                .WithPictures()
                 .WithSizes()
                 .WithColors()
-                .FilterByCategoryIfWasInformed(filters.Category)
-                .FilterByColorsIfWereInformed(filters.Colors)
-                .FilterBySizesIfWereInformed(filters.Sizes)
-                .OrderBy(direction: filters.Direction ?? "ascending", fieldName: filters.OrderBy ?? "");
-            // refactor this query
-
-            // Implement here a function that Recieves the name of field and orderBy it, with
-            // no conditional compensation for any existent field
-
-            var dontExistsProductsInThisPage = !productsFiltered.Paginate(page: filters.Page, pageSize: filters.PageSize).Any();
-
-            var INITIAL_PAGE = 0;
-
-            if (dontExistsProductsInThisPage)
-                filters.Page = INITIAL_PAGE;
-
-            var totalFiltered = productsFiltered.Count();
-
-            var paginatedProducts = productsFiltered
-                .Paginate(page: filters.Page, pageSize: filters.PageSize)
-                .AsNoTracking()
-                .Select(_mapper.Map<DisplayProductDto>).ToList();
-
-            if (!paginatedProducts.Any() || paginatedProducts.Count() == 0)
-                return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
-                    StatusCodes.Status404NotFound, 
-                    "Não foi encontrado nenhum produto.",
-                    filters.Page,
-                    filters.PageSize
-                    );
+                .WithCategories()
+                .AsEnumerable()
+                .Select(_mapper.Map<DisplayProductDto>)
+                .FilterByCategoryIfWasInformed(Category)
+                .FilterByColorsIfWereInformed(Colors)
+                .FilterBySizesIfWereInformed(Sizes)
+                .OrderBy(Direction, OrderBy)
+                .Paginate(Page, PageSize);
 
             return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
-                paginatedProducts,
+                productsFiltered,
                 StatusCodes.Status200OK,
-                filters.Page,
-                filters.PageSize,
-                totalFiltered
+                Page,
+                PageSize,
+                productsFiltered.Count()
                 );
         }
 

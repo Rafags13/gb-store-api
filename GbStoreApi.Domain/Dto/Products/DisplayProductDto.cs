@@ -1,4 +1,6 @@
-﻿namespace GbStoreApi.Domain.Dto.Products
+﻿using Newtonsoft.Json;
+
+namespace GbStoreApi.Domain.Dto.Products
 {
     public class DisplayProductDto
     {
@@ -8,6 +10,10 @@
         public decimal PriceWithDiscount { get; set; }
         public float? DiscountPercent { get; set; }
         public string PhotoUrlId { get; set; } = string.Empty;
-        public IEnumerable<string>? VariantNames { get; set; } = Enumerable.Empty<string>();
+        [JsonIgnore]
+        public string Category { get; set; } = string.Empty;
+        public IEnumerable<string>? Colors { get; set; } = Enumerable.Empty<string>();
+        public IEnumerable<string>? Sizes { get; set; } = Enumerable.Empty<string>();
     }
 }
+
