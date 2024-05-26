@@ -19,5 +19,9 @@ namespace GbStoreApi.Domain.Models
             UserId = userId;
             AddressId = addressId;
         }
+        public UserAddress()
+        {
+            
+        }
     }
 }

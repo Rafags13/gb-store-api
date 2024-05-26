@@ -36,21 +36,21 @@ namespace GbStoreApi.Application.Services.Addresses
             var currentUserId = currentLoggedUser.Value.Id;
             using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
+            UserAddress newUserAddress = new();
+
             if(AddressExistsInDatabaseByZipCode(createAddressDto.ZipCode))
             {
                 var currentAddressId = _unitOfWork.Address.FindOne(x => x.ZipCode == createAddressDto.ZipCode).Id;
-                var addressToUser = new UserAddress(currentUserId, currentAddressId);
-
-                _unitOfWork.UserAddresses.Add(addressToUser);
+                newUserAddress = new UserAddress(currentUserId, currentAddressId);
             } else
             {
-                var addressWithUser = _mapper.Map<UserAddress>(new CreateUserAddressByAddress(createAddressDto), opt => opt.AfterMap((_, address) =>
+                newUserAddress = _mapper.Map<UserAddress>(new CreateUserAddressByAddress(createAddressDto), opt => opt.AfterMap((_, address) =>
                 {
                     address.UserId = currentUserId;
                 }));
-                _unitOfWork.UserAddresses.Add(addressWithUser);
             }
 
+            _unitOfWork.UserAddresses.Add(newUserAddress);
 
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível criar o novo endereço");
@@ -114,6 +114,8 @@ namespace GbStoreApi.Application.Services.Addresses
 
             if (response.Value is null || response.StatusCode != StatusCodes.Status200OK)
                 return new ResponseDto<bool>(response.StatusCode, response.Message!);
+
+            if(_unitOfWork.UserAddresses.GetAll().Select(x => x.AddressId).Where(addressId => addressId == response.Value.Id).Count() > 1)
 
             _mapper.Map(updateAddressDto, response.Value);
             _unitOfWork.Address.Update(response.Value);
