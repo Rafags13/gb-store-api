@@ -37,6 +37,11 @@ namespace GbStoreApi.Domain.Models
         [Required]
         public UserType TypeOfUser { get; set; }
 
-        public virtual ICollection<Address>? Addresses { get; set; }
+        public virtual ICollection<UserAddress> UserAddresses { get; set; }
+
+        public User()
+        {
+            UserAddresses = new List<UserAddress>();
+        }
     }
 }

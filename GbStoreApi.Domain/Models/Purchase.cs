@@ -15,9 +15,9 @@ namespace GbStoreApi.Domain.Models
         public int DeliveryAddressId { get; set; }
         public virtual Address DeliveryAddress { get; set; }
 
-        [ForeignKey("User")]
-        public int? UserId { get; set; }
-        public virtual User? Buyer { get; set; }
+        //[ForeignKey("User")]
+        //public int? UserId { get; set; }
+        //public virtual User? Buyer { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]

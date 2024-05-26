@@ -34,10 +34,12 @@ namespace GbStoreApi.Domain.Models
 
         public string? Complement { get; set; }
 
-        [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User UserOwner { get; set; }
-
         public virtual ICollection<Purchase>? PurchasesInThisAddress { get; set; }
+        public virtual ICollection<UserAddress> UserAddresses { get; set; }
+
+        public Address()
+        {
+            UserAddresses = new List<UserAddress>();
+        }
     }
 }
