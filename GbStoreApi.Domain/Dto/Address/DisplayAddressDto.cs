@@ -1,14 +1,17 @@
-﻿namespace GbStoreApi.Domain.Dto.Address
+﻿
+
+using System.Text.Json.Serialization;
+
+namespace GbStoreApi.Domain.Dto.Address
 {
-    public class DisplayAddressDto
+    public class DisplayAddressDto : BaseAddressDto
     {
         public int Id { get; set; }
-        public required string ZipCode { get; set; }
-        public required string StreetName { get; set; }
-        public required string Neighbourhood { get; set; }
-        public required string City { get; set; }
-        public required string State { get; set; }
-        public int Number { get; set; }
-        public string? Complement { get; set; }
+        [JsonIgnore]
+        public int UserId { get; set; }
+        public DisplayAddressDto() : base()
+        {
+            
+        }
     }
 }

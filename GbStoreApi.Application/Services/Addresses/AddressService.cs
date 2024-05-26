@@ -3,9 +3,11 @@ using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Constants;
 using GbStoreApi.Domain.Dto.Address;
 using GbStoreApi.Domain.Dto.Generic;
+using GbStoreApi.Domain.Dto.UserAddresses;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
 namespace GbStoreApi.Application.Services.Addresses
@@ -32,15 +34,28 @@ namespace GbStoreApi.Application.Services.Addresses
                 return new ResponseDto<bool>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
 
             var currentUserId = currentLoggedUser.Value.Id;
-            var address = _mapper.Map<Address>(createAddressDto, (opt) =>
-            {
-                opt.AfterMap((_, address) => address.UserId = currentUserId);
-            });
+            using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
-            _unitOfWork.Address.Add(address);
+            if(AddressExistsInDatabaseByZipCode(createAddressDto.ZipCode))
+            {
+                var currentAddressId = _unitOfWork.Address.FindOne(x => x.ZipCode == createAddressDto.ZipCode).Id;
+                var addressToUser = new UserAddress(currentUserId, currentAddressId);
+
+                _unitOfWork.UserAddresses.Add(addressToUser);
+            } else
+            {
+                var addressWithUser = _mapper.Map<UserAddress>(new CreateUserAddressByAddress(createAddressDto), opt => opt.AfterMap((_, address) =>
+                {
+                    address.UserId = currentUserId;
+                }));
+                _unitOfWork.UserAddresses.Add(addressWithUser);
+            }
+
 
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível criar o novo endereço");
+
+            transaction.Commit();
 
             return new ResponseDto<bool>(true, StatusCodes.Status201Created, "Endereço criado com sucesso!");
         }
@@ -64,9 +79,14 @@ namespace GbStoreApi.Application.Services.Addresses
             if (!userExists)
                 return new ResponseDto<IEnumerable<DisplayAddressDto>>(StatusCodes.Status404NotFound, "O usuário informado não existe.");
 
-            var addressesByUserId = _unitOfWork.Address.GetAll().Where(x => x.UserId == currentUserId).Select(_mapper.Map<DisplayAddressDto>);
-
-            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addressesByUserId, StatusCodes.Status200OK);
+            var addresses =
+                _unitOfWork.UserAddresses
+                    .GetAll()
+                    .Include(x => x.Address)
+                    .Select(_mapper.Map<DisplayAddressDto>)
+                    .Where(x => x.UserId == currentUserId);
+            
+            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addresses, StatusCodes.Status200OK);
         }
 
         public ResponseDto<DisplayAddressDto> GetById(int id)
@@ -82,7 +102,7 @@ namespace GbStoreApi.Application.Services.Addresses
 
             var currentUserId = currentLoggedUser.Value.Id;
 
-            var currentAddressFromUser = _unitOfWork.Address.Find(x => x.ZipCode == zipCode && x.UserId == currentUserId).SingleOrDefault();
+            var currentAddressFromUser = _unitOfWork.Address.Find(x => x.ZipCode == zipCode).SingleOrDefault();
             if (currentAddressFromUser is null)
                 return new ResponseDto<Address>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço do qual não é seu!");
 
@@ -130,7 +150,7 @@ namespace GbStoreApi.Application.Services.Addresses
                 _unitOfWork
                 .Address
                 .GetAll()
-                .FirstOrDefault(predicate: x => x.ZipCode == zipcode && x.UserId == currentUserId);
+                .FirstOrDefault(predicate: x => x.ZipCode == zipcode);
 
             if (currentAddressId is null)
                 return new ResponseDto<int>(StatusCodes.Status404NotFound, "Não foi possível encontrar o endereço.");
@@ -140,12 +160,16 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<int> GetAddressIdFromStorePickup()
         {
-            var address = _unitOfWork.Address.GetAll().FirstOrDefault(predicate: x => x.UserId == AdminProfileConstants.USER_ID);
-
-            if (address is null)
+            var addressId = _unitOfWork.UserAddresses.GetAll().FirstOrDefault(predicate: x => x.UserId == AdminProfileConstants.USER_ID)?.AddressId;
+            if (addressId is null)
                 return new ResponseDto<int>(StatusCodes.Status400BadRequest, "Não foi possível buscar o endereço da loja.");
 
-            return new ResponseDto<int>(address.Id, StatusCodes.Status200OK);
+            return new ResponseDto<int>(addressId.GetValueOrDefault(), StatusCodes.Status200OK);
+        }
+
+        private bool AddressExistsInDatabaseByZipCode(string zipCode)
+        {
+            return _unitOfWork.Address.GetAll().Any(x => x.ZipCode.Equals(zipCode));
         }
     }
 }

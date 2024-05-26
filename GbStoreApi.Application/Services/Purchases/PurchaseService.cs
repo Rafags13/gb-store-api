@@ -64,7 +64,7 @@ namespace GbStoreApi.Application.Services.Purchases
                 _unitOfWork.Purchase
                 .GetAll()
                 .Include(x => x.DeliveryAddress)
-                    .ThenInclude(x => x.UserOwner)
+                    //.ThenInclude(x => x.UserOwner)
                 .Include(x => x.OrderItems)
                     .ThenInclude(x => x.Stock)
                         .ThenInclude(x => x.Product)

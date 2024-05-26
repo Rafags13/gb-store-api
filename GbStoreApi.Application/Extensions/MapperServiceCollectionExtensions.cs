@@ -8,6 +8,7 @@ using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Dto.Purchases;
 using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Stocks;
+using GbStoreApi.Domain.Dto.UserAddresses;
 using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
@@ -70,9 +71,26 @@ namespace GbStoreApi.Application.Extensions
                 #endregion
 
                 #region [Address]
-                configuration.CreateMap<Address, DisplayAddressDto>();
-                configuration.CreateMap<CreateAddressDto, Address>();
+                configuration.CreateMap<BaseAddressDto, Address>().ReverseMap();
+
+                configuration.CreateMap<Address, DisplayAddressDto>()
+                    .IncludeBase<Address, BaseAddressDto>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                    .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                    .ReverseMap();
+
+                configuration.CreateMap<CreateAddressDto, Address>()
+                    .IncludeBase<DisplayAddressDto, Address>();
+
                 configuration.CreateMap<UpdateAddressDto, Address>();
+                #endregion
+
+                #region UserAddress
+                configuration.CreateMap<CreateUserAddressByAddress, UserAddress>();
+
+                configuration.CreateMap<UserAddress, DisplayAddressDto>()
+                    .IncludeMembers(src => src.Address)
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AddressId));
                 #endregion
 
                 #region [Product]
@@ -87,7 +105,6 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<Purchase, PurchaseSpecificationDto>()
                     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
                     .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.DeliveryAddress.ZipCode))
-                    .ForMember(dest => dest.BoughterId, opt => opt.MapFrom(src => src.DeliveryAddress.UserId))
                     .ForMember(dest => dest.ProductUrl, opt=> opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name));
 
                 #endregion
