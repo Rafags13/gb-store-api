@@ -17,6 +17,7 @@ namespace GbStoreApi.Data.Context
         public DbSet<ProductStock> ProductStocks { get; set; }
         public DbSet<Picture> Pictures { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<UserAddress> UserAddresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

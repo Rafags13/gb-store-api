@@ -14,6 +14,7 @@ namespace GbStoreApi.Domain.Repository
         IPictureRepository Picture { get; }
         IAddressRepository Address { get; }
         IPurchaseRepository Purchase { get; }
+        IUserAddressesRepository UserAddresses { get; }
         DatabaseFacade GetContext();
         int Save();
     }
