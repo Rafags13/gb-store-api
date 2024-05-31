@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GbStoreApi.Domain.Models.Purchases;
 
 namespace GbStoreApi.Domain.Models
 {
@@ -29,12 +30,6 @@ namespace GbStoreApi.Domain.Models
         [StringLength(25)]
         public string State { get; set; } = string.Empty;
 
-        [Required]
-        public int Number { get; set; }
-
-        public string? Complement { get; set; }
-
-        public virtual ICollection<Purchase>? PurchasesInThisAddress { get; set; }
         public virtual ICollection<UserAddress> UserAddresses { get; set; }
 
         public Address()

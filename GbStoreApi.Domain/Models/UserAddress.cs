@@ -1,10 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GbStoreApi.Domain.Models
 {
     public class UserAddress
     {
         public Guid Id { get; set; }
+
+        [Required]
+        public int Number { get; set; }
+
+        public string? Complement { get; set; }
 
         [ForeignKey("UserId")]
         public int UserId { get; set; }
@@ -19,6 +25,7 @@ namespace GbStoreApi.Domain.Models
             UserId = userId;
             AddressId = addressId;
         }
+
         public UserAddress()
         {
             
