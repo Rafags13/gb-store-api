@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GbStoreApi.Application.Exceptions;
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Authentications;
 using GbStoreApi.Domain.Dto.Generic;
@@ -126,6 +127,16 @@ namespace GbStoreApi.Application.Services.Users
                 return new ResponseDto<bool>(StatusCodes.Status422UnprocessableEntity, "Não foi possível atualizar a senha.");
 
             return new ResponseDto<bool>(StatusCodes.Status200OK);
+        }
+
+        public int GetLoggedUserId()
+        {
+            var currentUserIdInClaims = _context.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(currentUserIdInClaims, out int currentLoggedUserId))
+                throw new UserNotValidException("Não foi possível recuperar o usuário logado");
+
+            return currentLoggedUserId;
         }
     }
 }
