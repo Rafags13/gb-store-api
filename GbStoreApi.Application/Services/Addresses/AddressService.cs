@@ -29,11 +29,14 @@ namespace GbStoreApi.Application.Services.Addresses
         }
         public ResponseDto<bool> Create(CreateAddressDto createAddressDto)
         {
-            var currentLoggedUser = _userService.GetCurrentInformations();
-            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
-                return new ResponseDto<bool>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
+            var currentUserId = _userService.GetLoggedUserId();
+            var thisAddressAlsoBeenRegisterByUser = _unitOfWork.UserAddresses
+                .GetAll()
+                .Any(x => x.Address.ZipCode == createAddressDto.ZipCode && x.UserId == currentUserId);
 
-            var currentUserId = currentLoggedUser.Value.Id;
+            if (thisAddressAlsoBeenRegisterByUser)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Esse endereço já foi cadastrado por você.");
+
             using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
             UserAddress newUserAddress = new();
@@ -41,7 +44,13 @@ namespace GbStoreApi.Application.Services.Addresses
             if(AddressExistsInDatabaseByZipCode(createAddressDto.ZipCode))
             {
                 var currentAddressId = _unitOfWork.Address.FindOne(x => x.ZipCode == createAddressDto.ZipCode).Id;
-                newUserAddress = new UserAddress(currentUserId, currentAddressId);
+                newUserAddress = new UserAddress()
+                {
+                    AddressId = currentAddressId,
+                    UserId = currentUserId,
+                    Complement = createAddressDto.Complement,
+                    Number = createAddressDto.Number
+                };
             } else
             {
                 newUserAddress = _mapper.Map<UserAddress>(new CreateUserAddressByAddress(createAddressDto), opt => opt.AfterMap((_, address) =>

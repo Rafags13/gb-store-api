@@ -12,6 +12,7 @@ using GbStoreApi.Domain.Dto.UserAddresses;
 using GbStoreApi.Domain.Dto.Users;
 using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
+using GbStoreApi.Domain.Models.Purchases;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GbStoreApi.Application.Extensions
@@ -80,13 +81,20 @@ namespace GbStoreApi.Application.Extensions
                     .ReverseMap();
 
                 configuration.CreateMap<CreateAddressDto, Address>()
-                    .IncludeBase<DisplayAddressDto, Address>();
+                    .IncludeBase<BaseAddressDto, Address>();
 
                 configuration.CreateMap<UpdateAddressDto, Address>();
                 #endregion
 
                 #region UserAddress
-                configuration.CreateMap<CreateUserAddressByAddress, UserAddress>();
+                configuration.CreateMap<BaseAddressDto, UserAddress>();
+
+                configuration.CreateMap<CreateAddressDto, UserAddress>()
+                    .IncludeBase<BaseAddressDto, UserAddress>();
+
+                configuration.CreateMap<CreateUserAddressByAddress, UserAddress>()
+                    .IncludeMembers(dest => dest.Address)
+                    .ForMember(dest => dest.Id, opt => opt.Ignore());
 
                 configuration.CreateMap<UserAddress, DisplayAddressDto>()
                     .IncludeMembers(src => src.Address)
@@ -104,7 +112,6 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<CreateOrderItemDto, OrderItems>();
                 configuration.CreateMap<Purchase, PurchaseSpecificationDto>()
                     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
-                    .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.DeliveryAddress.ZipCode))
                     .ForMember(dest => dest.ProductUrl, opt=> opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name));
 
                 #endregion

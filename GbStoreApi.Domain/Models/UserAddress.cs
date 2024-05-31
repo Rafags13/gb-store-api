@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GbStoreApi.Domain.Models
@@ -24,6 +25,14 @@ namespace GbStoreApi.Domain.Models
         {
             UserId = userId;
             AddressId = addressId;
+        }
+
+        public UserAddress(int userId, int addressId, int number, string? complement)
+        {
+            UserId = userId;
+            AddressId = addressId;
+            Number = number;
+            Complement = complement;
         }
 
         public UserAddress()
