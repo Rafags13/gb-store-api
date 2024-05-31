@@ -99,6 +99,8 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<UserAddress, DisplayAddressDto>()
                     .IncludeMembers(src => src.Address)
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AddressId));
+
+                configuration.CreateMap<UpdateAddressDto, UserAddress>();
                 #endregion
 
                 #region [Product]

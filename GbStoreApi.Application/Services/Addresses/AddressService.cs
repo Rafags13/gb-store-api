@@ -78,15 +78,7 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId()
         {
-            var currentLoggedUser = _userService.GetCurrentInformations();
-            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
-                return new ResponseDto<IEnumerable<DisplayAddressDto>>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
-
-            var currentUserId = currentLoggedUser.Value.Id;
-
-            var userExists = _unitOfWork.User.Contains(x => x.Id == currentLoggedUser.Value.Id);
-            if (!userExists)
-                return new ResponseDto<IEnumerable<DisplayAddressDto>>(StatusCodes.Status404NotFound, "O usuário informado não existe.");
+            var currentUserId = _userService.GetLoggedUserId();
 
             var addresses =
                 _unitOfWork.UserAddresses
@@ -103,31 +95,15 @@ namespace GbStoreApi.Application.Services.Addresses
             throw new NotImplementedException();
         }
 
-        private ResponseDto<Address> GetCurrentAddressByZipCode(string zipCode)
-        {
-            var currentLoggedUser = _userService.GetCurrentInformations();
-            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
-                return new ResponseDto<Address>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
-
-            var currentUserId = currentLoggedUser.Value.Id;
-
-            var currentAddressFromUser = _unitOfWork.Address.Find(x => x.ZipCode == zipCode).SingleOrDefault();
-            if (currentAddressFromUser is null)
-                return new ResponseDto<Address>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço do qual não é seu!");
-
-            return new ResponseDto<Address>(currentAddressFromUser, StatusCodes.Status200OK);
-        }
         public ResponseDto<bool> Update(UpdateAddressDto updateAddressDto)
         {
-            var response = GetCurrentAddressByZipCode(updateAddressDto.ZipCode);
+            var userAddress = GetUserAddressIdByZipCodeAndLoggedUser(updateAddressDto.ZipCode);
 
-            if (response.Value is null || response.StatusCode != StatusCodes.Status200OK)
-                return new ResponseDto<bool>(response.StatusCode, response.Message!);
+            if (userAddress is null)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço que não é seu.");
 
-            if(_unitOfWork.UserAddresses.GetAll().Select(x => x.AddressId).Where(addressId => addressId == response.Value.Id).Count() > 1)
-
-            _mapper.Map(updateAddressDto, response.Value);
-            _unitOfWork.Address.Update(response.Value);
+            _mapper.Map(updateAddressDto, userAddress);
+            _unitOfWork.UserAddresses.Update(userAddress);
 
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível editar o endereço. Tente Novamente.");
@@ -137,12 +113,13 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<bool> Remove(string zipCode)
         {
-            var response = GetCurrentAddressByZipCode(zipCode);
+            var currentAddressToRemove = GetUserAddressIdByZipCodeAndLoggedUser(zipCode);
 
-            if (response.Value is null || response.StatusCode != StatusCodes.Status200OK)
-                return new ResponseDto<bool>(response.StatusCode, response.Message!);
+            if (currentAddressToRemove is null)
+                return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Você não pode editar um endereço que não é seu.");
 
-            _unitOfWork.Address.Remove(response.Value);
+            _unitOfWork.UserAddresses.Remove(currentAddressToRemove);
+
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível remover o endereço. Tente Novamente.");
 
@@ -151,11 +128,7 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<int> GetAddressIdByZipCode(string zipcode)
         {
-            var currentLoggedUser = _userService.GetCurrentInformations();
-            if (currentLoggedUser.StatusCode != StatusCodes.Status200OK || currentLoggedUser.Value is null)
-                return new ResponseDto<int>(StatusCodes.Status401Unauthorized, "Usuário não autorizado.");
-
-            var currentUserId = currentLoggedUser.Value.Id;
+            var currentUserId = _userService.GetLoggedUserId();
 
             var currentAddressId =
                 _unitOfWork
@@ -171,7 +144,10 @@ namespace GbStoreApi.Application.Services.Addresses
 
         public ResponseDto<int> GetAddressIdFromStorePickup()
         {
-            var addressId = _unitOfWork.UserAddresses.GetAll().FirstOrDefault(predicate: x => x.UserId == AdminProfileConstants.USER_ID)?.AddressId;
+            var addressId = _unitOfWork.UserAddresses
+                .GetAll()
+                .FirstOrDefault(predicate: x => x.UserId == AdminProfileConstants.USER_ID)?.AddressId;
+
             if (addressId is null)
                 return new ResponseDto<int>(StatusCodes.Status400BadRequest, "Não foi possível buscar o endereço da loja.");
 
@@ -181,6 +157,16 @@ namespace GbStoreApi.Application.Services.Addresses
         private bool AddressExistsInDatabaseByZipCode(string zipCode)
         {
             return _unitOfWork.Address.GetAll().Any(x => x.ZipCode.Equals(zipCode));
+        }
+
+        private UserAddress? GetUserAddressIdByZipCodeAndLoggedUser(string zipCode)
+        {
+            var currentLoggedUser = _userService.GetLoggedUserId();
+            var userAddress = _unitOfWork.UserAddresses
+                .FindOne(x => x.UserId == currentLoggedUser
+                    && x.Address.ZipCode == zipCode);
+
+            return userAddress;
         }
     }
 }
