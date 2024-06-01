@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GbStoreApi.Domain.Models;
 using GbStoreApi.Domain.enums;
+using GbStoreApi.Domain.Models.Purchases;
 
 namespace GbStoreApi.Data.Context
 {
@@ -19,6 +20,12 @@ namespace GbStoreApi.Data.Context
         public DbSet<Address> Addresses { get; set; }
         public DbSet<UserAddress> UserAddresses { get; set; }
 
+        #region [Purchases]
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<ShippingPurchase> ShippingPurchases { get; set; }
+        public DbSet<StorePickupPurchase> StorePickupPurchases { get; set; }
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
@@ -28,7 +35,7 @@ namespace GbStoreApi.Data.Context
                     Cpf = "00000000000",
                     Email = "admin@gmail.com", // this can be also changed or updated in future 
                     Password = "$2a$11$t6XFpMSG74tuVVOCidtmQeXdqyteWbTBIqe29uC98goiLtzqiZdzC",
-                    BirthdayDate =  DateTime.Now,
+                    BirthdayDate =  DateTime.MinValue,
                     TypeOfUser = UserType.Administrator,
                 });
         }

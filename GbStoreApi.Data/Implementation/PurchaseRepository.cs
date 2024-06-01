@@ -1,5 +1,5 @@
 ﻿using GbStoreApi.Data.Context;
-using GbStoreApi.Domain.Models;
+using GbStoreApi.Domain.Models.Purchases;
 using GbStoreApi.Domain.Repository;
 
 namespace GbStoreApi.Data.Implementation

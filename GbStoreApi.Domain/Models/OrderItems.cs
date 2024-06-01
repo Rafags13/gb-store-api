@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GbStoreApi.Domain.Models.Purchases;
 
 namespace GbStoreApi.Domain.Models
 {

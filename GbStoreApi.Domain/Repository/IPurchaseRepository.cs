@@ -1,5 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
-using GbStoreApi.Domain.Models;
+using GbStoreApi.Domain.Models.Purchases;
 
 namespace GbStoreApi.Domain.Repository
 {
