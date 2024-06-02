@@ -7,7 +7,7 @@ namespace GbStoreApi.Application.Interfaces
         T GetById(int id);
         IQueryable<T> GetAll();
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
-        T FindOne(Expression<Func<T, bool>> predicate);
+        T? FindOne(Expression<Func<T, bool>> predicate);
         void Add(T Entity);
         void AddRange(IEnumerable<T> entities);
         T Remove(T Entity);

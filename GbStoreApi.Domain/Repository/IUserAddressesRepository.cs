@@ -5,5 +5,6 @@ namespace GbStoreApi.Domain.Repository
 {
     public interface IUserAddressesRepository : IGenericRepository<UserAddress>
     {
+        public Guid? GetUserAddressIdByUserAndZipCode(string zipCode, int userId); 
     }
 }

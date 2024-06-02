@@ -21,6 +21,8 @@ namespace GbStoreApi.Data.Implementation
             Address = new AddressRepository(_context);
             Purchase = new PurchaseRepository(_context);
             UserAddresses = new UserAddressesRepository(_context);
+            ShippingPurchase = new ShippingPurchaseRepository(_context);
+            StorePickupPurchase = new StorePickupPurchaseRepository(_context);
         }
 
         public IUserRepository User { get; private set; }
@@ -33,6 +35,8 @@ namespace GbStoreApi.Data.Implementation
         public IPictureRepository Picture { get; private set; }
         public IAddressRepository Address { get; private set; }
         public IPurchaseRepository Purchase { get; private set; }
+        public IShippingPurchaseRepository ShippingPurchase { get; private set; }
+        public IStorePickupPurchaseRepository StorePickupPurchase { get; private set; }
         public IUserAddressesRepository UserAddresses { get; private set; }
 
         public int Save()

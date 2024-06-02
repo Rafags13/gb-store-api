@@ -31,7 +31,7 @@ namespace GbStoreApi.Data.Implementation
             return _context.Set<T>().Where(predicate);
         }
 
-        public T FindOne(Expression<Func<T, bool>> predicate)
+        public T? FindOne(Expression<Func<T, bool>> predicate)
         {
             return _context.Set<T>().FirstOrDefault(predicate);
         }
