@@ -43,7 +43,7 @@ namespace GbStoreApi.Application.Services.Addresses
 
             if(AddressExistsInDatabaseByZipCode(createAddressDto.ZipCode))
             {
-                var currentAddressId = _unitOfWork.Address.FindOne(x => x.ZipCode == createAddressDto.ZipCode).Id;
+                var currentAddressId = _unitOfWork.Address.FindOne(x => x.ZipCode == createAddressDto.ZipCode)!.Id;
                 newUserAddress = new UserAddress()
                 {
                     AddressId = currentAddressId,
@@ -133,8 +133,7 @@ namespace GbStoreApi.Application.Services.Addresses
             var currentAddressId =
                 _unitOfWork
                 .Address
-                .GetAll()
-                .FirstOrDefault(predicate: x => x.ZipCode == zipcode);
+                .FindOne(x => x.ZipCode == zipcode);
 
             if (currentAddressId is null)
                 return new ResponseDto<int>(StatusCodes.Status404NotFound, "Não foi possível encontrar o endereço.");
@@ -145,8 +144,7 @@ namespace GbStoreApi.Application.Services.Addresses
         public ResponseDto<int> GetAddressIdFromStorePickup()
         {
             var addressId = _unitOfWork.UserAddresses
-                .GetAll()
-                .FirstOrDefault(predicate: x => x.UserId == AdminProfileConstants.USER_ID)?.AddressId;
+                .FindOne(x => x.UserId == AdminProfileConstants.USER_ID)?.AddressId;
 
             if (addressId is null)
                 return new ResponseDto<int>(StatusCodes.Status400BadRequest, "Não foi possível buscar o endereço da loja.");
