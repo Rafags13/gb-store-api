@@ -4,6 +4,7 @@ using GbStoreApi.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GbStoreApi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240602201001_UpdatedUserAddressRelationToCorrectIdType")]
+    partial class UpdatedUserAddressRelationToCorrectIdType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Brand", b =>
@@ -75,7 +78,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Category", b =>
@@ -93,7 +96,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Color", b =>
@@ -111,7 +114,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Colors", (string)null);
+                    b.ToTable("Colors");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.OrderItems", b =>
@@ -140,7 +143,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("PurchaseId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Picture", b =>
@@ -163,7 +166,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Pictures", (string)null);
+                    b.ToTable("Pictures");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Product", b =>
@@ -204,7 +207,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.ProductStock", b =>
@@ -235,7 +238,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("SizeId");
 
-                    b.ToTable("ProductStocks", (string)null);
+                    b.ToTable("ProductStocks");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Purchases.Purchase", b =>
@@ -263,7 +266,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Purchases", (string)null);
+                    b.ToTable("Purchases");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Purchases.ShippingPurchase", b =>
@@ -288,7 +291,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("UserAddressId");
 
-                    b.ToTable("ShippingPurchases", (string)null);
+                    b.ToTable("ShippingPurchases");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Purchases.StorePickupPurchase", b =>
@@ -315,7 +318,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("UserBuyerId");
 
-                    b.ToTable("StorePickupPurchases", (string)null);
+                    b.ToTable("StorePickupPurchases");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.Size", b =>
@@ -333,7 +336,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sizes", (string)null);
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.User", b =>
@@ -380,7 +383,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -420,7 +423,7 @@ namespace GbStoreApi.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAddresses", (string)null);
+                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("GbStoreApi.Domain.Models.OrderItems", b =>
