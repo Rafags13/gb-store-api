@@ -108,14 +108,30 @@ namespace GbStoreApi.Application.Extensions
                 #endregion
 
                 #region [Purchase]
-                configuration.CreateMap<BuyProductDto, Purchase>()
-                    .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.Items))
-                    .ForMember(dest => dest.FinalPrice, opt => opt.MapFrom(src => src.Items.Sum(x => x.ProductStockPrice)));
                 configuration.CreateMap<CreateOrderItemDto, OrderItems>();
+
+                configuration.CreateMap<BaseBuyProductDto, Purchase>();
+
+                configuration.CreateMap<BuyProductDto, Purchase>()
+                    .IncludeBase<BaseBuyProductDto, Purchase>()
+                    .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.Items))
+                    .ForMember(dest => dest.FinalPrice, opt => opt.MapFrom(src => src.Items.Sum(item => item.ProductStockPrice * item.ProductCount)))
+                    .ForMember(dest => dest.TypeOfPayment, opt => opt.MapFrom(src => src.PaymentMethod));
+
                 configuration.CreateMap<Purchase, PurchaseSpecificationDto>()
                     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
                     .ForMember(dest => dest.ProductUrl, opt=> opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name));
 
+                #endregion
+
+                #region [StorePickupPurchase]
+                configuration.CreateMap<BuyProductDto, StorePickupPurchase>()
+                    .ForMember(dest => dest.Purchase, opt => opt.MapFrom(src => src));
+                #endregion
+
+                #region [ShippingPurchase]
+                configuration.CreateMap<BuyProductDto, ShippingPurchase>()
+                    .ForMember(dest => dest.Purchase, opt => opt.MapFrom(src => src));
                 #endregion
             });
 

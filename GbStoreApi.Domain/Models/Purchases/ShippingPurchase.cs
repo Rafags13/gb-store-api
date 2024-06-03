@@ -9,8 +9,8 @@ namespace GbStoreApi.Domain.Models.Purchases
         public string? DeliveryInstructions { get; set; }
 
         [ForeignKey("UserAddress")]
-        public int UserAddressId { get; set; }
-        public UserAddress UserOwnerAddress { get; set; } = null!;
+        public Guid UserAddressId { get; set; }
+        public virtual UserAddress UserOwnerAddress { get; set; } = null!;
 
         [ForeignKey("Purchase")]
         public int PurchaseId { get; set; }

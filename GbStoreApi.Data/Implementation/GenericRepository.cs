@@ -69,5 +69,10 @@ namespace GbStoreApi.Data.Implementation
         {
             return _context.Set<T>().Any(predicate);
         }
+
+        public void UpdateRange(IEnumerable<T> entities)
+        {
+            _context.UpdateRange(entities);
+        }
     }
 }

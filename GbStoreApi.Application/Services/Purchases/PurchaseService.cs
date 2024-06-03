@@ -3,7 +3,7 @@ using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Purchases;
 using GbStoreApi.Domain.Enums;
-using GbStoreApi.Domain.Models;
+using GbStoreApi.Domain.Models.Purchases;
 using GbStoreApi.Domain.Repository;
 using LinqKit;
 using Microsoft.AspNetCore.Http;
@@ -31,26 +31,110 @@ namespace GbStoreApi.Application.Services.Purchases
         public ResponseDto<bool> BuyProduct(BuyProductDto buyProductDto)
         {
             if (SomeStockIsUnavaliable(buyProductDto.Items))
-                return new ResponseDto<bool>(StatusCodes.Status409Conflict, "O estoque selecionado atual possui itens inválidos.");
+                return new ResponseDto<bool>(
+                    StatusCodes.Status409Conflict,
+                    "Algum dos produtos está com estoque indisponível. " +
+                    "Reinicie a página para visualizar no carrinho esse item.");
 
-            var response =
-                buyProductDto.TypeOfDelivery == DeliveryType.StorePickup ?
-                _addressService.GetAddressIdFromStorePickup() :
-                _addressService.GetAddressIdByZipCode(buyProductDto.ZipCode);
+            var loggedUserId = _userService.GetLoggedUserId();
 
-            if (response.StatusCode != StatusCodes.Status200OK)
-                return new ResponseDto<bool>(response.StatusCode, response.Message);
+            using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
-            var newPurchase = _mapper.Map<Purchase>(buyProductDto);
-            newPurchase.DeliveryAddressId = response.Value;
+            if (buyProductDto.TypeOfDelivery.Equals(DeliveryType.StorePickup))
+            {
+                var storeAddressId = _unitOfWork.Address.GetStoreAddressId();
 
-            _unitOfWork.Purchase.Add(newPurchase);
+                if (storeAddressId is null)
+                    return new ResponseDto<bool>(
+                        StatusCodes.Status400BadRequest,
+                        "Não foi possível buscar o endereço da loja. Tente Novamente.");
+
+                TryAddStorePickupPurchase(buyProductDto, loggedUserId, storeAddressId.GetValueOrDefault());
+            }
+            else
+            {
+                var userAddressId = _unitOfWork.UserAddresses.GetUserAddressIdByUserAndZipCode(
+                    zipCode: buyProductDto.SelectedZipCode ?? "",
+                    loggedUserId
+                    );
+
+                if (userAddressId is null)
+                    return new ResponseDto<bool>(
+                        StatusCodes.Status400BadRequest,
+                        "Não foi possível encontrar o endereço escolhido para entrega. Tente Novamente.");
+
+                TryAddShippingPurchase(buyProductDto, userAddressId.GetValueOrDefault());
+            }
+
+            UpdateStockItemsAfterBought(buyProductDto.Items);
 
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status422UnprocessableEntity, "Não foi possível realizar a compra.");
 
+            transaction.Commit();
+
             return new ResponseDto<bool>(StatusCodes.Status200OK);
-                
+        }
+
+        private bool SomeStockIsUnavaliable(IEnumerable<CreateOrderItemDto> items)
+        {
+            var itemsIds = items.Select(x => x.ProductStockId);
+            var hasLeastOneStockIsUnavaliable =
+                _unitOfWork.Stock
+                    .GetAll()
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Count
+                    })
+                    .Where(x => itemsIds.Contains(x.Id))
+                    .AsNoTracking()
+                    .ToList()
+                    .Zip(items)
+                    .Any((items) => 
+                        items.First.Id == items.Second.ProductStockId &&
+                        items.First.Count < items.Second.ProductCount);
+
+            return hasLeastOneStockIsUnavaliable;
+        }
+
+        private void UpdateStockItemsAfterBought(IEnumerable<CreateOrderItemDto> items)
+        {
+            var itemsIds = items.Select(x => x.ProductStockId);
+
+            var currentStockProducts =
+                _unitOfWork.Stock.GetAll()
+                .Where(x => itemsIds.Contains(x.Id));
+
+            Parallel.ForEach(currentStockProducts, x =>
+            {
+                var currentStock = items.First(itemStock => itemStock.ProductStockId == x.Id);
+
+                x.Count -= currentStock.ProductCount;
+            });
+
+            _unitOfWork.Stock.UpdateRange(currentStockProducts);
+        }
+
+        private void TryAddStorePickupPurchase(BuyProductDto buyProductDto, int loggedUserId, int storeAddressId)
+        {
+            var storePickupPurchase = _mapper.Map<StorePickupPurchase>(buyProductDto, opt => opt.AfterMap((_, purchase) =>
+            {
+                purchase.StoreAddressId = storeAddressId;
+                purchase.UserBuyerId = loggedUserId;
+            }));
+
+            _unitOfWork.StorePickupPurchase.Add(storePickupPurchase);
+        }
+
+        private void TryAddShippingPurchase(BuyProductDto buyProductDto, Guid userAddressId)
+        {
+            var shippingPurchase = _mapper.Map<ShippingPurchase>(buyProductDto, opt => opt.AfterMap((_, purchase) =>
+            {
+                purchase.UserAddressId = userAddressId;
+            }));
+
+            _unitOfWork.ShippingPurchase.Add(shippingPurchase);
         }
 
         public ResponseDto<IEnumerable<PurchaseSpecificationDto>> GetAll()
@@ -63,41 +147,14 @@ namespace GbStoreApi.Application.Services.Purchases
             var currentBoughts =
                 _unitOfWork.Purchase
                 .GetAll()
-                .Include(x => x.DeliveryAddress)
-                    //.ThenInclude(x => x.UserOwner)
                 .Include(x => x.OrderItems)
-                    .ThenInclude(x => x.Stock)
-                        .ThenInclude(x => x.Product)
-                            .ThenInclude(x => x.Pictures)
-                .Include(x => x.OrderItems)
+                .AsNoTracking()
                 .Select(_mapper.Map<PurchaseSpecificationDto>)
                 .Where(x => x.BoughterId == currentUser.Value.Id);
 
             return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentBoughts, StatusCodes.Status200OK);
         }
 
-        private bool SomeStockIsUnavaliable(IEnumerable<CreateOrderItemDto> items)
-        {
-            var itemsIds = items.Select(x => x.ProductStockId);
-            var allStockFromDatabase =
-                _unitOfWork.Stock
-                    .GetAll()
-                    .Where(x => itemsIds.Contains(x.Id))
-                    .AsNoTracking();
-
-            var unavaliable = false;
-
-            items.ForEach(item =>
-            {
-                var currentItemFromDatabase = allStockFromDatabase.FirstOrDefault(predicate: x => x.Id == item.ProductStockId);
-
-                if(item.ProductCount > currentItemFromDatabase.Id)
-                {
-                    unavaliable = true;
-                }
-            });
-
-            return unavaliable;
-        }
+        
     }
 }
