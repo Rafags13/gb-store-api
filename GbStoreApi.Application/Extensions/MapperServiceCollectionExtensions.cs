@@ -119,6 +119,10 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(dest => dest.TypeOfPayment, opt => opt.MapFrom(src => src.PaymentMethod));
 
                 configuration.CreateMap<Purchase, PurchaseSpecificationDto>()
+                    .ForMember(dest => dest.BoughterId, opt => opt.MapFrom(src =>
+                        src.ShippingPurchase != null ?
+                        src.ShippingPurchase.UserOwnerAddress.UserId :
+                        src.StorePickupPurchase.UserBuyerId))
                     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
                     .ForMember(dest => dest.ProductUrl, opt=> opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name));
 

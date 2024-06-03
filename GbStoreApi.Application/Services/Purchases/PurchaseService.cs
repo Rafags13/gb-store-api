@@ -98,24 +98,6 @@ namespace GbStoreApi.Application.Services.Purchases
             return hasLeastOneStockIsUnavaliable;
         }
 
-        private void UpdateStockItemsAfterBought(IEnumerable<CreateOrderItemDto> items)
-        {
-            var itemsIds = items.Select(x => x.ProductStockId);
-
-            var currentStockProducts =
-                _unitOfWork.Stock.GetAll()
-                .Where(x => itemsIds.Contains(x.Id));
-
-            Parallel.ForEach(currentStockProducts, x =>
-            {
-                var currentStock = items.First(itemStock => itemStock.ProductStockId == x.Id);
-
-                x.Count -= currentStock.ProductCount;
-            });
-
-            _unitOfWork.Stock.UpdateRange(currentStockProducts);
-        }
-
         private void TryAddStorePickupPurchase(BuyProductDto buyProductDto, int loggedUserId, int storeAddressId)
         {
             var storePickupPurchase = _mapper.Map<StorePickupPurchase>(buyProductDto, opt => opt.AfterMap((_, purchase) =>
@@ -137,24 +119,43 @@ namespace GbStoreApi.Application.Services.Purchases
             _unitOfWork.ShippingPurchase.Add(shippingPurchase);
         }
 
+        private void UpdateStockItemsAfterBought(IEnumerable<CreateOrderItemDto> items)
+        {
+            var itemsIds = items.Select(x => x.ProductStockId);
+
+            var currentStockProducts =
+                _unitOfWork.Stock.GetAll()
+                .Where(x => itemsIds.Contains(x.Id));
+
+            Parallel.ForEach(currentStockProducts, x =>
+            {
+                var currentStock = items.First(itemStock => itemStock.ProductStockId == x.Id);
+
+                x.Count -= currentStock.ProductCount;
+            });
+
+            _unitOfWork.Stock.UpdateRange(currentStockProducts);
+        }
+
         public ResponseDto<IEnumerable<PurchaseSpecificationDto>> GetAll()
         {
-            var currentUser = _userService.GetCurrentInformations();
-
-            if (currentUser.StatusCode != StatusCodes.Status200OK || currentUser.Value is null)
-                return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentUser.StatusCode, currentUser.Message!);
+            var currentUser = _userService.GetLoggedUserId();
 
             var currentBoughts =
                 _unitOfWork.Purchase
                 .GetAll()
                 .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Stock)
+                        .ThenInclude(x => x.Product)
+                            .ThenInclude(x => x.Pictures)
+                .Include(x => x.ShippingPurchase)
+                    .ThenInclude(x => x.UserOwnerAddress)
+                .Include(x => x.StorePickupPurchase)
                 .AsNoTracking()
                 .Select(_mapper.Map<PurchaseSpecificationDto>)
-                .Where(x => x.BoughterId == currentUser.Value.Id);
+                .Where(x => x.BoughterId == currentUser);
 
             return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentBoughts, StatusCodes.Status200OK);
         }
-
-        
     }
 }
