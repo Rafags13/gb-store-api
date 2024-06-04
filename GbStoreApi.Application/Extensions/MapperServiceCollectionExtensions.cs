@@ -28,7 +28,7 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
                     .ForMember(member => member.PhotoUrlId, map => map.MapFrom(x => x.Pictures.FirstOrDefault().Name))
                     .ForMember(member => member.Colors, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Color!.Name).Distinct()))
-                    .ForMember(member => member.Sizes, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Color!.Name).Distinct()))
+                    .ForMember(member => member.Sizes, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Size!.Name).Distinct()))
                     .ReverseMap();
 
                 configuration.CreateMap<Product, ProductSpecificationsDto>()

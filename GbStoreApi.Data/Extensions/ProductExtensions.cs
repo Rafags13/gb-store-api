@@ -1,9 +1,9 @@
 ﻿using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Enums;
 using GbStoreApi.Domain.Models;
+using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Linq.Dynamic.Core;
 
 namespace GbStoreApi.Data.Extensions
 {
@@ -67,8 +67,8 @@ namespace GbStoreApi.Data.Extensions
         {
             if (string.IsNullOrWhiteSpace(direction) || string.IsNullOrWhiteSpace(fieldName))
                 return products.OrderBy(x => x.Id);
-
-            return products.OrderBy(direction, fieldName);
+            
+            return products.AsQueryable().OrderBy($"{fieldName} {direction}");
         }
     }
 }
