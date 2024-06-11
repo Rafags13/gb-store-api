@@ -112,6 +112,12 @@ namespace GbStoreApi.Application.Extensions
 
                 configuration.CreateMap<BaseBuyProductDto, Purchase>();
 
+                configuration.CreateMap<OrderItems, DisplayPurchaseItem>()
+                    .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Stock.Product.Name))
+                    .ForMember(dest => dest.ProductUrl, opt => opt.MapFrom(src => src.Stock.Product.Pictures.First().Name))
+                    .ForMember(dest => dest.UnitaryPrice, opt => opt.MapFrom(src => src.ProductStockPrice))
+                    .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.ProductCount));
+
                 configuration.CreateMap<BuyProductDto, Purchase>()
                     .IncludeBase<BaseBuyProductDto, Purchase>()
                     .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.Items))
@@ -123,8 +129,13 @@ namespace GbStoreApi.Application.Extensions
                         src.ShippingPurchase != null ?
                         src.ShippingPurchase.UserOwnerAddress.UserId :
                         src.StorePickupPurchase.UserBuyerId))
-                    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
-                    .ForMember(dest => dest.ProductUrl, opt=> opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name));
+                    .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src =>
+                    src.ShippingPurchase != null ?
+                        src.ShippingPurchase.UserOwnerAddress.Address.ZipCode :
+                        src.StorePickupPurchase.StoreAddress.ZipCode
+                    ))
+                    .ForMember(dest => dest.PurchaseId, opt => opt.MapFrom(src => src.Id))
+                    ;
 
                 #endregion
 

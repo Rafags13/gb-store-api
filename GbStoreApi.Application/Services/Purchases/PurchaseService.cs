@@ -150,7 +150,9 @@ namespace GbStoreApi.Application.Services.Purchases
                             .ThenInclude(x => x.Pictures)
                 .Include(x => x.ShippingPurchase)
                     .ThenInclude(x => x.UserOwnerAddress)
+                        .ThenInclude(x => x.Address)
                 .Include(x => x.StorePickupPurchase)
+                    .ThenInclude(x => x.StoreAddress)
                 .AsNoTracking()
                 .Select(_mapper.Map<PurchaseSpecificationDto>)
                 .Where(x => x.BoughterId == currentUser);
