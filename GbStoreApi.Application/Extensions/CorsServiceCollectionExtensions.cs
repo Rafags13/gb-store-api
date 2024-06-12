@@ -12,7 +12,13 @@ namespace GbStoreApi.Application.Extensions
                 option.AddPolicy(corsPolicyName,
                     builder => builder.WithOrigins("http://localhost:5173")
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
+                        .WithExposedHeaders("Token")
+                        .WithHeaders(
+                            HeaderNames.AccessControlAllowCredentials,
+                            HeaderNames.AccessControlAllowOrigin,
+                            HeaderNames.ContentType,
+                            HeaderNames.Authorization)
+                        .AllowCredentials()
                     );
             });
             return serviceCollection;

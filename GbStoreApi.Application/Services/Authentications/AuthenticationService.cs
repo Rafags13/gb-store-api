@@ -53,9 +53,9 @@ namespace GbStoreApi.Application.Services.Authentications
         {
             var cookieOptions = new CookieOptions
             {
-                HttpOnly = true,
-                Secure = true,
                 Expires = refreshToken.TokenExpires,
+                SameSite = SameSiteMode.Strict,
+                HttpOnly = true
             }; 
 
             _context.HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
@@ -88,7 +88,7 @@ namespace GbStoreApi.Application.Services.Authentications
             return user != null;
         }
 
-        public string RefreshToken(int subUserId)
+        public string UpdateTokens(int subUserId)
         {
             var refreshToken = _context?.HttpContext?.Request.Cookies["refreshToken"];
             var currentUser = _unitOfWork.User.FindOne(x => x.Id == subUserId);

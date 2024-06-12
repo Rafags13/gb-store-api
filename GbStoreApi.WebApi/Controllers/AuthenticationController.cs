@@ -35,7 +35,7 @@ namespace GbStoreApi.WebApi.Controllers
         {
             try
             {
-                var newToken = _authenticationService.RefreshToken(userId);
+                var newToken = _authenticationService.UpdateTokens(userId);
 
                 return Ok(newToken);
             }
