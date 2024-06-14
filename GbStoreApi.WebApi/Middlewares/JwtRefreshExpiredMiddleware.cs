@@ -40,15 +40,15 @@ namespace GbStoreApi.WebApi.Middlewares
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var key = Encoding.ASCII.GetBytes(_jwtSettings.PrivateKey);
 
-                    var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = false,
-                    }, out SecurityToken validatedToken);
+                SecurityToken validatedToken;
 
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
                     if (validatedToken.ValidTo < DateTime.UtcNow)
                     {
                         var subId = int.Parse(principal.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
@@ -59,6 +59,8 @@ namespace GbStoreApi.WebApi.Middlewares
                     }
                 }
                 await next(context);
+
+                
             }
             catch (SecurityTokenSignatureKeyNotFoundException ex)
             {
