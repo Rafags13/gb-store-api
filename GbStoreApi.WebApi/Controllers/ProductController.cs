@@ -1,7 +1,9 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Product.Catalogs;
 using GbStoreApi.Domain.Dto.Products;
 using GbStoreApi.Domain.Dto.Stocks;
+using GbStoreApi.Domain.Dto.Stocks.Filters;
 using GbStoreApi.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,9 @@ namespace GbStoreApi.WebApi.Controllers
 
         [Authorize(Roles = "Administrator")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayProductDto>>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<IEnumerable<DisplayProductDto>>))]
         public IActionResult GetAll()
         {
             try
@@ -35,6 +40,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("Filters/{page}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayProductDto>>))]
         public IActionResult GetByFilters(
             [FromQuery] string[]? Sizes,
             [FromQuery] string[]? Colors,
@@ -57,8 +63,10 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
             try
@@ -79,6 +87,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("Current-Variants")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayVariantsDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetCurrentVariants()
         {
             try
@@ -94,6 +104,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("Informations/{productId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductSpecificationsDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetProductSpecificationById([FromRoute] int productId)
         {
             try
@@ -109,6 +121,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("GetAllFilters")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayFiltersDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetAllFilters()
         {
             try
@@ -124,6 +138,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost("GetAvaliableStocks")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<StockAvaliableByIdDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetAvaliableStocks([FromBody] IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
         {
             try

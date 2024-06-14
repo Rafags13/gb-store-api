@@ -45,10 +45,10 @@ namespace GbStoreApi.Application.Services.Products
 
             _unitOfWork.Product.Add(newProduct);
 
-            if (_unitOfWork.Save() < 1)
-            {
-                throw new CantCreateProductException("Não foi possível criar o produto informado.");
-            }
+            using var transaction = _unitOfWork.GetContext().BeginTransaction();
+
+            if (_unitOfWork.Save() == 0)
+                return false; // return new Response unprocessableentity
 
             var currentProductId = _unitOfWork.Product.FindOne(x => x.Name == createProductDto.Name).Id;
 
@@ -69,6 +69,8 @@ namespace GbStoreApi.Application.Services.Products
                 ProductId = currentProductId
             };
 
+            // Refactor this method to add all once
+
             _pictureService.CreateMultiplePictures(picturesWithProductId); // refactor
 
             return true;
@@ -87,7 +89,7 @@ namespace GbStoreApi.Application.Services.Products
                 .Select(x => _mapper.Map<DisplayProductDto>(x))
                 .Paginate();
 
-            if (!productsReference.Any())
+            if (!productsReference.Any()) // TODO: return an empty this.
                 return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status404NotFound, "Nenhum produto foi encontrado.");
 
             return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status200OK);
@@ -95,7 +97,14 @@ namespace GbStoreApi.Application.Services.Products
 
         public PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters)
         {
-            (int Page, int PageSize, string[]? Sizes, string[]? Colors, string? OrderBy, string? Direction, string? Category) = filters;
+               (int Page,
+                int PageSize,
+                string[]? Sizes,
+                string[]? Colors,
+                string? OrderBy,
+                string? Direction,
+                string? Category
+                ) = filters;
 
             var productsFiltered = _unitOfWork.Product
                 .GetAll()
