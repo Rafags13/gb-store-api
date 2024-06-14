@@ -25,38 +25,46 @@ namespace GbStoreApi.WebApi.Middlewares
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            if (context.Request.Method.Equals("OPTIONS"))
+            try
             {
-                await next(context);
-                return;
-            }
-
-            var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_jwtSettings.PrivateKey);
-
-                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                if (context.Request.Method.Equals("OPTIONS"))
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = false,
-                }, out SecurityToken validatedToken);
-
-                if (validatedToken.ValidTo < DateTime.UtcNow)
-                {
-                    var subId = int.Parse(principal.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-                    var newToken = _authenticationService.UpdateTokens(subId);
-                    context.Request.Headers.Remove("Token");
-                    context.Request.Headers.Add("Token", new StringValues(newToken));
-                    context.Response.Headers.Add("Token", new StringValues(newToken));
+                    await next(context);
+                    return;
                 }
+
+                var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes(_jwtSettings.PrivateKey);
+
+                    var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
+                    }, out SecurityToken validatedToken);
+
+                    if (validatedToken.ValidTo < DateTime.UtcNow)
+                    {
+                        var subId = int.Parse(principal.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                        var newToken = _authenticationService.UpdateTokens(subId);
+                        context.Request.Headers.Remove("Token");
+                        context.Request.Headers.Add("Token", new StringValues(newToken));
+                        context.Response.Headers.Add("Token", new StringValues(newToken));
+                    }
+                }
+                await next(context);
             }
-            await next(context);
+            catch (SecurityTokenSignatureKeyNotFoundException ex)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await next(context);
+            }
         }
 
     }

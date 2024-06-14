@@ -48,7 +48,8 @@ namespace GbStoreApi.Application.Extensions
 
                 #region [User]
                 configuration.CreateMap<DisplayUserDto, User>();
-                configuration.CreateMap<User, DisplayUserDto>();
+                configuration.CreateMap<User, DisplayUserDto>()
+                .ForMember(dest => dest.TypeOfUser, opt => opt.MapFrom(src => src.TypeOfUser.ToString()));
                 configuration.CreateMap<UserTokenDto, User>().ReverseMap();
                 configuration.CreateMap<SignUpDto, User>()
                     .ForMember(member => member.Password, map => map.MapFrom(x => BCrypt.Net.BCrypt.HashPassword(x.Password)))
