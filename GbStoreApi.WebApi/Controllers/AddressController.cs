@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Address;
+using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,7 @@ namespace GbStoreApi.WebApi.Controllers
 
         [Authorize(Roles = "Administrator")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayAddressDto>>))]
         public IActionResult GetAll()
         {
             var response = _addressService.GetAll();
@@ -28,27 +30,35 @@ namespace GbStoreApi.WebApi.Controllers
 
         [Authorize(Roles = "Administrator")]
         [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayAddressDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayAddressDto>))]
         public IActionResult Get(int id)
         {
             var response = _addressService.GetById(id);
             return StatusCode(response.StatusCode, response);
         }
 
+
         [HttpGet("GetAllByUser")]
-        public IActionResult GetByUserId()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayAddressDto>>))]
+        public IActionResult GetAllByUserId()
         {
             var response = _addressService.GetAllByUserId();
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<bool>))]
         public IActionResult Post([FromBody] CreateAddressDto createAddressDto)
         {
             var response = _addressService.Create(createAddressDto);
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPut()]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<bool>))]
         public IActionResult Update([FromBody] UpdateAddressDto updateAddressDto)
         {
             var response = _addressService.Update(updateAddressDto);
@@ -56,6 +66,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpDelete("{zipCode}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<bool>))]
         public IActionResult Remove([FromRoute] string zipCode)
         {
             var response = _addressService.Remove(zipCode);
