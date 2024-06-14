@@ -41,7 +41,7 @@ namespace GbStoreApi.Application.Services.Brands
 
             var response = _mapper.Map<DisplayBrandDto>(currentAddedBrand);
 
-            return new ResponseDto<DisplayBrandDto>(response, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayBrandDto>(response, StatusCodes.Status201Created);
         }
 
         public ResponseDto<IEnumerable<DisplayBrandDto>> GetAll()

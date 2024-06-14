@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Categories;
+using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayCategoryDto>>))]
         public IActionResult GetAll()
         {
             var response = _categoryService.GetAll();
@@ -25,6 +27,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayCategoryDto>))]
         public IActionResult GetById(int id) 
         {
             var response = _categoryService.GetById(id);
@@ -33,6 +37,10 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayCategoryDto>))]
         public IActionResult Create([FromBody] string categoryName)
         {
             var response = _categoryService.Create(categoryName);
@@ -41,6 +49,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayCategoryDto>))]
         public IActionResult Update([FromBody] UpdateCategoryDto updateCategoryDto)
         {
             var response = _categoryService.Update(updateCategoryDto);
@@ -49,6 +60,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayCategoryDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayCategoryDto>))]
         public IActionResult Delete([FromRoute] int id)
         {
             var response = _categoryService.Delete(id);

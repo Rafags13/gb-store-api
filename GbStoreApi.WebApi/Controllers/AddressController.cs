@@ -48,7 +48,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ResponseDto<bool>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<bool>))]
         public IActionResult Post([FromBody] CreateAddressDto createAddressDto)
         {

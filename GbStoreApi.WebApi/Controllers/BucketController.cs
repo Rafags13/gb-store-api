@@ -17,6 +17,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
         public async Task<IActionResult> ListAllBuckets()
         {   
             var data = await _amazonS3Service.ListBucketsAsync();

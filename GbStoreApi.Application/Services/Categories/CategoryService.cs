@@ -50,14 +50,17 @@ namespace GbStoreApi.Application.Services.Categories
             var newCategory = new Category { Name = categoryName };
 
             _unitOfWork.Category.Add(newCategory);
-            _unitOfWork.Save();
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayCategoryDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível adicionar a Categoria.");
 
-            var response = GetByName(categoryName);
+            var currentAddedCategory = _unitOfWork.Category.GetOneByName(categoryName);
 
-            if (response.StatusCode != StatusCodes.Status200OK || response.Value is null)
-                return new ResponseDto<DisplayCategoryDto>(response.StatusCode, response.Message!);
+            if (currentAddedCategory == null)
+                return new ResponseDto<DisplayCategoryDto>(StatusCodes.Status404NotFound, "Não foi possível encontrar a recém adicionada Categoria.");
 
-            return new ResponseDto<DisplayCategoryDto>(response.Value, StatusCodes.Status201Created);
+            var response = _mapper.Map<DisplayCategoryDto>(currentAddedCategory);
+
+            return new ResponseDto<DisplayCategoryDto>(response, StatusCodes.Status201Created);
         }
 
         public ResponseDto<DisplayCategoryDto> GetByName(string categoryName)
@@ -82,7 +85,10 @@ namespace GbStoreApi.Application.Services.Categories
             currentCategory.Name = updateCategoryDto.NewCategoryName;
 
             var updatedCategory = _unitOfWork.Category.Update(currentCategory);
-            _unitOfWork.Save();
+
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayCategoryDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível atualizar a categoria.");
+
             var categoryToResponse = _mapper.Map<DisplayCategoryDto>(updatedCategory);
 
             return new ResponseDto<DisplayCategoryDto>(categoryToResponse, StatusCodes.Status200OK);

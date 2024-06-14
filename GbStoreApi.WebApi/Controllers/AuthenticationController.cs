@@ -26,7 +26,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost("Register")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<string>))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ResponseDto<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<string>))]
         public IActionResult SignUp([FromBody] SignUpDto signUpDto)
         {

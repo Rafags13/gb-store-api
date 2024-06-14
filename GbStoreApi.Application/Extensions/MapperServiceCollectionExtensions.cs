@@ -43,7 +43,7 @@ namespace GbStoreApi.Application.Extensions
                 #endregion
 
                 #region [Brand]
-                configuration.CreateMap<Brand, DisplayBrandDto>();
+                configuration.CreateMap<Brand, DisplayBrandDto>().ReverseMap();
                 #endregion
 
                 #region [User]

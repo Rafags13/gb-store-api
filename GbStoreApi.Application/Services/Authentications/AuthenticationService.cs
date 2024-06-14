@@ -78,7 +78,7 @@ namespace GbStoreApi.Application.Services.Authentications
             if (_unitOfWork.Save() <= 0)
                 return new ResponseDto<string>(StatusCodes.Status400BadRequest, "Não foi possível adicionar esse usuário ao sistema.");
             
-            return new ResponseDto<string>(StatusCodes.Status200OK, "Usuário adicionado com sucesso!");
+            return new ResponseDto<string>(StatusCodes.Status201Created, "Usuário adicionado com sucesso!");
         }
 
         private bool UserAlsoExists(string cpf, string email)
