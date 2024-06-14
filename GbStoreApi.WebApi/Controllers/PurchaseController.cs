@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Purchases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<bool>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<bool>))]
         public IActionResult BuyProduct([FromBody] BuyProductDto buyProductDto)
         {
             var response = _purchaseService.BuyProduct(buyProductDto);
@@ -25,6 +29,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<PurchaseSpecificationDto>>))]
         public IActionResult GetAll()
         {
             var response = _purchaseService.GetAll();
