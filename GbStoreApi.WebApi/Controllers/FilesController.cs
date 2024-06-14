@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Dto.AmazonBuckets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Task<IEnumerable<S3ObjectDto>>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> GettAllFilesAsync(string bucketName, string? prefix)
         {
             try
@@ -34,6 +38,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("{bucketName}/{key}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileStreamResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> GetFileById(string bucketName, string key)
         {
             try
@@ -51,6 +58,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("With-Url")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(S3ObjectDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> GetFileWithUrl(string bucketName, string key)
         {
             try
@@ -68,6 +78,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> UploadFileAsync(IFormFile formFile, string bucketName, string? prefix)
         {
             try
