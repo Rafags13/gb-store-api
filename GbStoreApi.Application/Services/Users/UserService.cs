@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using GbStoreApi.Application.Exceptions;
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Authentications;
@@ -81,14 +82,23 @@ namespace GbStoreApi.Application.Services.Users
             return new ResponseDto<DisplayUserDto>(displayUser, StatusCodes.Status200OK);
         }
 
-        public ResponseDto<string> GetUserRole()
+        public ResponseDto<string?> GetUserRole()
         {
-            var response = GetCurrentInformations();
+            try
+            {
+                var currentUserId = GetLoggedUserId();
 
-            if (response.StatusCode != StatusCodes.Status200OK || response.Value is null)
-                return new ResponseDto<string>(response.StatusCode, response.Message!);
+                var currentUser = _unitOfWork.User.FindOne(x => x.Id == currentUserId);
 
-            return new ResponseDto<string>(response.Value.TypeOfUser.ToString(), StatusCodes.Status200OK);
+                if (currentUser is null)
+                    return new ResponseDto<string?>(StatusCodes.Status404NotFound, "Não foi possível encontrar o usuário.");
+
+                return new ResponseDto<string?>(currentUser.TypeOfUser.ToString(), StatusCodes.Status200OK);
+            }
+            catch (UserNotValidException)
+            {
+                return new ResponseDto<string?>(StatusCodes.Status200OK, null);
+            }
         }
 
         public ResponseDto<bool> Update(UpdateUserDto updateUserDto)
