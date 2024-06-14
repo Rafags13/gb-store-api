@@ -25,23 +25,23 @@ namespace GbStoreApi.Application.Services.Brands
         public ResponseDto<DisplayBrandDto> Create(string brandName)
         {
             var newBrand = new Brand { Name = brandName };
-            if (BrandExists(brandName))
+
+            if (_unitOfWork.Brand.Contains(x => x.Name == brandName))
                 return new ResponseDto<DisplayBrandDto>(StatusCodes.Status400BadRequest, "A marca informada já existe no sistema.");
 
             _unitOfWork.Brand.Add(newBrand);
-            _unitOfWork.Save();
 
-            var response = GetByName(newBrand.Name);
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível adicionar a marca.");
 
-            if (response.StatusCode != StatusCodes.Status200OK || response.Value is null)
-                return new ResponseDto<DisplayBrandDto>(response.StatusCode, response.Message!);
+            var currentAddedBrand = _unitOfWork.Brand.GetByName(brandName);
 
-            return new ResponseDto<DisplayBrandDto>(response.Value, StatusCodes.Status200OK);
-        }
+            if(currentAddedBrand == null)
+                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status404NotFound, "Não foi buscar a marca recém adicionada.");
 
-        private bool BrandExists(string brandName)
-        {
-            return _unitOfWork.Brand.Contains(x => x.Name == brandName);
+            var response = _mapper.Map<DisplayBrandDto>(currentAddedBrand);
+
+            return new ResponseDto<DisplayBrandDto>(response, StatusCodes.Status200OK);
         }
 
         public ResponseDto<IEnumerable<DisplayBrandDto>> GetAll()
@@ -85,6 +85,9 @@ namespace GbStoreApi.Application.Services.Brands
             currentBrand.Name = updateBrandDto.OldBrandName;
 
             var updatedBrand = _unitOfWork.Brand.Update(currentBrand);
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível alterar o nome da marca.");
+
             var brandToResponse = _mapper.Map<DisplayBrandDto>(updatedBrand);
 
             return new ResponseDto<DisplayBrandDto>(brandToResponse, StatusCodes.Status200OK);
@@ -102,8 +105,8 @@ namespace GbStoreApi.Application.Services.Brands
             if (currentBrand is null)
                 return new ResponseDto<DisplayBrandDto>(StatusCodes.Status404NotFound, "Não existe nenhuma marca com esse Id.");
 
-            if(currentBrand.Products is null)
-                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status404NotFound,
+            if(currentBrand.Products is not null)
+                return new ResponseDto<DisplayBrandDto>(StatusCodes.Status400BadRequest,
                     "Não é possível excluir essa marca, pois ela está ligada a um produto. Exclua essa ligação para poder removê-la.");
 
             var deletedBrand = _unitOfWork.Brand.Remove(currentBrand);

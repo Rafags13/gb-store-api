@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Brands;
+using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayBrandDto>>))]
         public IActionResult GetAll()
         {
             var response = _brandService.GetAll();
@@ -24,6 +26,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayBrandDto>))]
         public IActionResult GetById([FromRoute] int id)
         {
             var response = _brandService.GetById(id);
@@ -31,6 +35,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("{name}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayBrandDto>))]
         public IActionResult GetByName([FromRoute] string name)
         {
             var response = _brandService.GetByName(name);
@@ -38,6 +44,10 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayBrandDto>))]
         public IActionResult Create([FromBody] string brandName)
         {
             var response = _brandService.Create(brandName);
@@ -45,6 +55,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayBrandDto>))]
         public IActionResult Update([FromBody] UpdateBrandDto updateBrandDto)
         {
             var response = _brandService.Update(updateBrandDto);
@@ -52,6 +65,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayBrandDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayBrandDto>))]
         public IActionResult Delete([FromRoute] int id)
         {
             var response = _brandService.Delete(id);
