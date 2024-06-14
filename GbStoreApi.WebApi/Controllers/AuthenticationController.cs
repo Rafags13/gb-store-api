@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Authentications;
+using GbStoreApi.Domain.Dto.Generic;
 
 namespace GbStoreApi.WebApi.Controllers
 {
@@ -15,6 +16,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost("Login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<string>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<string>))]
         public IActionResult SignIn([FromBody] SignInDto signInDto)
         {
             var response = _authenticationService.SignIn(signInDto);
@@ -23,6 +26,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost("Register")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<string>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<string>))]
         public IActionResult SignUp([FromBody] SignUpDto signUpDto)
         {
             var response = _authenticationService.SignUp(signUpDto);
@@ -31,6 +36,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost("Refresh-Token/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult Refresh(int userId)
         {
             try
