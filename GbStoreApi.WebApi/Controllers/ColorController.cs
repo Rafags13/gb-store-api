@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Colors;
+using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayColorDto>>))]
         public IActionResult GetAll()
         {
             var response = _colorService.GetAll();
@@ -25,6 +27,8 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayColorDto>))]
         public IActionResult Get(int id)
         {
             var response = _colorService.GetById(id);
@@ -33,6 +37,10 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayColorDto>))]
         public IActionResult Create([FromBody] string colorName)
         {
             var response = _colorService.CreateColor(colorName);
@@ -41,6 +49,9 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayColorDto>))]
         public IActionResult Update([FromBody] UpdateColorDto updateColorDto)
         {
             var response = _colorService.Update(updateColorDto);
@@ -49,6 +60,10 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<DisplayColorDto>))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ResponseDto<DisplayColorDto>))]
         public IActionResult Delete(int id) 
         {
             var response = _colorService.Delete(id);

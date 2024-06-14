@@ -29,10 +29,17 @@ namespace GbStoreApi.Application.Services.Colors
                 return new ResponseDto<DisplayColorDto>(StatusCodes.Status400BadRequest, "A cor informada já existe no sistema.");
             
             var newColor = new Color { Name = colorName };
+
             _unitOfWork.Color.Add(newColor);
-            _unitOfWork.Save();
+
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível adicionar a cor.");
 
             var currentColor = _unitOfWork.Color.GetByName(colorName);
+
+            if (currentColor is null)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status404NotFound, "Não foi buscar a cor recém adicionada.");
+
             var createdColor = _mapper.Map<DisplayColorDto>(currentColor);
 
             return new ResponseDto<DisplayColorDto>(createdColor, StatusCodes.Status200OK);
@@ -55,7 +62,9 @@ namespace GbStoreApi.Application.Services.Colors
                     "A cor selecionada está relacionada a outros produtos. Delete a relação para remover esta cor.");
 
             var removedColor = _unitOfWork.Color.Remove(currentColor);
-            _unitOfWork.Save();
+
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível excluir a cor selecionada.");
 
             var colorToResponse = _mapper.Map<DisplayColorDto>(removedColor);
 
@@ -102,7 +111,8 @@ namespace GbStoreApi.Application.Services.Colors
 
             currentColor.Name = updateColorDto.NewColorName;
             var updatedColor = _unitOfWork.Color.Update(currentColor);
-            _unitOfWork.Save();
+            if (_unitOfWork.Save() == 0)
+                return new ResponseDto<DisplayColorDto>(StatusCodes.Status422UnprocessableEntity, "Não foi possível atualizar a cor.");
             
             var colorToResponse = _mapper.Map<DisplayColorDto>(updatedColor);
 
