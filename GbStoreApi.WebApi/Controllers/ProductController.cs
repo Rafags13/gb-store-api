@@ -41,7 +41,7 @@ namespace GbStoreApi.WebApi.Controllers
 
         [HttpGet("Filters/{page}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<DisplayProductDto>>))]
-        public IActionResult GetByFilters(
+        public async Task<IActionResult> GetByFilters(
             [FromQuery] string[]? Sizes,
             [FromQuery] string[]? Colors,
             [FromQuery] string? Category,
@@ -59,7 +59,7 @@ namespace GbStoreApi.WebApi.Controllers
                 OrderBy = OrderBy,
                 PageSize = 20,
             };
-            var response = _productService.GetByFilters(filters);
+            var response = await _productService.GetByFilters(filters);
             return StatusCode(response.StatusCode, response);
         }
 

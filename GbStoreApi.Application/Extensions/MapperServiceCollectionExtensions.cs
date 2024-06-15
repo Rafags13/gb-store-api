@@ -24,12 +24,12 @@ namespace GbStoreApi.Application.Extensions
             var config = new MapperConfiguration(configuration =>
             {
                 #region [Product]
-                configuration.CreateMap<Product, DisplayProductDto>()
+                configuration.CreateProjection<Product, DisplayProductDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
                     .ForMember(member => member.PhotoUrlId, map => map.MapFrom(x => x.Pictures.FirstOrDefault().Name))
+                    .ForMember(member => member.Category, map => map.MapFrom(x => x.Category.Name))
                     .ForMember(member => member.Colors, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Color!.Name).Distinct()))
-                    .ForMember(member => member.Sizes, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Size!.Name).Distinct()))
-                    .ReverseMap();
+                    .ForMember(member => member.Sizes, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Size!.Name).Distinct()));
 
                 configuration.CreateMap<Product, ProductSpecificationsDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
@@ -40,6 +40,8 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(member => member.StockId, map => map.MapFrom(x => x.Id))
                     .ForMember(member => member.Amount, map => map.MapFrom(x => x.Count))
                     .ReverseMap();
+
+                configuration.CreateMap<CreateProductDto, Product>();
                 #endregion
 
                 #region [Brand]
@@ -102,10 +104,6 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AddressId));
 
                 configuration.CreateMap<UpdateAddressDto, UserAddress>();
-                #endregion
-
-                #region [Product]
-                configuration.CreateMap<CreateProductDto, Product>();
                 #endregion
 
                 #region [Purchase]

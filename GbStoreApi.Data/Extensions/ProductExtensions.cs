@@ -33,7 +33,7 @@ namespace GbStoreApi.Data.Extensions
             return products.Include(x => x.Category);
         }
 
-        public static IEnumerable<DisplayProductDto> FilterByCategoryIfWasInformed(this IEnumerable<DisplayProductDto> products, string? categoryName)
+        public static IQueryable<DisplayProductDto> FilterByCategoryIfWasInformed(this IQueryable<DisplayProductDto> products, string? categoryName)
         {
             if (string.IsNullOrWhiteSpace(categoryName))
                 return products;
@@ -42,33 +42,40 @@ namespace GbStoreApi.Data.Extensions
                 .Where(x => x.Category == categoryName);
         }
 
-        public static IEnumerable<DisplayProductDto> FilterByColorsIfWereInformed(this IEnumerable<DisplayProductDto> products, string[]? colors)
+        public static IQueryable<DisplayProductDto> FilterByColorsIfWereInformed(this IQueryable<DisplayProductDto> products, string[]? colors)
         {
             if (colors is null || !colors.Any())
                 return products;
 
-            return products.Where(product => colors.All(colorName => product.Colors.Contains(colorName)));
+            return products.Where(product => product.Colors.Any(x => colors.Contains(x)));
         }
 
-        public static IEnumerable<DisplayProductDto> FilterBySizesIfWereInformed(this IEnumerable<DisplayProductDto> products, string[]? sizes)
+        public static IQueryable<DisplayProductDto> FilterBySizesIfWereInformed(this IQueryable<DisplayProductDto> products, string[]? sizes)
         {
             if(sizes is null || !sizes.Any())
                 return products;
 
-            return products.Where(product => sizes.All(sizeName => product.Sizes.Contains(sizeName)));
+            return products.Where(product => product.Sizes.Any(x => sizes.Contains(x)));
         }
         
-        public static IEnumerable<DisplayProductDto> Paginate(this IEnumerable<DisplayProductDto> products, int page = 0, int pageSize = 20)
+        public static IQueryable<DisplayProductDto> Paginate(this IQueryable<DisplayProductDto> products, int page = 0, int pageSize = 20)
         {
             return products.Skip(page * pageSize).Take(pageSize);
         }
 
-        public static IEnumerable<DisplayProductDto> OrderBy(this IEnumerable<DisplayProductDto> products, string? direction, string? fieldName)
+        public static IQueryable<DisplayProductDto> OrderBy(this IQueryable<DisplayProductDto> products, string? direction, string? fieldName)
         {
             if (string.IsNullOrWhiteSpace(direction) || string.IsNullOrWhiteSpace(fieldName))
                 return products.OrderBy(x => x.Id);
             
             return products.AsQueryable().OrderBy($"{fieldName} {direction}");
+        }
+
+        public static IQueryable<DisplayProductDto> Count(this IQueryable<DisplayProductDto> products, out int count)
+        {
+            count = products.Count();
+
+            return products;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace GbStoreApi.Application.Interfaces
         Task<bool> CreateProduct(CreateProductDto createProductDto);
         DisplayVariantsDto? GetCurrentVariants();
         ResponseDto<IEnumerable<DisplayProductDto>> GetAll();
-        PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters);
+        Task<PaginatedResponseDto<IEnumerable<DisplayProductDto>>> GetByFilters(CatalogFilterDto filters);
         ProductSpecificationsDto? GetProductSpecificationById(int productId);
         DisplayFiltersDto GetAllFilters();
         IEnumerable<StockAvaliableByIdDto> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos);

@@ -15,6 +15,7 @@ using GbStoreApi.Domain.Dto.Sizes;
 using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Http;
 using GbStoreApi.Domain.Enums;
+using AutoMapper.QueryableExtensions;
 
 namespace GbStoreApi.Application.Services.Products
 {
@@ -95,7 +96,7 @@ namespace GbStoreApi.Application.Services.Products
             return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status200OK);
         }
 
-        public PaginatedResponseDto<IEnumerable<DisplayProductDto>> GetByFilters(CatalogFilterDto filters)
+        public async Task<PaginatedResponseDto<IEnumerable<DisplayProductDto>>> GetByFilters(CatalogFilterDto filters)
         {
                (int Page,
                 int PageSize,
@@ -106,26 +107,27 @@ namespace GbStoreApi.Application.Services.Products
                 string? Category
                 ) = filters;
 
-            var productsFiltered = _unitOfWork.Product
+            var productsFiltered = await _unitOfWork.Product
                 .GetAll()
                 .WithPictures()
                 .WithSizes()
                 .WithColors()
                 .WithCategories()
-                .AsEnumerable()
-                .Select(_mapper.Map<DisplayProductDto>)
+                .ProjectTo<DisplayProductDto>(_mapper.ConfigurationProvider)
                 .FilterByCategoryIfWasInformed(Category)
                 .FilterByColorsIfWereInformed(Colors)
                 .FilterBySizesIfWereInformed(Sizes)
                 .OrderBy(Direction, OrderBy)
-                .Paginate(Page, PageSize);
+                .Count(out int count)
+                .Paginate(Page, PageSize)
+                .ToListAsync();
 
             return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
                 productsFiltered,
                 StatusCodes.Status200OK,
                 Page,
                 PageSize,
-                productsFiltered.Count()
+                count
                 );
         }
 

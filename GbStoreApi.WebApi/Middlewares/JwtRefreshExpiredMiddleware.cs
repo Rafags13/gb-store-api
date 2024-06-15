@@ -62,7 +62,7 @@ namespace GbStoreApi.WebApi.Middlewares
 
                 
             }
-            catch (SecurityTokenSignatureKeyNotFoundException ex)
+            catch (Exception ex) when (ex is SecurityTokenSignatureKeyNotFoundException || ex is UnauthorizedAccessException)
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await next(context);
