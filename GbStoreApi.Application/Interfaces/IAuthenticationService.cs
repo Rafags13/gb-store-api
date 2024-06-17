@@ -7,6 +7,6 @@ namespace GbStoreApi.Application.Interfaces
     {
         ResponseDto<string> SignIn(SignInDto signInDto);
         ResponseDto<string> SignUp(SignUpDto signUpDto);
-        string UpdateTokens(int subUserId);
+        ResponseDto<string> UpdateTokens(int subUserId);
     }
 }

@@ -40,16 +40,9 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult Refresh(int userId)
         {
-            try
-            {
-                var newToken = _authenticationService.UpdateTokens(userId);
+            var response = _authenticationService.UpdateTokens(userId);
 
-                return Ok(newToken);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

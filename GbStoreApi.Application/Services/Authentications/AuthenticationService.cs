@@ -88,28 +88,27 @@ namespace GbStoreApi.Application.Services.Authentications
             return user != null;
         }
 
-        public string UpdateTokens(int subUserId)
+        public ResponseDto<string> UpdateTokens(int subUserId)
         {
             var refreshToken = _context?.HttpContext?.Request.Cookies["refreshToken"];
             var currentUser = _unitOfWork.User.FindOne(x => x.Id == subUserId);
 
-            if (!currentUser.RefreshToken.Equals(refreshToken))
-            {
-                throw new UnauthorizedAccessException("Você não possui acesso ao sistema.");
-            }
+            if(currentUser is null)
+                return new(StatusCodes.Status401Unauthorized, "Não existe nenhum usuário no sistema com essa identificação.");
 
+            if (currentUser.RefreshToken!.Equals(refreshToken))
+                return new(StatusCodes.Status401Unauthorized, "Você não possui acesso ao sistema.");
+            
             if (currentUser.TokenExpires < DateTime.Now)
-            {
-                throw new UnauthorizedAccessException("Seu tempo de sessão acabou. Entre novamente.");
-            }
-
+                return new(StatusCodes.Status401Unauthorized, "Seu tempo de sessão acabou. Entre novamente.");
+            
             var userToken = _mapper.Map<UserTokenDto>(currentUser);
             string newToken = _tokenService.Generate(userToken);
 
             var newRefreshToken = _tokenService.GenerateRefresh();
             SetRefreshToken(newRefreshToken, subUserId);
 
-            return newToken;
+            return new(StatusCodes.Status200OK, newToken);
         }
     }
 }

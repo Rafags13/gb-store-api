@@ -51,11 +51,16 @@ namespace GbStoreApi.WebApi.Middlewares
 
                     if (validatedToken.ValidTo < DateTime.UtcNow)
                     {
-                        var subId = int.Parse(principal.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-                        var newToken = _authenticationService.UpdateTokens(subId);
+                        var subId = int.Parse(principal.Identities.First().Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+
+                        var response = _authenticationService.UpdateTokens(subId);
+
+                        if (response.StatusCode != StatusCodes.Status200OK)
+                            throw new UnauthorizedAccessException(response.Message);
+
                         context.Request.Headers.Remove("Token");
-                        context.Request.Headers.Add("Token", new StringValues(newToken));
-                        context.Response.Headers.Add("Token", new StringValues(newToken));
+                        context.Request.Headers.Add("Token", new StringValues(response.Value));
+                        context.Response.Headers.Add("Token", new StringValues(response.Value));
                     }
                 }
                 await next(context);
