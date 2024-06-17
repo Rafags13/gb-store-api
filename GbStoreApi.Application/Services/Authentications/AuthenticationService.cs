@@ -46,7 +46,7 @@ namespace GbStoreApi.Application.Services.Authentications
 
             SetRefreshToken(refreshToken, currentUser.Value.Id);
 
-            return new ResponseDto<string>(token, StatusCodes.Status200OK);
+            return new ResponseDto<string>(token);
         }
 
         private void SetRefreshToken(RefreshToken refreshToken, int userId)

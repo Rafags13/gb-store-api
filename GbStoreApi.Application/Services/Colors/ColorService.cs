@@ -42,7 +42,7 @@ namespace GbStoreApi.Application.Services.Colors
 
             var createdColor = _mapper.Map<DisplayColorDto>(currentColor);
 
-            return new ResponseDto<DisplayColorDto>(createdColor, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayColorDto>(createdColor);
         }
 
         public ResponseDto<DisplayColorDto> Delete(int id)
@@ -68,14 +68,14 @@ namespace GbStoreApi.Application.Services.Colors
 
             var colorToResponse = _mapper.Map<DisplayColorDto>(removedColor);
 
-            return new ResponseDto<DisplayColorDto>(colorToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayColorDto>(colorToResponse);
         }
 
         public ResponseDto<IEnumerable<DisplayColorDto>> GetAll()
         {
             var colors = _unitOfWork.Color.GetAll().Select(color => _mapper.Map<DisplayColorDto>(color));
 
-            return new ResponseDto<IEnumerable<DisplayColorDto>>(colors, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplayColorDto>>(colors);
         }
 
         public ResponseDto<DisplayColorDto> GetById(int id)
@@ -87,7 +87,7 @@ namespace GbStoreApi.Application.Services.Colors
 
             var color = _mapper.Map<DisplayColorDto>(currentColor);
 
-            return new ResponseDto<DisplayColorDto>(color, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayColorDto>(color);
         }
 
         public ResponseDto<DisplayColorDto> GetByName(string colorName)
@@ -99,7 +99,7 @@ namespace GbStoreApi.Application.Services.Colors
 
             var color = _mapper.Map<DisplayColorDto>(currentColor);
 
-            return new ResponseDto<DisplayColorDto>(color, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayColorDto>(color);
         }
 
         public ResponseDto<DisplayColorDto> Update(UpdateColorDto updateColorDto)
@@ -116,7 +116,7 @@ namespace GbStoreApi.Application.Services.Colors
             
             var colorToResponse = _mapper.Map<DisplayColorDto>(updatedColor);
 
-            return new ResponseDto<DisplayColorDto>(colorToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayColorDto>(colorToResponse);
 
         }
         #endregion

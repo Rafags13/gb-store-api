@@ -27,7 +27,7 @@ namespace GbStoreApi.Application.Services.Categories
         {
             var categories = _unitOfWork.Category.GetAll().Select(category => _mapper.Map<DisplayCategoryDto>(category));
 
-            return new ResponseDto<IEnumerable<DisplayCategoryDto>>(categories, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplayCategoryDto>>(categories);
         }
 
         public ResponseDto<DisplayCategoryDto> GetById(int id)
@@ -39,7 +39,7 @@ namespace GbStoreApi.Application.Services.Categories
 
             var category = _mapper.Map<DisplayCategoryDto>(currentCategory);
 
-            return new ResponseDto<DisplayCategoryDto>(category, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayCategoryDto>(category);
         }
 
         public ResponseDto<DisplayCategoryDto> Create(string categoryName)
@@ -60,7 +60,7 @@ namespace GbStoreApi.Application.Services.Categories
 
             var response = _mapper.Map<DisplayCategoryDto>(currentAddedCategory);
 
-            return new ResponseDto<DisplayCategoryDto>(response, StatusCodes.Status201Created);
+            return new ResponseDto<DisplayCategoryDto>(response);
         }
 
         public ResponseDto<DisplayCategoryDto> GetByName(string categoryName)
@@ -72,7 +72,7 @@ namespace GbStoreApi.Application.Services.Categories
 
             var category = _mapper.Map<DisplayCategoryDto>(currentCategory);
 
-            return new ResponseDto<DisplayCategoryDto>(category, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayCategoryDto>(category);
         }
 
         public ResponseDto<DisplayCategoryDto> Update(UpdateCategoryDto updateCategoryDto)
@@ -91,7 +91,7 @@ namespace GbStoreApi.Application.Services.Categories
 
             var categoryToResponse = _mapper.Map<DisplayCategoryDto>(updatedCategory);
 
-            return new ResponseDto<DisplayCategoryDto>(categoryToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayCategoryDto>(categoryToResponse);
         }
 
         public ResponseDto<DisplayCategoryDto> Delete(int id)
@@ -114,7 +114,7 @@ namespace GbStoreApi.Application.Services.Categories
             _unitOfWork.Save();
             var categoryToResponse = _mapper.Map<DisplayCategoryDto>(deletedCategory);
 
-            return new ResponseDto<DisplayCategoryDto>(categoryToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayCategoryDto>(categoryToResponse);
         }
 
 #endregion

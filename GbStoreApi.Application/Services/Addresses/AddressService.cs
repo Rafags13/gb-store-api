@@ -73,7 +73,7 @@ namespace GbStoreApi.Application.Services.Addresses
         {
             var addresses = _unitOfWork.Address.GetAll().Select(_mapper.Map<DisplayAddressDto>);
 
-            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addresses, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addresses);
         }
 
         public ResponseDto<IEnumerable<DisplayAddressDto>> GetAllByUserId()
@@ -87,7 +87,7 @@ namespace GbStoreApi.Application.Services.Addresses
                     .Select(_mapper.Map<DisplayAddressDto>)
                     .Where(x => x.UserId == currentUserId);
             
-            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addresses, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplayAddressDto>>(addresses);
         }
 
         public ResponseDto<DisplayAddressDto> GetById(int id)
@@ -108,7 +108,7 @@ namespace GbStoreApi.Application.Services.Addresses
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível editar o endereço. Tente Novamente.");
 
-            return new ResponseDto<bool>(true, StatusCodes.Status200OK);
+            return new ResponseDto<bool>(true);
         }
 
         public ResponseDto<bool> Remove(string zipCode)
@@ -123,7 +123,7 @@ namespace GbStoreApi.Application.Services.Addresses
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível remover o endereço. Tente Novamente.");
 
-            return new ResponseDto<bool>(StatusCodes.Status200OK);
+            return new ResponseDto<bool>(true);
         }
 
         public ResponseDto<int> GetAddressIdByZipCode(string zipcode)
@@ -138,7 +138,7 @@ namespace GbStoreApi.Application.Services.Addresses
             if (currentAddressId is null)
                 return new ResponseDto<int>(StatusCodes.Status404NotFound, "Não foi possível encontrar o endereço.");
 
-            return new ResponseDto<int>(currentAddressId.Id, StatusCodes.Status200OK);
+            return new ResponseDto<int>(currentAddressId.Id);
         }
 
         public ResponseDto<int> GetAddressIdFromStorePickup()
@@ -149,7 +149,7 @@ namespace GbStoreApi.Application.Services.Addresses
             if (addressId is null)
                 return new ResponseDto<int>(StatusCodes.Status400BadRequest, "Não foi possível buscar o endereço da loja.");
 
-            return new ResponseDto<int>(addressId.GetValueOrDefault(), StatusCodes.Status200OK);
+            return new ResponseDto<int>(addressId.GetValueOrDefault());
         }
 
         private bool AddressExistsInDatabaseByZipCode(string zipCode)

@@ -30,7 +30,7 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
             request.Metadata.Add("Content-Type", formFile.ContentType);
             await _s3Client.PutObjectAsync(request);
 
-            return new(formFile.FileName, StatusCodes.Status200OK);
+            return new(formFile.FileName);
         }
 
         private string CreateFileSync(IFormFile formFile, string bucketName, string? prefix)
@@ -100,7 +100,7 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
                 };
             });
 
-            return new(s3Objects, StatusCodes.Status200OK);
+            return new(s3Objects);
         }
 
         public async Task<ResponseDto<GetObjectResponse>> GetFile(string bucketName, string key)
@@ -113,7 +113,7 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
 
             var file = await _s3Client.GetObjectAsync(request);
 
-            return new(file, StatusCodes.Status200OK);
+            return new(file);
         }
 
         public async Task<ResponseDto<S3ObjectDto>> GetFileWithUrl(string bucketName, string key)
@@ -133,7 +133,7 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
                 Url = _s3Client.GetPreSignedURL(urlRequest),
             };
 
-            return new(s3Object, StatusCodes.Status200OK);
+            return new(s3Object);
         }
     }
 }

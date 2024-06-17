@@ -32,7 +32,7 @@ namespace GbStoreApi.Application.Services.Users
             var users = _unitOfWork.User.GetAll().Select(user => _mapper.Map<DisplayUserDto>(user)) ??
                 Enumerable.Empty<DisplayUserDto>().AsQueryable();
 
-            return new ResponseDto<IEnumerable<DisplayUserDto>>(users, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplayUserDto>>(users);
         }
 
         public ResponseDto<DisplayUserDto> GetById(int id)
@@ -47,7 +47,7 @@ namespace GbStoreApi.Application.Services.Users
             var userMapped = _mapper.Map<DisplayUserDto>(selectedUser);
 
 
-            return new ResponseDto<DisplayUserDto>(userMapped, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayUserDto>(userMapped);
         }
 
         public ResponseDto<User> GetByCredentials(SignInDto signInDto)
@@ -63,7 +63,7 @@ namespace GbStoreApi.Application.Services.Users
             if (!passwordsMatch)
                 return new ResponseDto<User>(StatusCodes.Status404NotFound, "A senha informada está incorreta. Tente Novamente.");
             
-            return new ResponseDto<User>(currentUser, StatusCodes.Status200OK);
+            return new ResponseDto<User>(currentUser);
         }
 
         public ResponseDto<DisplayUserDto> GetCurrentInformations()
@@ -79,7 +79,7 @@ namespace GbStoreApi.Application.Services.Users
 
             var displayUser = _mapper.Map<DisplayUserDto>(currentUser);
 
-            return new ResponseDto<DisplayUserDto>(displayUser, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayUserDto>(displayUser);
         }
 
         public ResponseDto<string?> GetUserRole()
@@ -93,11 +93,11 @@ namespace GbStoreApi.Application.Services.Users
                 if (currentUser is null)
                     return new ResponseDto<string?>(StatusCodes.Status404NotFound, "Não foi possível encontrar o usuário.");
 
-                return new ResponseDto<string?>(currentUser.TypeOfUser.ToString(), StatusCodes.Status200OK);
+                return new ResponseDto<string?>(currentUser.TypeOfUser.ToString());
             }
             catch (UserNotValidException)
             {
-                return new ResponseDto<string?>(StatusCodes.Status200OK, null);
+                return new ResponseDto<string?>(null);
             }
         }
 
@@ -115,7 +115,7 @@ namespace GbStoreApi.Application.Services.Users
             if (_unitOfWork.Save() == 0)
                 return new ResponseDto<bool>(StatusCodes.Status400BadRequest, "Não foi possível salvar as alterações do usuário.");
 
-            return new ResponseDto<bool>(true, StatusCodes.Status200OK);
+            return new ResponseDto<bool>(true);
         }
 
         public ResponseDto<bool> UpdatePassword(UpdatePasswordDto updatePasswordDto)

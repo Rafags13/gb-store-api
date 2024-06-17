@@ -157,7 +157,7 @@ namespace GbStoreApi.Application.Services.Purchases
                 .Select(_mapper.Map<PurchaseSpecificationDto>)
                 .Where(x => x.BoughterId == currentUser);
 
-            return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentBoughts, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentBoughts);
         }
     }
 }

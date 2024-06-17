@@ -26,7 +26,7 @@ namespace GbStoreApi.Application.Services.Sizes
             var allSizes = _unitOfWork.Size.GetAll().Select(size => _mapper.Map<DisplaySizeDto>(size)) ??
                 Enumerable.Empty<DisplaySizeDto>().AsQueryable();
 
-            return new ResponseDto<IEnumerable<DisplaySizeDto>>(allSizes, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplaySizeDto>>(allSizes);
         }
 
         public ResponseDto<DisplaySizeDto> GetById(int id)
@@ -37,7 +37,7 @@ namespace GbStoreApi.Application.Services.Sizes
 
             var size = _mapper.Map<DisplaySizeDto>(currentSize);
 
-            return new ResponseDto<DisplaySizeDto>(size, StatusCodes.Status200OK);
+            return new ResponseDto<DisplaySizeDto>(size);
         }
 
         public ResponseDto<DisplaySizeDto> GetByName(string sizeName)
@@ -48,7 +48,7 @@ namespace GbStoreApi.Application.Services.Sizes
 
             var size = _mapper.Map<DisplaySizeDto>(currentSize);
 
-            return new ResponseDto<DisplaySizeDto>(size, StatusCodes.Status200OK);
+            return new ResponseDto<DisplaySizeDto>(size);
         }
 
         public ResponseDto<DisplaySizeDto> Create(string sizeName)
@@ -67,7 +67,7 @@ namespace GbStoreApi.Application.Services.Sizes
 
             var response = _mapper.Map<DisplaySizeDto>(recentllyAddedSize);
 
-            return new ResponseDto<DisplaySizeDto>(response, StatusCodes.Status200OK);
+            return new ResponseDto<DisplaySizeDto>(response);
         }
 
         public ResponseDto<DisplaySizeDto> Update(UpdateSizeDto updateSizeDto)
@@ -86,7 +86,7 @@ namespace GbStoreApi.Application.Services.Sizes
             
             var sizeToResponse = _mapper.Map<DisplaySizeDto>(updatedSize);
 
-            return new ResponseDto<DisplaySizeDto>(sizeToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplaySizeDto>(sizeToResponse);
         }
 
         public ResponseDto<DisplaySizeDto> Delete(int id)
@@ -112,7 +112,7 @@ namespace GbStoreApi.Application.Services.Sizes
 
             var sizeToResponse = _mapper.Map<DisplaySizeDto>(removedSize);
 
-            return new ResponseDto<DisplaySizeDto>(sizeToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplaySizeDto>(sizeToResponse);
         }
         #endregion
     }

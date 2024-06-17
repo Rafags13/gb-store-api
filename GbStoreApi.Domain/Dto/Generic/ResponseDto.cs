@@ -12,10 +12,10 @@
             Message = message;
         }
 
-        public ResponseDto(T value, int statusCode)
+        public ResponseDto(T value)
         {
             Value = value;
-            StatusCode = statusCode;
+            StatusCode = 200;
         }
 
         public ResponseDto(int statusCode, string message)

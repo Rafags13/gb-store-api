@@ -11,7 +11,7 @@
             PageSize = pageSize;
             Total = total;
         }
-        public PaginatedResponseDto(T value, int statusCode, int page, int pageSize, int total): base(value, statusCode) 
+        public PaginatedResponseDto(T value, int page, int pageSize, int total): base(value) 
         {
             Page = page;
             PageSize = pageSize;

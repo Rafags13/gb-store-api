@@ -75,7 +75,7 @@ namespace GbStoreApi.Application.Services.Products
 
             _pictureService.CreateMultiplePictures(picturesWithProductId); // refactor
 
-            return new(true, StatusCodes.Status200OK);
+            return new(true);
         }
 
         public ResponseDto<IEnumerable<DisplayProductDto>> GetAll()
@@ -92,9 +92,9 @@ namespace GbStoreApi.Application.Services.Products
                 .Paginate();
 
             if (!productsReference.Any())
-                return new(Enumerable.Empty<DisplayProductDto>(), StatusCodes.Status200OK);
+                return new(Enumerable.Empty<DisplayProductDto>());
 
-            return new(productsReference, StatusCodes.Status200OK);
+            return new(productsReference);
         }
 
         public async Task<PaginatedResponseDto<IEnumerable<DisplayProductDto>>> GetByFilters(CatalogFilterDto filters)
@@ -126,7 +126,6 @@ namespace GbStoreApi.Application.Services.Products
 
             return new PaginatedResponseDto<IEnumerable<DisplayProductDto>>(
                 productsFiltered,
-                StatusCodes.Status200OK,
                 Page,
                 PageSize,
                 count
@@ -140,7 +139,7 @@ namespace GbStoreApi.Application.Services.Products
 
             var currentVariants = new DisplayVariantsDto { Colors = colors, Sizes = sizes };
 
-            return new(currentVariants, StatusCodes.Status200OK);
+            return new(currentVariants);
         }
 
         public ResponseDto<ProductSpecificationsDto?> GetProductSpecificationById(int productId)
@@ -164,7 +163,7 @@ namespace GbStoreApi.Application.Services.Products
 
             var product = _mapper.Map<ProductSpecificationsDto>(currentProduct);
 
-            return new(product, StatusCodes.Status200OK);
+            return new(product);
         }
 
         public ResponseDto<DisplayFiltersDto> GetAllFilters()
@@ -184,7 +183,7 @@ namespace GbStoreApi.Application.Services.Products
                 Sizes = allSizes,
             };
 
-            return new(filters, StatusCodes.Status200OK);
+            return new(filters);
         }
 
         public ResponseDto<IEnumerable<StockAvaliableByIdDto>> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
@@ -202,7 +201,7 @@ namespace GbStoreApi.Application.Services.Products
                 })
                 .Where(x => onlyStockIds.Contains(x.StockId));
 
-            return new(stocksDeterminedByItsCount, StatusCodes.Status200OK);
+            return new(stocksDeterminedByItsCount);
         }
     }
 }

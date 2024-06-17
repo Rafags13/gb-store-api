@@ -41,7 +41,7 @@ namespace GbStoreApi.Application.Services.Brands
 
             var response = _mapper.Map<DisplayBrandDto>(currentAddedBrand);
 
-            return new ResponseDto<DisplayBrandDto>(response, StatusCodes.Status201Created);
+            return new ResponseDto<DisplayBrandDto>(response);
         }
 
         public ResponseDto<IEnumerable<DisplayBrandDto>> GetAll()
@@ -49,7 +49,7 @@ namespace GbStoreApi.Application.Services.Brands
             var brands = _unitOfWork.Brand.GetAll().Select(brand => _mapper.Map<DisplayBrandDto>(brand))
                 ?? Enumerable.Empty<DisplayBrandDto>().AsQueryable();
 
-            return new ResponseDto<IEnumerable<DisplayBrandDto>>(brands, StatusCodes.Status200OK);
+            return new ResponseDto<IEnumerable<DisplayBrandDto>>(brands);
         }
 
         public ResponseDto<DisplayBrandDto> GetById(int id)
@@ -61,7 +61,7 @@ namespace GbStoreApi.Application.Services.Brands
 
             var brand = _mapper.Map<DisplayBrandDto>(currentBrand);
 
-            return new ResponseDto<DisplayBrandDto>(brand, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayBrandDto>(brand);
         }
 
         public ResponseDto<DisplayBrandDto> GetByName(string brandName)
@@ -73,7 +73,7 @@ namespace GbStoreApi.Application.Services.Brands
 
             var brand = _mapper.Map<DisplayBrandDto>(currentBrand);
 
-            return new ResponseDto<DisplayBrandDto>(brand, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayBrandDto>(brand);
         }
 
         public ResponseDto<DisplayBrandDto> Update(UpdateBrandDto updateBrandDto)
@@ -90,7 +90,7 @@ namespace GbStoreApi.Application.Services.Brands
 
             var brandToResponse = _mapper.Map<DisplayBrandDto>(updatedBrand);
 
-            return new ResponseDto<DisplayBrandDto>(brandToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayBrandDto>(brandToResponse);
         }
 
         public ResponseDto<DisplayBrandDto> Delete(int id)
@@ -112,7 +112,7 @@ namespace GbStoreApi.Application.Services.Brands
             var deletedBrand = _unitOfWork.Brand.Remove(currentBrand);
             var brandToResponse = _mapper.Map<DisplayBrandDto>(deletedBrand);
 
-            return new ResponseDto<DisplayBrandDto>(brandToResponse, StatusCodes.Status200OK);
+            return new ResponseDto<DisplayBrandDto>(brandToResponse);
         }
         #endregion
     }
