@@ -8,12 +8,12 @@ namespace GbStoreApi.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<bool> CreateProduct(CreateProductDto createProductDto);
-        DisplayVariantsDto? GetCurrentVariants();
+        Task<ResponseDto<bool>> CreateProduct(CreateProductDto createProductDto);
+        ResponseDto<DisplayVariantsDto?> GetCurrentVariants();
         ResponseDto<IEnumerable<DisplayProductDto>> GetAll();
         Task<PaginatedResponseDto<IEnumerable<DisplayProductDto>>> GetByFilters(CatalogFilterDto filters);
-        ProductSpecificationsDto? GetProductSpecificationById(int productId);
-        DisplayFiltersDto GetAllFilters();
-        IEnumerable<StockAvaliableByIdDto> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos);
+        ResponseDto<ProductSpecificationsDto?> GetProductSpecificationById(int productId);
+        ResponseDto<DisplayFiltersDto> GetAllFilters();
+        ResponseDto<IEnumerable<StockAvaliableByIdDto>> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos);
     }
 }

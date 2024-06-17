@@ -40,7 +40,7 @@ namespace GbStoreApi.Application.Services.Products
             _pictureService = pictureService;
             _mapper = mapper;
         }
-        public async Task<bool> CreateProduct(CreateProductDto createProductDto)
+        public async Task<ResponseDto<bool>> CreateProduct(CreateProductDto createProductDto)
         {
             var newProduct = _mapper.Map<Product>(createProductDto);
 
@@ -49,20 +49,21 @@ namespace GbStoreApi.Application.Services.Products
             using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
             if (_unitOfWork.Save() == 0)
-                return false; // return new Response unprocessableentity
+                return new(StatusCodes.Status422UnprocessableEntity, "Não foi possível criar os dados do Produto.");
 
             var currentProductId = _unitOfWork.Product.FindOne(x => x.Name == createProductDto.Name).Id;
 
             var newStockToProduct = new CreateStockByProductIdDto { ProductId = currentProductId, Variants = createProductDto.Stock };
 
             var createStockSuccess = _stockService.CreateMultipleStock(newStockToProduct) > 0;
+
             if (!createStockSuccess) throw new CantCreateProductException("Não foi possível criar os estoques. Fale com o administrador do sistema.");
 
             var picturesName = await _fileService.CreateMultipleFiles(createProductDto.Photos);
 
             var picturesToCreate = picturesName.Select(name => name);
 
-            if (!picturesToCreate.Any()) return false;
+            if (!picturesToCreate.Any()) return new(StatusCodes.Status400BadRequest, "Não foi possível criar as fotos do produto.");
 
             var picturesWithProductId = new PicturesGroupedByProductDto
             {
@@ -74,7 +75,7 @@ namespace GbStoreApi.Application.Services.Products
 
             _pictureService.CreateMultiplePictures(picturesWithProductId); // refactor
 
-            return true;
+            return new(true, StatusCodes.Status200OK);
         }
 
         public ResponseDto<IEnumerable<DisplayProductDto>> GetAll()
@@ -90,10 +91,10 @@ namespace GbStoreApi.Application.Services.Products
                 .Select(x => _mapper.Map<DisplayProductDto>(x))
                 .Paginate();
 
-            if (!productsReference.Any()) // TODO: return an empty this.
-                return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status404NotFound, "Nenhum produto foi encontrado.");
+            if (!productsReference.Any())
+                return new(Enumerable.Empty<DisplayProductDto>(), StatusCodes.Status200OK);
 
-            return new ResponseDto<IEnumerable<DisplayProductDto>>(productsReference, StatusCodes.Status200OK);
+            return new(productsReference, StatusCodes.Status200OK);
         }
 
         public async Task<PaginatedResponseDto<IEnumerable<DisplayProductDto>>> GetByFilters(CatalogFilterDto filters)
@@ -113,6 +114,7 @@ namespace GbStoreApi.Application.Services.Products
                 .WithSizes()
                 .WithColors()
                 .WithCategories()
+                .AsNoTracking()
                 .ProjectTo<DisplayProductDto>(_mapper.ConfigurationProvider)
                 .FilterByCategoryIfWasInformed(Category)
                 .FilterByColorsIfWereInformed(Colors)
@@ -131,17 +133,17 @@ namespace GbStoreApi.Application.Services.Products
                 );
         }
 
-        public DisplayVariantsDto? GetCurrentVariants()
+        public ResponseDto<DisplayVariantsDto?> GetCurrentVariants()
         {
             var colors = _unitOfWork.Color.GetAll().Select(x => new DisplayColorDto { Id = x.Id, Name = x.Name });
             var sizes = _unitOfWork.Size.GetAll().Select(x => new DisplaySizeDto { Id = x.Id, Name = x.Name });
 
             var currentVariants = new DisplayVariantsDto { Colors = colors, Sizes = sizes };
 
-            return currentVariants;
+            return new(currentVariants, StatusCodes.Status200OK);
         }
 
-        public ProductSpecificationsDto? GetProductSpecificationById(int productId)
+        public ResponseDto<ProductSpecificationsDto?> GetProductSpecificationById(int productId)
         {
             var currentProduct =
                 _unitOfWork
@@ -157,11 +159,15 @@ namespace GbStoreApi.Application.Services.Products
                 .AsNoTracking()
                 .FirstOrDefault(predicate: x => x.Id == productId);
 
-            if (currentProduct is null) throw new ProductNotFoundException("O produto especificado não existe no sistema.");
-            return _mapper.Map<ProductSpecificationsDto>(currentProduct);
+            if (currentProduct is null)
+                return new(StatusCodes.Status404NotFound, "O produto especificado não existe no sistema.");
+
+            var product = _mapper.Map<ProductSpecificationsDto>(currentProduct);
+
+            return new(product, StatusCodes.Status200OK);
         }
 
-        public DisplayFiltersDto GetAllFilters()
+        public ResponseDto<DisplayFiltersDto> GetAllFilters()
         {
             var allColors = _unitOfWork.Color.GetAll().Select(x => x.Name).ToList();
             var allBrands = _unitOfWork.Brand.GetAll().Select(x => x.Name).ToList();
@@ -178,15 +184,17 @@ namespace GbStoreApi.Application.Services.Products
                 Sizes = allSizes,
             };
 
-            return filters;
+            return new(filters, StatusCodes.Status200OK);
         }
 
-        public IEnumerable<StockAvaliableByIdDto> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
+        public ResponseDto<IEnumerable<StockAvaliableByIdDto>> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
         {
             var onlyStockIds = countStockByItsIdDtos.Select(x => x.StockId);
+
             var stocksDeterminedByItsCount = _unitOfWork
                 .Stock
                 .GetAll()
+                .AsNoTracking()
                 .Select(x => new StockAvaliableByIdDto
                 {
                     StockId = x.Id,
@@ -194,7 +202,7 @@ namespace GbStoreApi.Application.Services.Products
                 })
                 .Where(x => onlyStockIds.Contains(x.StockId));
 
-            return stocksDeterminedByItsCount;
+            return new(stocksDeterminedByItsCount, StatusCodes.Status200OK);
         }
     }
 }

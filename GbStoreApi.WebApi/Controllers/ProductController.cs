@@ -27,16 +27,9 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<IEnumerable<DisplayProductDto>>))]
         public IActionResult GetAll()
         {
-            try
-            {
-                var response = _productService.GetAll();
+            var response = _productService.GetAll();
 
-                return StatusCode(response.StatusCode, response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet("Filters/{page}")]
@@ -69,21 +62,9 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
-            try
-            {
-                var success = await _productService.CreateProduct(createProductDto);
-
-                if(success)
-                {
-                    return Ok("Produto criado com sucesso!");
-                }
-
-                return BadRequest("Não foi possível criar o produto.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+            var response = await _productService.CreateProduct(createProductDto);
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet("Current-Variants")]
@@ -91,16 +72,8 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetCurrentVariants()
         {
-            try
-            {
-                var currentVariants = _productService.GetCurrentVariants();
-
-                return Ok(currentVariants);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var currentVariants = _productService.GetCurrentVariants();
+            return StatusCode(StatusCodes.Status200OK, currentVariants);
         }
 
         [HttpGet("Informations/{productId:int}")]
@@ -108,16 +81,8 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetProductSpecificationById([FromRoute] int productId)
         {
-            try
-            {
-                var currentProduct = _productService.GetProductSpecificationById(productId);
-
-                return Ok(currentProduct);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var currentProduct = _productService.GetProductSpecificationById(productId);
+            return StatusCode(StatusCodes.Status200OK, currentProduct);
         }
 
         [HttpGet("GetAllFilters")]
@@ -125,16 +90,8 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetAllFilters()
         {
-            try
-            {
-                var allFilters = _productService.GetAllFilters();
-
-                return Ok(allFilters);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var allFilters = _productService.GetAllFilters();
+            return StatusCode(StatusCodes.Status200OK, allFilters);
         }
 
         [HttpPost("GetAvaliableStocks")]
@@ -142,16 +99,9 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetAvaliableStocks([FromBody] IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
         {
-            try
-            {
-                var avaliableStocks = _productService.GetAvaliableStocks(countStockByItsIdDtos);
-
-                return Ok(avaliableStocks);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+           
+            var avaliableStocks = _productService.GetAvaliableStocks(countStockByItsIdDtos);
+            return StatusCode(StatusCodes.Status200OK, avaliableStocks);
         }
     }
 }
