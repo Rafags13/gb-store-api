@@ -44,6 +44,11 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<CreateProductDto, Product>();
                 #endregion
 
+                #region [Stock]
+                configuration.CreateProjection<ProductStock, StockAvaliableByIdDto>()
+                    .ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.Id));
+                #endregion
+
                 #region [Brand]
                 configuration.CreateMap<Brand, DisplayBrandDto>().ReverseMap();
                 #endregion

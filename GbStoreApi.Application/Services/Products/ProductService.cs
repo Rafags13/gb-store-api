@@ -187,13 +187,12 @@ namespace GbStoreApi.Application.Services.Products
             var stocksDeterminedByItsCount = _unitOfWork
                 .Stock
                 .GetAll()
-                .AsEnumerable()
-                .IntersectBy(onlyStockIds, x => x.Id)
                 .Select(x => new StockAvaliableByIdDto
                 {
                     StockId = x.Id,
                     IsAvaliable = countStockByItsIdDtos.Single(y => y.StockId == x.Id).StockCount <= x.Count,
-                });
+                })
+                .Where(x => onlyStockIds.Contains(x.StockId));
 
             return stocksDeterminedByItsCount;
         }

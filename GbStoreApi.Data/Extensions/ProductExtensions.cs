@@ -47,7 +47,9 @@ namespace GbStoreApi.Data.Extensions
             if (colors is null || !colors.Any())
                 return products;
 
-            return products.Where(product => product.Colors.Any(x => colors.Contains(x)));
+            var colorCount = colors.Count();
+
+            return products.Where(product => product.Colors.Where(x => colors.Contains(x)).Count() == colorCount);
         }
 
         public static IQueryable<DisplayProductDto> FilterBySizesIfWereInformed(this IQueryable<DisplayProductDto> products, string[]? sizes)
@@ -55,7 +57,11 @@ namespace GbStoreApi.Data.Extensions
             if(sizes is null || !sizes.Any())
                 return products;
 
-            return products.Where(product => product.Sizes.Any(x => sizes.Contains(x)));
+            var sizeCount = sizes.Count();
+
+            return products.Where(product => product.Sizes
+                .Where(size => sizes.Contains(size))
+                .Count() == sizeCount);
         }
         
         public static IQueryable<DisplayProductDto> Paginate(this IQueryable<DisplayProductDto> products, int page = 0, int pageSize = 20)
