@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Domain.Constants;
 using GbStoreApi.Domain.Dto.AmazonBuckets;
 using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Http;
@@ -51,12 +52,10 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
 
         public async Task<List<string>> CreateMultipleFiles(IEnumerable<IFormFile> files, string? prefix)
         {
-            var bucketName = await _bucketService.GetCurrentPictureBucket();
             var pictureNames = new List<string>();
 
-            files.ToList().ForEach(file =>
-            {
-                var fileName = CreateFileSync(file, bucketName, "");
+            Parallel.ForEach(files, file => {
+                var fileName = CreateFileSync(file, BucketContants.BUCKET_S3_NAME, "");
                 pictureNames.Add(fileName);
             });
 

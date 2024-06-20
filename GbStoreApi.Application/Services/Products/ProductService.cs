@@ -42,38 +42,25 @@ namespace GbStoreApi.Application.Services.Products
         }
         public async Task<ResponseDto<bool>> CreateProduct(CreateProductDto createProductDto)
         {
-            var newProduct = _mapper.Map<Product>(createProductDto);
+            using var transaction = _unitOfWork.GetContext().BeginTransaction();
+
+            var picturesName = await _fileService.CreateMultipleFiles(createProductDto.Photos);
+
+            if (!picturesName.Any()) return new(StatusCodes.Status400BadRequest, "Não foi possível criar as fotos do produto.");
+
+            var newPictures = _mapper.Map<List<Picture>>(picturesName);
+
+            var newProduct = _mapper.Map<Product>(createProductDto, opt => opt.AfterMap((_, product) =>
+            {
+                product.Pictures.AddRange(newPictures);
+            }));
 
             _unitOfWork.Product.Add(newProduct);
-
-            using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
             if (_unitOfWork.Save() == 0)
                 return new(StatusCodes.Status422UnprocessableEntity, "Não foi possível criar os dados do Produto.");
 
-            var currentProductId = _unitOfWork.Product.FindOne(x => x.Name == createProductDto.Name).Id;
-
-            var newStockToProduct = new CreateStockByProductIdDto { ProductId = currentProductId, Variants = createProductDto.Stock };
-
-            var createStockSuccess = _stockService.CreateMultipleStock(newStockToProduct) > 0;
-
-            if (!createStockSuccess) throw new CantCreateProductException("Não foi possível criar os estoques. Fale com o administrador do sistema.");
-
-            var picturesName = await _fileService.CreateMultipleFiles(createProductDto.Photos);
-
-            var picturesToCreate = picturesName.Select(name => name);
-
-            if (!picturesToCreate.Any()) return new(StatusCodes.Status400BadRequest, "Não foi possível criar as fotos do produto.");
-
-            var picturesWithProductId = new PicturesGroupedByProductDto
-            {
-                Pictures = picturesToCreate,
-                ProductId = currentProductId
-            };
-
-            // Refactor this method to add all once
-
-            _pictureService.CreateMultiplePictures(picturesWithProductId); // refactor
+            await transaction.CommitAsync();
 
             return new(true);
         }

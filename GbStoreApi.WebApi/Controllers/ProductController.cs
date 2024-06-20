@@ -62,9 +62,8 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
-            
             var response = await _productService.CreateProduct(createProductDto);
-            return StatusCode(response.StatusCode, response);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpGet("Current-Variants")]

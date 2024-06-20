@@ -44,7 +44,7 @@ namespace GbStoreApi.Domain.Models
             }}
 
         public virtual ICollection<ProductStock> Stocks { get; set; }
-        public virtual ICollection<Picture> Pictures { get; set; }
+        public virtual List<Picture> Pictures { get; set; }
 
         public Product()
         {

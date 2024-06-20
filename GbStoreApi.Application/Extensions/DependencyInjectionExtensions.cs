@@ -28,7 +28,6 @@ public static class DependencyInjectionExtensions
         serviceCollection.AddScoped<IStockService, StockService>();
         serviceCollection.AddScoped<IPictureService, PictureService>();
         serviceCollection.AddScoped<IProductService, ProductService>();
-
         serviceCollection.AddScoped<ICategoryService, CategoryService>();
 
         return serviceCollection;

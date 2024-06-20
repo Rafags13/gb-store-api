@@ -18,10 +18,9 @@ namespace GbStoreApi.Domain.Dto.Products
         {
             get
             {
-                var stocks = JsonConvert.DeserializeObject<List<CreateStockDto>>(StockSerialized);
-                return stocks;
+                return JsonConvert.DeserializeObject<List<CreateStockDto>>(StockSerialized);
             }
         }
-        public List<IFormFile> Photos { get; set; }
+        public List<IFormFile> Photos { get; set; } = null!;
     }
 }

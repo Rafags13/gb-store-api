@@ -11,11 +11,9 @@ namespace GbStoreApi.Application.Extensions
         public static IServiceCollection AddCustomDefaultAWSOptions(this IServiceCollection serviceCollection, ConfigurationManager configuration)
         {
             var awsOptions = configuration.GetAWSOptions();
+            var configurationAmazon = configuration.GetSection("Configuration").Get<MyConfigurationClass>()!.AmazonSecrets;
 
-            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
-            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
-
-            awsOptions.Credentials = new BasicAWSCredentials(accessKey, secretKey);
+            awsOptions.Credentials = new BasicAWSCredentials(configurationAmazon.AccessKeyId, configurationAmazon.SecretAccessKey);
             awsOptions.Region = RegionEndpoint.SAEast1;
 
             serviceCollection.AddDefaultAWSOptions(awsOptions);

@@ -32,7 +32,7 @@ namespace GbStoreApi.Application.Services.Authentication
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = GenerateClaims(user),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = credentials,
             };
             var token = handler.CreateToken(tokenDescriptor);

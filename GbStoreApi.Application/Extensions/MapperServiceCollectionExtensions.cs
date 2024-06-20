@@ -23,6 +23,10 @@ namespace GbStoreApi.Application.Extensions
         {
             var config = new MapperConfiguration(configuration =>
             {
+                #region [Picture]
+                configuration.CreateMap<string, Picture>()
+                    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src));
+                #endregion
                 #region [Product]
                 configuration.CreateProjection<Product, DisplayProductDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
@@ -41,7 +45,11 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(member => member.Amount, map => map.MapFrom(x => x.Count))
                     .ReverseMap();
 
-                configuration.CreateMap<CreateProductDto, Product>();
+                configuration.CreateMap<CreateStockDto, ProductStock>()
+                    .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.StockSize));
+
+                configuration.CreateMap<CreateProductDto, Product>()
+                    .ForMember(dest => dest.Stocks, opt => opt.MapFrom(src => src.Stock));
                 #endregion
 
                 #region [Stock]
