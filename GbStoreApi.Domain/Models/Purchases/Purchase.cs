@@ -27,6 +27,8 @@ namespace GbStoreApi.Domain.Models.Purchases
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime EstimatedDeliveryDate { get; set; } = DateTime.Now;
+
+        public PurchaseState PurchaseState { get; set; }
         #endregion
 
         #region [Types of Purchase]
