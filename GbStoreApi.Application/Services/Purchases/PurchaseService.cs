@@ -213,6 +213,9 @@ namespace GbStoreApi.Application.Services.Purchases
             if (purchase is null)
                 return new (StatusCodes.Status404NotFound, "Essa compra não existe.");
 
+            if (purchase.PurchaseState.Equals(PurchaseState.Delivered))
+                return new(StatusCodes.Status400BadRequest, "Essa compra já foi entregue.");
+
             if (purchase.PurchaseState.Equals(newState))
                 return new(StatusCodes.Status400BadRequest, "A compra já foi atualizada para esse estado.");
 
