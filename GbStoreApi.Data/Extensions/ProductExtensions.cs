@@ -33,6 +33,14 @@ namespace GbStoreApi.Data.Extensions
             return products.Include(x => x.Category);
         }
 
+        public static IQueryable<DisplayProductDto> FilterByProductNameIfWasInformed(this IQueryable<DisplayProductDto> products, string? productName)
+        {
+            if (string.IsNullOrEmpty(productName))
+                return products;
+
+            return products.Where(x => x.Name.Contains(productName));
+        }
+
         public static IQueryable<DisplayProductDto> FilterByCategoryIfWasInformed(this IQueryable<DisplayProductDto> products, string? categoryName)
         {
             if (string.IsNullOrWhiteSpace(categoryName))

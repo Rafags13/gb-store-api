@@ -27,6 +27,7 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<string, Picture>()
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src));
                 #endregion
+
                 #region [Product]
                 configuration.CreateProjection<Product, DisplayProductDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
@@ -146,9 +147,23 @@ namespace GbStoreApi.Application.Extensions
                         src.ShippingPurchase.UserOwnerAddress.Address.ZipCode :
                         src.StorePickupPurchase.StoreAddress.ZipCode
                     ))
-                    .ForMember(dest => dest.PurchaseId, opt => opt.MapFrom(src => src.Id))
-                    ;
+                    .ForMember(dest => dest.PurchaseId, opt => opt.MapFrom(src => src.Id));
 
+                configuration.CreateMap<Purchase, AdminPurchaseSpecificationDto>()
+                    .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src =>
+                    src.ShippingPurchase != null ?
+                        src.ShippingPurchase.UserOwnerAddress.Address.ZipCode :
+                        src.StorePickupPurchase.StoreAddress.ZipCode
+                    ))
+                    .ForMember(dest => dest.PurchaseId, opt => opt.MapFrom(src => src.Id));
+
+                configuration.CreateMap<Purchase, AdminPurchaseDisplay>()
+                    .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.OrderItems.First().Stock.Product.Pictures.First().Name))
+                    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.FinalPrice))
+                    .ForMember(dest => dest.BoughterName, opt => opt.MapFrom(src =>
+                        src.ShippingPurchase != null ?
+                        src.ShippingPurchase.UserOwnerAddress.User.Name :
+                        src.StorePickupPurchase.UserBuyer.Name));
                 #endregion
 
                 #region [StorePickupPurchase]

@@ -10,7 +10,9 @@ namespace GbStoreApi.Domain.Dto.Product.Catalogs
         public string[]? Colors { get; set; } = Array.Empty<string>();
         public string? OrderBy { get; set; }
         public string? Direction { get; set; }
-        public string? Category = string.Empty;
+        public string? Category { get; set; }
+        public string? ProductName { get; set; }
+
 
         public void Deconstruct(
             out int Page,
@@ -19,6 +21,7 @@ namespace GbStoreApi.Domain.Dto.Product.Catalogs
             out string[]? Colors,
             out string? OrderBy,
             out string? Direction,
+            out string? ProductName,
             out string? Category)
         {
             Page = this.Page;
@@ -28,6 +31,7 @@ namespace GbStoreApi.Domain.Dto.Product.Catalogs
             OrderBy = this.OrderBy;
             Direction = this.Direction;
             Category = this.Category;
+            ProductName = this.ProductName;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Data.Extensions;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Purchases;
 using GbStoreApi.Domain.Enums;
@@ -7,6 +9,7 @@ using GbStoreApi.Domain.Models.Purchases;
 using GbStoreApi.Domain.Repository;
 using LinqKit;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GbStoreApi.Application.Services.Purchases
@@ -14,17 +17,14 @@ namespace GbStoreApi.Application.Services.Purchases
     public class PurchaseService : IPurchaseService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAddressService _addressService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         public PurchaseService(
             IUnitOfWork unitOfWork,
-            IAddressService addressService,
             IUserService userService,
             IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _addressService = addressService;
             _userService = userService;
             _mapper = mapper;
         }
@@ -158,6 +158,54 @@ namespace GbStoreApi.Application.Services.Purchases
                 .Where(x => x.BoughterId == currentUser);
 
             return new ResponseDto<IEnumerable<PurchaseSpecificationDto>>(currentBoughts);
+        }
+
+        public PaginatedResponseDto<IEnumerable<AdminPurchaseDisplay>> GetPaginated(
+            string searchQuery = "",
+            int page = 0,
+            int pageSize = 20
+            )
+        {
+            var paginatedProducts = _unitOfWork.Purchase
+                .GetAll()
+                .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Stock)
+                        .ThenInclude(x => x.Product)
+                            .ThenInclude(x => x.Pictures)
+                .Include(x => x.ShippingPurchase)
+                    .ThenInclude(x => x.UserOwnerAddress)
+                        .ThenInclude(x => x.User)
+                .Include(x => x.StorePickupPurchase)
+                    .ThenInclude(x => x.UserBuyer)
+                .ProjectTo<AdminPurchaseDisplay>(_mapper.ConfigurationProvider)
+                .FilterByBoughterName(searchQuery)
+                .GetCount(out int totalItems)
+                .Paginate(page, pageSize);
+
+            return new(paginatedProducts, page, pageSize, totalItems);
+        }
+
+        public ResponseDto<AdminPurchaseSpecificationDto> GetSpecificationById(int id)
+        {
+            var purchase = _unitOfWork.Purchase
+                .GetAll()
+                .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Stock)
+                        .ThenInclude(x => x.Product)
+                            .ThenInclude(x => x.Pictures)
+                .Include(x => x.ShippingPurchase)
+                    .ThenInclude(x => x.UserOwnerAddress)
+                        .ThenInclude(x => x.Address)
+                .Include(x => x.StorePickupPurchase)
+                    .ThenInclude(x => x.StoreAddress)
+                .AsNoTracking()
+                .Select(_mapper.Map<AdminPurchaseSpecificationDto>)
+                .FirstOrDefault(x => x.PurchaseId == id);
+
+            if (purchase is null)
+                return new(StatusCodes.Status404NotFound, "A compra buscada não existe mais.");
+
+            return new(purchase);
         }
     }
 }

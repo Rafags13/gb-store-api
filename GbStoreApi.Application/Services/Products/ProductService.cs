@@ -92,6 +92,7 @@ namespace GbStoreApi.Application.Services.Products
                 string[]? Colors,
                 string? OrderBy,
                 string? Direction,
+                string? ProductName,
                 string? Category
                 ) = filters;
 
@@ -103,6 +104,7 @@ namespace GbStoreApi.Application.Services.Products
                 .WithCategories()
                 .AsNoTracking()
                 .ProjectTo<DisplayProductDto>(_mapper.ConfigurationProvider)
+                .FilterByProductNameIfWasInformed(ProductName)
                 .FilterByCategoryIfWasInformed(Category)
                 .FilterByColorsIfWereInformed(Colors)
                 .FilterBySizesIfWereInformed(Sizes)

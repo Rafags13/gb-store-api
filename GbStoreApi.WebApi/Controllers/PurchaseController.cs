@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GbStoreApi.WebApi.Controllers
 {
     [Route("[controller]")]
-    [Authorize(Roles = "Common")]
+    [Authorize(Roles = "Administrator,Common")]
     [ApiController]
 
     public class PurchaseController : ControllerBase
@@ -33,6 +33,33 @@ namespace GbStoreApi.WebApi.Controllers
         public IActionResult GetAll()
         {
             var response = _purchaseService.GetAll();
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("Paginated")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<AdminPurchaseDisplay>>))]
+        public IActionResult GetPaginated(
+            [FromQuery] string searchQuery = "",
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 20)
+        {
+            var response = _purchaseService.GetPaginated(
+                searchQuery,
+                page,
+                pageSize
+                );
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("Specification/{id:int}")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<AdminPurchaseSpecificationDto>))]
+        public IActionResult GetSpecificationById(
+            [FromRoute] int id
+            )
+        {
+            var response = _purchaseService.GetSpecificationById(id);
             return StatusCode(response.StatusCode, response);
         }
     }
