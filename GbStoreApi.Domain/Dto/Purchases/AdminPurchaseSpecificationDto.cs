@@ -11,6 +11,7 @@ namespace GbStoreApi.Domain.Dto.Purchases
         public DateTime EstimatedDeliveryDate { get; set; }
         public DeliveryType TypeOfDelivery { get; set; }
         public PaymentMethod TypeOfPayment { get; set; }
+        public PurchaseState PurchaseState { get; set; }
 
         public AdminPurchaseSpecificationDto()
         {

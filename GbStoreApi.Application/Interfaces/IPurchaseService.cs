@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Purchases;
+using GbStoreApi.Domain.Enums;
 
 namespace GbStoreApi.Application.Interfaces
 {
@@ -13,5 +14,6 @@ namespace GbStoreApi.Application.Interfaces
             int pageSize = 20
             );
         ResponseDto<AdminPurchaseSpecificationDto> GetSpecificationById(int id);
+        ResponseDto<bool> UpdateStateById(int id, PurchaseState newState);
     }
 }

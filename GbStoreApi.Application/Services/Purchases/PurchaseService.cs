@@ -7,9 +7,7 @@ using GbStoreApi.Domain.Dto.Purchases;
 using GbStoreApi.Domain.Enums;
 using GbStoreApi.Domain.Models.Purchases;
 using GbStoreApi.Domain.Repository;
-using LinqKit;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GbStoreApi.Application.Services.Purchases
@@ -206,6 +204,26 @@ namespace GbStoreApi.Application.Services.Purchases
                 return new(StatusCodes.Status404NotFound, "A compra buscada não existe mais.");
 
             return new(purchase);
+        }
+
+        public ResponseDto<bool> UpdateStateById(int id, PurchaseState newState)
+        {
+            var purchase = _unitOfWork.Purchase.FindOne(x => x.Id == id);
+
+            if (purchase is null)
+                return new (StatusCodes.Status404NotFound, "Essa compra não existe.");
+
+            if (purchase.PurchaseState.Equals(newState))
+                return new(StatusCodes.Status400BadRequest, "A compra já foi atualizada para esse estado.");
+
+            purchase.PurchaseState = newState;
+
+            _unitOfWork.Purchase.Update(purchase);
+
+            if (_unitOfWork.Save() == 0)
+                return new(StatusCodes.Status422UnprocessableEntity, "Não foi possível alterar o estado da Compra. Tente Novamente.");
+
+            return new(true);
         }
     }
 }

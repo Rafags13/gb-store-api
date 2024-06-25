@@ -9,6 +9,7 @@ namespace GbStoreApi.Domain.Dto.Purchases
         public required string BoughterName { get; set; }
         public decimal Price { get; set; }
         public DeliveryType TypeOfPayment { get; set; }
+        public PurchaseState PurchaseState { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime EstimatedDeliveryDate { get; set; }
     }
