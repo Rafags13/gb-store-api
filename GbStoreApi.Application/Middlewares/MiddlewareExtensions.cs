@@ -1,4 +1,6 @@
-﻿namespace GbStoreApi.WebApi.Middlewares
+﻿using Microsoft.AspNetCore.Builder;
+
+namespace GbStoreApi.Application.Middlewares
 {
     public static class MiddlewareExtensions
     {

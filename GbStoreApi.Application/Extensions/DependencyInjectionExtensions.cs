@@ -1,4 +1,5 @@
 ﻿using GbStoreApi.Application.Interfaces;
+using GbStoreApi.Application.Middlewares;
 using GbStoreApi.Application.Services.Addresses;
 using GbStoreApi.Application.Services.AmazonBuckets;
 using GbStoreApi.Application.Services.Authentication;
@@ -35,9 +36,11 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddUserServices(this IServiceCollection servicesCollection)
     {
+        servicesCollection.AddTransient<JwtRefreshExpiredMiddleware>();
         servicesCollection.AddScoped<IAuthenticationService, AuthenticationService>();
         servicesCollection.AddScoped<IUserService, UserService>();
         servicesCollection.AddScoped<ITokenService, TokenService>();
+        servicesCollection.AddTransient(provider => new Lazy<IAuthenticationService>(() => provider.GetRequiredService<IAuthenticationService>()));
 
         return servicesCollection;
     }

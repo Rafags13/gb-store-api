@@ -2,7 +2,7 @@ using Amazon.S3;
 using GbStoreApi.Application;
 using GbStoreApi.Application.Extensions;
 using GbStoreApi.Data.Context;
-using GbStoreApi.WebApi.Middlewares;
+using GbStoreApi.Application.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,8 +18,6 @@ builder.Services.AddDbContext<DataContext>(option =>
 {
     option.UseSqlServer(connectionString);
 });
-
-builder.Services.AddTransient<JwtRefreshExpiredMiddleware>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

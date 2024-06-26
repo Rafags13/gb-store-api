@@ -1,5 +1,6 @@
 ﻿using GbStoreApi.Application.Extensions;
 using GbStoreApi.Application.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -7,16 +8,16 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace GbStoreApi.WebApi.Middlewares
+namespace GbStoreApi.Application.Middlewares
 {
     public class JwtRefreshExpiredMiddleware : IMiddleware
     {
         private readonly MyConfigurationClass _jwtSettings;
-        private readonly IAuthenticationService _authenticationService;
+        private readonly Lazy<IAuthenticationService> _authenticationService;
 
         public JwtRefreshExpiredMiddleware(
             IOptions<MyConfigurationClass> jwtSettings,
-            IAuthenticationService authenticationService
+            Lazy<IAuthenticationService> authenticationService
             )
         {
             _jwtSettings = jwtSettings.Value;
@@ -51,9 +52,10 @@ namespace GbStoreApi.WebApi.Middlewares
 
                     if (validatedToken.ValidTo < DateTime.UtcNow)
                     {
-                        var subId = int.Parse(principal.Identities.First().Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                        if(!int.TryParse(principal.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value, out int subId))
+                            throw new UnauthorizedAccessException("Usuário Inválido.");
 
-                        var response = _authenticationService.UpdateTokens(subId);
+                        var response = _authenticationService.Value.UpdateTokens(subId);
 
                         if (response.StatusCode != StatusCodes.Status200OK)
                             throw new UnauthorizedAccessException(response.Message);
