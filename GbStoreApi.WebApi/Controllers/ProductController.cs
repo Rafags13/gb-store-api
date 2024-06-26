@@ -58,6 +58,19 @@ namespace GbStoreApi.WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [Authorize(Roles = "Administrator")]
+        [HttpGet("ExistentPaginated/{page:int}/{pageSize:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedResponseDto<IEnumerable<DisplayStubProduct>>))]
+        public async Task<IActionResult> GetExistentPaginated(
+            [FromQuery] string? ProductName,
+            [FromRoute] int page = 0,
+            [FromRoute] int pageSize = 20
+            )
+        {
+            var response = await _productService.GetExistentPaginated(ProductName, page, pageSize);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
@@ -100,7 +113,6 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetAvaliableStocks([FromBody] IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos)
         {
-           
             var avaliableStocks = _productService.GetAvaliableStocks(countStockByItsIdDtos);
             return StatusCode(StatusCodes.Status200OK, avaliableStocks);
         }

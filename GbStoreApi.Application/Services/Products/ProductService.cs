@@ -192,5 +192,29 @@ namespace GbStoreApi.Application.Services.Products
 
             return new(stocksDeterminedByItsCount);
         }
+
+        public async Task<PaginatedResponseDto<IEnumerable<DisplayStubProduct>>> GetExistentPaginated(
+            string? productName,
+            int page = 0,
+            int pageSize = 20
+            )
+        {
+            var paginatedProducts = await _unitOfWork.Product
+                .GetAll()
+                .Include(x => x.Pictures)
+                .Include(x => x.Brand)
+                .Include(x => x.Category)
+                .ProjectTo<DisplayStubProduct>(_mapper.ConfigurationProvider)
+                .FilterByProductNameIfWasInformed(productName)
+                .GetCount(out int count)
+                .Paginate(page, pageSize)
+                .ToListAsync();
+
+            return new PaginatedResponseDto<IEnumerable<DisplayStubProduct>>(
+                paginatedProducts,
+                page,
+                pageSize,
+                count);
+        }
     }
 }

@@ -36,6 +36,11 @@ namespace GbStoreApi.Application.Extensions
                     .ForMember(member => member.Colors, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Color!.Name).Distinct()))
                     .ForMember(member => member.Sizes, map => map.MapFrom(src => src.Stocks.Select(stocks => stocks.Size!.Name).Distinct()));
 
+                configuration.CreateProjection<Product, DisplayStubProduct>()
+                    .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
+                    .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
+                    .ForMember(dest => dest.ProductPictureId, opt => opt.MapFrom(src => src.Pictures.First().Name));
+
                 configuration.CreateMap<Product, ProductSpecificationsDto>()
                     .ForMember(member => member.RealPrice, map => map.MapFrom(x => x.UnitaryPrice))
                     .ForMember(member => member.ProductPictureIds, map => map.MapFrom(x => x.Pictures.Select(y => y.Name)))
