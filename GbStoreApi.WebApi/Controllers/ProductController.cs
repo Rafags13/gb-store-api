@@ -59,15 +59,15 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        [HttpGet("ExistentPaginated/{page:int}/{pageSize:int}")]
+        [HttpGet("ExistentPaginated/{page:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedResponseDto<IEnumerable<DisplayStubProduct>>))]
         public async Task<IActionResult> GetExistentPaginated(
-            [FromQuery] string? ProductName,
+            [FromQuery] string? searchQuery,
             [FromRoute] int page = 0,
             [FromRoute] int pageSize = 20
             )
         {
-            var response = await _productService.GetExistentPaginated(ProductName, page, pageSize);
+            var response = await _productService.GetExistentPaginated(searchQuery, page, pageSize);
             return StatusCode(response.StatusCode, response);
         }
 
