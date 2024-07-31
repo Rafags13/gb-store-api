@@ -1,6 +1,7 @@
 ﻿using GbStoreApi.Domain.Dto.Authentications;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Users;
+using GbStoreApi.Domain.Dto.Users.Dashboard;
 using GbStoreApi.Domain.enums;
 using GbStoreApi.Domain.Models;
 
@@ -16,5 +17,6 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<bool> Update(UpdateUserDto updateUserDto);
         ResponseDto<User> GetByCredentials(SignInDto signInDto);
         ResponseDto<bool> UpdatePassword(UpdatePasswordDto updatePasswordDto);
+        ResponseDto<DashboardSummaryDto> GetDashboardSummary(int monthIndex);
     }
 }

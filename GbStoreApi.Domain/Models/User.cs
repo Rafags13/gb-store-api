@@ -25,6 +25,8 @@ namespace GbStoreApi.Domain.Models
         [Required]
         public string Password { get; set; } = string.Empty;
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]

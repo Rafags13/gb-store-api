@@ -1,6 +1,7 @@
 ﻿using GbStoreApi.Application.Interfaces;
 using GbStoreApi.Domain.Dto.Generic;
 using GbStoreApi.Domain.Dto.Users;
+using GbStoreApi.Domain.Dto.Users.Dashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -78,6 +79,15 @@ namespace GbStoreApi.WebApi.Controllers
         public IActionResult UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
         {
             var response = _userService.UpdatePassword(updatePasswordDto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpGet("DashboardSummary/{monthIndex:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<DashboardSummaryDto>))]
+        public IActionResult GetDashboardData([FromRoute] int monthIndex)
+        {
+            var response = _userService.GetDashboardSummary(monthIndex);
             return StatusCode(response.StatusCode, response);
         }
     }

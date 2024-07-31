@@ -69,6 +69,7 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddPurchaseService(this IServiceCollection servicesCollection)
     {
         servicesCollection.AddScoped<IPurchaseService, PurchaseService>();
+        servicesCollection.AddTransient(provider => new Lazy<IPurchaseService>(() => provider.GetRequiredService<IPurchaseService>()));
 
         return servicesCollection;
     }

@@ -70,6 +70,16 @@ namespace GbStoreApi.Data.Implementation
             return _context.Set<T>().Any(predicate);
         }
 
+        public int Count()
+        {
+            return _context.Set<T>().Count();
+        }
+
+        public int Count(Expression<Func<T, bool>> predicate)
+        {
+            return _context.Set<T>().Count(predicate);
+        }
+
         public void UpdateRange(IEnumerable<T> entities)
         {
             _context.UpdateRange(entities);

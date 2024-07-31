@@ -15,5 +15,8 @@ namespace GbStoreApi.Application.Interfaces
             );
         ResponseDto<AdminPurchaseSpecificationDto> GetSpecificationById(int id);
         ResponseDto<bool> UpdateStateById(int id, PurchaseState newState);
+        (int, int) GetDifferenceCountByMonthIndex(int monthIndex);
+        (int, int) GetMultipleProductsDifferenceCountByMonthIndex(int monthIndex);
+        (decimal, decimal) GetDifferenceSumByMonthIndex(int monthIndex);
     }
 }

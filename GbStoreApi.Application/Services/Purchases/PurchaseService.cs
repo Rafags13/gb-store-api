@@ -228,5 +228,38 @@ namespace GbStoreApi.Application.Services.Purchases
 
             return new(true);
         }
+
+        public (int, int) GetDifferenceCountByMonthIndex(int monthIndex)
+        {
+            var sellsCountingByMonthIndex = _unitOfWork.Purchase.CountByMonthIndex(monthIndex);
+            var previousSellCoutingByMonthIndex = _unitOfWork.Purchase.CountByMonthIndex(monthIndex == 1 ? 12 : monthIndex - 1);
+
+            return new (sellsCountingByMonthIndex, previousSellCoutingByMonthIndex);
+        }
+
+        public (decimal, decimal) GetDifferenceSumByMonthIndex(int monthIndex)
+        {
+            var sellsSummingByMonthIndex = _unitOfWork.Purchase.SumByMonthIndex(monthIndex);
+            var previousSellSummingByMonthIndex = _unitOfWork.Purchase.SumByMonthIndex(monthIndex == 1 ? 12 : monthIndex - 1);
+
+            return new(sellsSummingByMonthIndex, previousSellSummingByMonthIndex);
+        }
+
+        public (int, int) GetMultipleProductsDifferenceCountByMonthIndex(int monthIndex)
+        {
+            var sellsWithMultipleProductsByMonthIndex = _unitOfWork.Purchase
+                .GetAll()
+                .Include(x => x.OrderItems)
+                .Where(x => x.OrderDate.Month == monthIndex)
+                .Count(x => x.OrderItems.Count > 1);
+
+            var previousSellWithMultipleProducts = _unitOfWork.Purchase
+                .GetAll()
+                .Include(x => x.OrderItems)
+                .Where(x => x.OrderDate.Month == (monthIndex == 1 ? 12 : monthIndex - 1))
+                .Count(x => x.OrderItems.Count > 1);
+
+            return new(sellsWithMultipleProductsByMonthIndex, previousSellWithMultipleProducts);
+        }
     }
 }
