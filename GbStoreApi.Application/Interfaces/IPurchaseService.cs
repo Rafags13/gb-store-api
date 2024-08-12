@@ -1,0 +1,27 @@
+﻿using GbStoreApi.Domain.Dto.Generic;
+using GbStoreApi.Domain.Dto.Purchases;
+using GbStoreApi.Domain.Enums;
+
+namespace GbStoreApi.Application.Interfaces
+{
+    public interface IPurchaseService
+    {
+        ResponseDto<bool> BuyProduct(BuyProductDto buyProductDto);
+        ResponseDto<IEnumerable<PurchaseSpecificationDto>> GetAll();
+        PaginatedResponseDto<IEnumerable<AdminPurchaseDisplay>> GetPaginated(
+            string searchQuery = "",
+            string boughterName = "",
+            string price = "",
+            string paymentType = "",
+            string purchaseState = "",
+            string estimatedDeliveryDate = "",
+            int page = 0,
+            int pageSize = 20
+            );
+        ResponseDto<AdminPurchaseSpecificationDto> GetSpecificationById(int id);
+        ResponseDto<bool> UpdateStateById(int id, PurchaseState newState);
+        (int, int) GetDifferenceCountByMonthIndex(int monthIndex);
+        (int, int) GetMultipleProductsDifferenceCountByMonthIndex(int monthIndex);
+        (decimal, decimal) GetDifferenceSumByMonthIndex(int monthIndex);
+    }
+}
