@@ -108,6 +108,7 @@ namespace GbStoreApi.Application.Services.Products
                 .FilterByCategoryIfWasInformed(Category)
                 .FilterByColorsIfWereInformed(Colors)
                 .FilterBySizesIfWereInformed(Sizes)
+                .FilterByActiveProducts()
                 .OrderBy(Direction, OrderBy)
                 .Count(out int count)
                 .Paginate(Page, PageSize)
@@ -194,9 +195,7 @@ namespace GbStoreApi.Application.Services.Products
         }
 
         public async Task<PaginatedResponseDto<IEnumerable<DisplayStubProduct>>> GetExistentPaginated(
-            string? productName,
-            int page = 0,
-            int pageSize = 20
+            ExistentQueryDto existentQueryDto
             )
         {
             var paginatedProducts = await _unitOfWork.Product
@@ -205,16 +204,35 @@ namespace GbStoreApi.Application.Services.Products
                 .Include(x => x.Brand)
                 .Include(x => x.Category)
                 .ProjectTo<DisplayStubProduct>(_mapper.ConfigurationProvider)
-                .FilterByProductNameIfWasInformed(productName)
+                .FilterByProductNameIfWasInformed(existentQueryDto.SearchQuery)
+                .OrderByNameWithInformedDirection(existentQueryDto.Name)
+                .OrderByPriceWithInformedDirection(existentQueryDto.Price)
+                .OrderByCategoryWithInformedDirection(existentQueryDto.Category)
+                .OrderByBrandWithInformedDirection(existentQueryDto.Brand)
                 .GetCount(out int count)
-                .Paginate(page, pageSize)
+                .Paginate(existentQueryDto.Page, existentQueryDto.PageSize)
                 .ToListAsync();
 
             return new PaginatedResponseDto<IEnumerable<DisplayStubProduct>>(
                 paginatedProducts,
-                page,
-                pageSize,
+                existentQueryDto.Page,
+                existentQueryDto.PageSize,
                 count);
+        }
+
+        public ResponseDto<bool> DisableProduct(int productId, bool isActive)
+        {
+            var currentProduct = _unitOfWork.Product.FindOne(x => x.Id == productId);
+
+            if (currentProduct is null)
+                return new(StatusCodes.Status404NotFound, "O produto a ser desativado não existe mais.");
+
+            currentProduct.IsActive = isActive;
+
+            _unitOfWork.Product.Update(currentProduct);
+            _unitOfWork.Save();
+
+            return new(StatusCodes.Status200OK, $"Produto {(isActive ? "ativado" : "desativado")} com sucesso!");
         }
     }
 }

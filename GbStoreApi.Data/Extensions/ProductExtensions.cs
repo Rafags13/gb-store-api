@@ -4,6 +4,7 @@ using GbStoreApi.Domain.Models;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using GbStoreApi.Domain.Constants;
 
 namespace GbStoreApi.Data.Extensions
 {
@@ -70,7 +71,7 @@ namespace GbStoreApi.Data.Extensions
 
         public static IQueryable<DisplayProductDto> FilterBySizesIfWereInformed(this IQueryable<DisplayProductDto> products, string[]? sizes)
         {
-            if(sizes is null || !sizes.Any())
+            if (sizes is null || !sizes.Any())
                 return products;
 
             var sizeCount = sizes.Count();
@@ -79,7 +80,12 @@ namespace GbStoreApi.Data.Extensions
                 .Where(size => sizes.Contains(size))
                 .Count() == sizeCount);
         }
-        
+
+        public static IQueryable<DisplayProductDto> FilterByActiveProducts(this IQueryable<DisplayProductDto> products)
+        {
+            return products.Where(product => product.IsActive);
+        }
+
         public static IQueryable<DisplayProductDto> Paginate(this IQueryable<DisplayProductDto> products, int page = 0, int pageSize = 20)
         {
             return products.Skip(page * pageSize).Take(pageSize);
@@ -89,8 +95,44 @@ namespace GbStoreApi.Data.Extensions
         {
             if (string.IsNullOrWhiteSpace(direction) || string.IsNullOrWhiteSpace(fieldName))
                 return products.OrderBy(x => x.Id);
-            
+
             return products.AsQueryable().OrderBy($"{fieldName} {direction}");
+        }
+
+        public static IQueryable<DisplayStubProduct> OrderByNameWithInformedDirection(this IQueryable<DisplayStubProduct> query, string? nameOrderDirection)
+        {
+            if (string.IsNullOrWhiteSpace(nameOrderDirection)) return query;
+
+            if (nameOrderDirection == OrdenationConstants.ASCENDING) return query.OrderBy(x => x.Name);
+
+            return query.OrderByDescending(x => x.Name);
+        }
+
+        public static IQueryable<DisplayStubProduct> OrderByPriceWithInformedDirection(this IQueryable<DisplayStubProduct> query, string? priceOrderDirection)
+        {
+            if(string.IsNullOrWhiteSpace(priceOrderDirection)) return query;
+
+            if (priceOrderDirection == OrdenationConstants.ASCENDING) return query.OrderBy(x => x.PriceWithDiscount);
+
+            return query.OrderByDescending(x => x.PriceWithDiscount);
+        }
+
+        public static IQueryable<DisplayStubProduct> OrderByCategoryWithInformedDirection(this IQueryable<DisplayStubProduct> query, string? categoryOrderDirection)
+        {
+            if (string.IsNullOrWhiteSpace(categoryOrderDirection)) return query;
+
+            if (categoryOrderDirection == OrdenationConstants.ASCENDING) return query.OrderBy(x => x.CategoryName);
+
+            return query.OrderByDescending(x => x.CategoryName);
+        }
+
+        public static IQueryable<DisplayStubProduct> OrderByBrandWithInformedDirection(this IQueryable<DisplayStubProduct> query, string? brandOrderDirection)
+        {
+            if (string.IsNullOrWhiteSpace(brandOrderDirection)) return query;
+
+            if (brandOrderDirection == OrdenationConstants.ASCENDING) return query.OrderBy(x => x.BrandName);
+
+            return query.OrderByDescending(x => x.BrandName);
         }
 
         public static IQueryable<DisplayProductDto> Count(this IQueryable<DisplayProductDto> products, out int count)

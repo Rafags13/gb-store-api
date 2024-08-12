@@ -10,7 +10,7 @@ namespace GbStoreApi.Application.Extensions
             serviceCollection.AddCors(option =>
             {
                 option.AddPolicy(corsPolicyName,
-                    builder => builder.WithOrigins("http://localhost:5173")
+                    builder => builder.WithOrigins("http://localhost:3000")
                         .AllowAnyMethod()
                         .WithExposedHeaders("Token")
                         .WithHeaders(

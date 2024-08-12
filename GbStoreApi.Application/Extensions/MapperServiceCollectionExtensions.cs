@@ -39,6 +39,7 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateProjection<Product, DisplayStubProduct>()
                     .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                     .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
+                    .ForMember(dest => dest.PriceWithDiscount, opt => opt.MapFrom(src => src.UnitaryPrice / (decimal)(1 - src.DiscountPercent ?? 0)))
                     .ForMember(dest => dest.ProductPictureId, opt => opt.MapFrom(src => src.Pictures.First().Name));
 
                 configuration.CreateMap<Product, ProductSpecificationsDto>()

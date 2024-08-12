@@ -10,6 +10,7 @@ namespace GbStoreApi.Domain.Dto.Products
         public decimal PriceWithDiscount { get; set; }
         public float? DiscountPercent { get; set; }
         public string PhotoUrlId { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
         [JsonIgnore]
         public string Category { get; set; } = string.Empty;
         public IEnumerable<string>? Colors { get; set; } = Enumerable.Empty<string>();

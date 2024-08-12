@@ -63,11 +63,24 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedResponseDto<IEnumerable<DisplayStubProduct>>))]
         public async Task<IActionResult> GetExistentPaginated(
             [FromQuery] string? searchQuery,
+            [FromQuery] string? name,
+            [FromQuery] string? price,
+            [FromQuery] string? category,
+            [FromQuery] string? brand,
             [FromRoute] int page = 0,
             [FromRoute] int pageSize = 20
             )
         {
-            var response = await _productService.GetExistentPaginated(searchQuery, page, pageSize);
+            var response = await _productService.GetExistentPaginated(new ExistentQueryDto
+            {
+                SearchQuery = searchQuery,
+                Name = name,
+                Brand = brand,
+                Category = category,
+                Page = page,
+                PageSize = pageSize,
+                Price = price
+            });
             return StatusCode(response.StatusCode, response);
         }
 
@@ -115,6 +128,14 @@ namespace GbStoreApi.WebApi.Controllers
         {
             var avaliableStocks = _productService.GetAvaliableStocks(countStockByItsIdDtos);
             return StatusCode(StatusCodes.Status200OK, avaliableStocks);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPatch("ToggleVisualizationProduct/{productId:int}")]
+        public IActionResult DisableProduct([FromRoute] int productId, [FromBody] bool isActive)
+        {
+            var response = _productService.DisableProduct(productId, isActive);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

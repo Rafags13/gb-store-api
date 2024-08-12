@@ -8,6 +8,7 @@ using GbStoreApi.Domain.Enums;
 using GbStoreApi.Domain.Models.Purchases;
 using GbStoreApi.Domain.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GbStoreApi.Application.Services.Purchases
@@ -160,6 +161,11 @@ namespace GbStoreApi.Application.Services.Purchases
 
         public PaginatedResponseDto<IEnumerable<AdminPurchaseDisplay>> GetPaginated(
             string searchQuery = "",
+            string boughterName = "",
+            string price = "",
+            string paymentType = "",
+            string purchaseState = "",
+            string estimatedDeliveryDate = "",
             int page = 0,
             int pageSize = 20
             )
@@ -177,6 +183,11 @@ namespace GbStoreApi.Application.Services.Purchases
                     .ThenInclude(x => x.UserBuyer)
                 .ProjectTo<AdminPurchaseDisplay>(_mapper.ConfigurationProvider)
                 .FilterByBoughterName(searchQuery)
+                .OrderByBoughterNameWithInformedDirection(boughterName)
+                .OrderByPriceWithInformedDirection(price)
+                .OrderByPaymentTypeWithInformedDirection(paymentType)
+                .OrderByPurchaseStateWithInformedDirection(purchaseState)
+                .OrderByDeliveryDateWithInformedDirection(estimatedDeliveryDate)
                 .GetCount(out int totalItems)
                 .Paginate(page, pageSize);
 

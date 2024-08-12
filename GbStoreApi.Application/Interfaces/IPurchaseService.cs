@@ -10,6 +10,11 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<IEnumerable<PurchaseSpecificationDto>> GetAll();
         PaginatedResponseDto<IEnumerable<AdminPurchaseDisplay>> GetPaginated(
             string searchQuery = "",
+            string boughterName = "",
+            string price = "",
+            string paymentType = "",
+            string purchaseState = "",
+            string estimatedDeliveryDate = "",
             int page = 0,
             int pageSize = 20
             );

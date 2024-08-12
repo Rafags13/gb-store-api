@@ -30,6 +30,10 @@ namespace GbStoreApi.Domain.Models
         [DefaultValue(1)]
         public int? QuotasNumber { get; set; }
 
+        [DefaultValue(true)]
+        public bool IsActive { get; set; }
+
+        #region [One to One]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
@@ -37,14 +41,19 @@ namespace GbStoreApi.Domain.Models
         [ForeignKey("Brand")]
         public int BrandId { get; set; }
         public Brand Brand { get; set; }
+        #endregion
 
+        #region [One to Many]
+        public virtual ICollection<ProductStock> Stocks { get; set; }
+        public virtual List<Picture> Pictures { get; set; }
+        #endregion
+
+        #region [Not Mapped]
         [NotMapped]
         public decimal PriceWithDiscount { get {
                 return UnitaryPrice / (decimal)(1 - DiscountPercent ?? 0);
             }}
-
-        public virtual ICollection<ProductStock> Stocks { get; set; }
-        public virtual List<Picture> Pictures { get; set; }
+        #endregion
 
         public Product()
         {

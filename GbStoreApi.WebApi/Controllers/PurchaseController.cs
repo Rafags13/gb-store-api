@@ -42,11 +42,21 @@ namespace GbStoreApi.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<IEnumerable<AdminPurchaseDisplay>>))]
         public IActionResult GetPaginated(
             [FromQuery] string searchQuery = "",
+            [FromQuery] string boughterName = "",
+            [FromQuery] string price = "",
+            [FromQuery] string paymentType = "",
+            [FromQuery] string purchaseState = "",
+            [FromQuery] string estimatedDeliveryDate = "",
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 20)
         {
             var response = _purchaseService.GetPaginated(
                 searchQuery,
+                boughterName,
+                price,
+                paymentType,
+                purchaseState,
+                estimatedDeliveryDate,
                 page,
                 pageSize
                 );
