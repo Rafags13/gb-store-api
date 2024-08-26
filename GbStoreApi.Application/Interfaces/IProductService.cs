@@ -16,6 +16,8 @@ namespace GbStoreApi.Application.Interfaces
         ResponseDto<ProductSpecificationsDto?> GetProductSpecificationById(int productId);
         ResponseDto<DisplayFiltersDto> GetAllFilters();
         ResponseDto<IEnumerable<StockAvaliableByIdDto>> GetAvaliableStocks(IEnumerable<CountStockByItsIdDto> countStockByItsIdDtos);
+        CategoriesBrandsList GetAllCategoriesAndBrands();
         ResponseDto<bool> DisableProduct(int productId, bool isActive);
+        ResponseDto<UpdateProductDto> GetProductById(int productId);
     }
 }

@@ -53,7 +53,8 @@ namespace GbStoreApi.Application.Extensions
                     .ReverseMap();
 
                 configuration.CreateMap<CreateStockDto, ProductStock>()
-                    .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.StockSize));
+                    .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.StockSize))
+                    .ReverseMap();
 
                 configuration.CreateMap<CreateProductDto, Product>()
                     .ForMember(dest => dest.Stocks, opt => opt.MapFrom(src => src.Stock));
@@ -65,7 +66,8 @@ namespace GbStoreApi.Application.Extensions
                 #endregion
 
                 #region [Brand]
-                configuration.CreateMap<Brand, DisplayBrandDto>().ReverseMap();
+                configuration.CreateMap<Brand, DisplayBrandDto>();
+
                 #endregion
 
                 #region [User]
@@ -88,6 +90,7 @@ namespace GbStoreApi.Application.Extensions
 
                 #region [Category]
                 configuration.CreateMap<DisplayCategoryDto, Category>().ReverseMap();
+                configuration.CreateMap<Category, DisplayCategoryDto>();
                 #endregion
 
                 #region [Color]
@@ -181,6 +184,9 @@ namespace GbStoreApi.Application.Extensions
                 configuration.CreateMap<BuyProductDto, ShippingPurchase>()
                     .ForMember(dest => dest.Purchase, opt => opt.MapFrom(src => src));
                 #endregion
+
+                configuration.CreateMap<Product, UpdateProductDto>()
+                    .ForPath(dest => dest.Photos, opt => opt.MapFrom(src => src.Pictures.Select(x => x.Name)));
             });
 
             IMapper mapper = config.CreateMapper();

@@ -44,7 +44,7 @@ namespace GbStoreApi.Domain.Models
         #endregion
 
         #region [One to Many]
-        public virtual ICollection<ProductStock> Stocks { get; set; }
+        public virtual List<ProductStock> Stocks { get; set; }
         public virtual List<Picture> Pictures { get; set; }
         #endregion
 

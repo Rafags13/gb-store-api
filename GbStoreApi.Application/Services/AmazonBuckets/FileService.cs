@@ -11,16 +11,13 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
     public class FileService : IFileService
     {
         private readonly IAmazonS3 _s3Client;
-        private readonly IBucketService _bucketService;
-        public FileService(IAmazonS3 s3Client, IBucketService bucketService)
+        public FileService(IAmazonS3 s3Client)
         {
             _s3Client = s3Client;
-            _bucketService = bucketService;
         }
 
         public async Task<ResponseDto<string>> CreateFileAsync(IFormFile formFile, string bucketName, string? prefix)
         {
-
             var request = new PutObjectRequest()
             {
                 BucketName = bucketName,
@@ -40,12 +37,12 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
             var request = new PutObjectRequest()
             {
                 BucketName = bucketName,
-                Key = string.IsNullOrEmpty(prefix) ? randomNameFromFile : $"{prefix?.TrimEnd('/')}/{randomNameFromFile}",
+                Key = string.IsNullOrEmpty(prefix) ? randomNameFromFile : $"{prefix}-{randomNameFromFile}",
                 InputStream = formFile.OpenReadStream()
             };
 
             request.Metadata.Add("Content-Type", formFile.ContentType);
-            var response = _s3Client.PutObjectAsync(request).Result;
+            _ = _s3Client.PutObjectAsync(request).Result;
 
             return randomNameFromFile;
         }
@@ -55,7 +52,7 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
             var pictureNames = new List<string>();
 
             Parallel.ForEach(files, file => {
-                var fileName = CreateFileSync(file, BucketContants.BUCKET_S3_NAME, "");
+                var fileName = CreateFileSync(file, BucketContants.BUCKET_S3_NAME, prefix);
                 pictureNames.Add(fileName);
             });
 
@@ -78,11 +75,11 @@ namespace GbStoreApi.Application.Services.AmazonBuckets
             var request = new ListObjectsV2Request()
             {
                 BucketName = bucketName,
-                Prefix = prefix
+                Prefix = prefix,
             };
 
             var result = await _s3Client.ListObjectsV2Async(request);
-
+            
             var s3Objects = result.S3Objects.Select(s3 =>
             {
                 var urlRequest = new GetPreSignedUrlRequest()

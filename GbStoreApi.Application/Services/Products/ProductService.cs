@@ -16,6 +16,8 @@ using GbStoreApi.Domain.Dto.Generic;
 using Microsoft.AspNetCore.Http;
 using GbStoreApi.Domain.Enums;
 using AutoMapper.QueryableExtensions;
+using GbStoreApi.Domain.Dto.Categories;
+using GbStoreApi.Domain.Dto.Brands;
 
 namespace GbStoreApi.Application.Services.Products
 {
@@ -44,7 +46,7 @@ namespace GbStoreApi.Application.Services.Products
         {
             using var transaction = _unitOfWork.GetContext().BeginTransaction();
 
-            var picturesName = await _fileService.CreateMultipleFiles(createProductDto.Photos);
+            var picturesName = await _fileService.CreateMultipleFiles(createProductDto.Photos, createProductDto.Name);
 
             if (!picturesName.Any()) return new(StatusCodes.Status400BadRequest, "Não foi possível criar as fotos do produto.");
 
@@ -233,6 +235,30 @@ namespace GbStoreApi.Application.Services.Products
             _unitOfWork.Save();
 
             return new(StatusCodes.Status200OK, $"Produto {(isActive ? "ativado" : "desativado")} com sucesso!");
+        }
+
+        public CategoriesBrandsList GetAllCategoriesAndBrands()
+        {
+            var categories = _unitOfWork.Category.GetAll().ProjectTo<DisplayCategoryDto>(_mapper.ConfigurationProvider);
+            var brands = _unitOfWork.Brand.GetAll().ProjectTo<DisplayBrandDto>(_mapper.ConfigurationProvider);
+
+            return new(categories, brands);
+        }
+
+        public ResponseDto<UpdateProductDto> GetProductById(int productId)
+        {
+            var currentProduct = _unitOfWork.Product
+                .GetAll()
+                .Include(x => x.Stocks)
+                .Include(x => x.Pictures)
+                .Include(x => x.Category)
+                .Include(x => x.Brand)
+                .FirstOrDefault(x => x.Id == productId);
+
+            if (currentProduct is null)
+                return new(StatusCodes.Status404NotFound, "O produto informado não existe.");
+
+            return new(_mapper.Map<UpdateProductDto>(currentProduct));
         }
     }
 }

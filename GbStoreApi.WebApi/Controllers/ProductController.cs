@@ -131,10 +131,29 @@ namespace GbStoreApi.WebApi.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoriesBrandsList))]
+        [HttpGet("GetAllCategoriesAndBrands")]
+        public IActionResult GetAllCategoriesAndBrands()
+        {
+            var categoriesAndBrands = _productService.GetAllCategoriesAndBrands();
+            return StatusCode(StatusCodes.Status200OK, categoriesAndBrands);
+        }
+
+        [Authorize(Roles = "Administrator")]
         [HttpPatch("ToggleVisualizationProduct/{productId:int}")]
         public IActionResult DisableProduct([FromRoute] int productId, [FromBody] bool isActive)
         {
             var response = _productService.DisableProduct(productId, isActive);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("GetProductById/{productId}")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto<UpdateProductDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseDto<UpdateProductDto>))]
+        public IActionResult GetProductById([FromRoute] int productId)
+        {
+            var response = _productService.GetProductById(productId);
             return StatusCode(response.StatusCode, response);
         }
     }
